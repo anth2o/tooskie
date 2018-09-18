@@ -3,7 +3,10 @@ from tooskie.config.common import Common
 class Local(Common):
     DEBUG = True
 
-    INSTALLED_APPS = Common.INSTALLED_APPS
+    INSTALLED_APPS = Common.INSTALLED_APPS + [
+        'tooskie.user',
+        'tooskie.recipe'
+    ]
 
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = 'x4mjy^)4_!4v9bx1#vas9tgw%ds044d2@ht=a=z43m@*ae4ujb'
