@@ -21,7 +21,7 @@ services:
     environment:
       DJANGO_CONFIGURATION: Local
       DJANGO_SETTINGS_MODULE: tooskie.config
-    command: bash -c "sleep 10 && python3 manage.py makemigrations && python3 manage.py runserver 0.0.0.0:8000"
+    command: bash -c "sleep 10 && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:

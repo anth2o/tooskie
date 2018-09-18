@@ -12,6 +12,16 @@ If you wanna try the latest version, make sure you're pulling dev branch.
 docker-compose up
 ```
 
+## Apply migrations
+
+If you've just downloaded the project or you made a modifcation on the models, you need to apply those migrations
+
+```sh
+docker exec tooskie_web_1 python manage.py makemigrations
+
+docker exec tooskie_web_1 python manage.py migrate
+```
+
 ## Create a superuser
 
 This is mandatory to access the django admin interface
