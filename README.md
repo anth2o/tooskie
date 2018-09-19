@@ -27,12 +27,10 @@ docker exec tooskie_web_1 python manage.py migrate
 This is mandatory to access the django admin interface
 
 ```sh
-docker exec -it tooskie_web_1 bash
-
-python manage.py createsuperuser
+docker exec -it tooskie_web_1 python manage.py createsuperuser
 ```
 
-Follow the instructions, then you can quit the container
+Follow the instructions
 
 ## Access the django admin
 
