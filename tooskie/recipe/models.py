@@ -2,8 +2,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
+
 
 from tooskie.abstract.models import BaseModel, NameModel
+from tooskie import choices
+from tooskie.constants import *
 
 class Recipe(NameModel):
     name = models.CharField(max_length=1000, verbose_name=_('Name'))
@@ -13,6 +17,7 @@ class Recipe(NameModel):
     # Relations
     level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
+    measure_of_ingredient = models.ManyToManyField('MeasureOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
 
 class Step(BaseModel):
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
@@ -42,13 +47,41 @@ class UstensilInRecipe(BaseModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def __str__(self):
-        return str(self.ustensil) + '-in-' + str(self.recipe)
+        return str(self.ustensil) + LINK_WORD + str(self.recipe)
 
 class Ingredient(NameModel):
-    # average price in Euros
-    average_price = models.PositiveIntegerField(blank=True, null=True)
     # average conservation time in hours
     conservation_time = models.PositiveIntegerField(blank=True, null=True)
+
+    # Relations
+    measurement = models.ManyToManyField('Measurement')
+
+class IngredientInRecipe(BaseModel):
+    quantity = models.FloatField(blank=True, null=True)
+
+    # Relations
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+    measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.measure_of_ingredient) + LINK_WORD + str(self.recipe)
+
+
+class MeasureOfIngredient(BaseModel):
+    average_price = models.PositiveIntegerField(blank=True, null=True)
+
+    # Relations
+    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
+    measurement = models.ForeignKey('Measurement', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.ingredient) + LINK_WORD + str(self.measurement)
+
+class Measurement(NameModel):
+    unit = models.CharField(max_length=1000, choices=choices.unit_choices)
+
+    def __str__(self):
+        return str(self.permaname) + LINK_WORD + str(slugify(self.unit))
 
 class RecipeSuggested(BaseModel):
     class Meta:
@@ -72,5 +105,6 @@ class RecipeSuggested(BaseModel):
 
 class Picture(BaseModel):
     picture = models.ImageField(verbose_name=_('Picture'))
-
+    
+    # Relations
     recipe_suggested = models.ForeignKey('RecipeSuggested', on_delete=models.CASCADE, verbose_name=_('Recipe suggested'))
