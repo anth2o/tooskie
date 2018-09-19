@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Recipe, RecipeSuggested
+import tooskie.recipe.models as models
+import sys, inspect
 
-admin.site.register(Recipe)
-admin.site.register(RecipeSuggested)
+for name, obj in inspect.getmembers(models):
+    if inspect.isclass(obj):
+        try:
+            admin.site.register(obj)
+        except Exception as e:
+            print(e)
