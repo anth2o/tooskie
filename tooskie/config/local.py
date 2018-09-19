@@ -4,6 +4,7 @@ class Local(Common):
     DEBUG = True
 
     INSTALLED_APPS = Common.INSTALLED_APPS + [
+        'tooskie.abstract',
         'tooskie.user',
         'tooskie.recipe'
     ]

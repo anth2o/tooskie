@@ -14,7 +14,7 @@ docker-compose up
 
 ## Apply migrations
 
-If you've just downloaded the project or you made a modifcation on the models, you need to apply those migrations
+If you've just made a modifcation on the models, you need to apply those migrations
 
 ```sh
 docker exec tooskie_web_1 python manage.py makemigrations
