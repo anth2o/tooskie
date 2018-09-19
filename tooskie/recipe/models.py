@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 
 from tooskie.abstract.models import BaseModel, NameModel
 
@@ -63,6 +64,11 @@ class RecipeSuggested(BaseModel):
 
     def __str__(self):
         return str(self.recipe) + '-to-' + str(self.user) + '-' + str(self.created_at)
+
+    def save(self, *args, **kwargs):
+        if not self.is_accepted and self.rating:
+            raise ValidationError("You can't post a rating if you declined the suggestion")
+        super(RecipeSuggested, self).save(*args, **kwargs)
 
 class Picture(BaseModel):
     picture = models.ImageField(verbose_name=_('Picture'))
