@@ -6,7 +6,8 @@ class Local(Common):
     INSTALLED_APPS = Common.INSTALLED_APPS + [
         'tooskie.recipe',
         'tooskie.user',
-        'tooskie.utils'
+        'tooskie.utils',
+        'tooskie.pantry'
     ]
 
     # SECURITY WARNING: keep the secret key used in production secret!

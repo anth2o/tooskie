@@ -17,6 +17,7 @@ class User(NameModel):
     status = models.ForeignKey('Status', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Status'))
     playlist = models.ManyToManyField('Playlist', through='CanAccessPlaylist')
     social_media = models.ManyToManyField('SocialMedia', through='IsConnectedTo')
+    pantry = models.ManyToManyField('pantry.Pantry')
 
     def save(self, *args, **kwargs):
         self.name = self.first_name + ' ' + self.last_name
