@@ -26,3 +26,5 @@ class Local(Common):
             'PORT': '',
         },
     }
+
+    MEDIA_ROOT = './media/'
