@@ -19,6 +19,9 @@ class Pantry(NameModel):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
+    # Relations
+    shopping_list = models.ManyToManyField('shop.ShoppingList', through='Receipt')
+
 class IngredientInPantry(BaseModel):
     quantity = models.FloatField(blank=True, null=True)
 
@@ -39,4 +42,20 @@ class UstensilInPantry(BaseModel):
     def __str__(self):
         return str(self.ustensil) + LINK_WORD + str(self.pantry)
 
-# TODO: implement models related to receipt (picture, list of ingredients, tricount...)
+class Receipt(BaseModel):
+    # There is no picture if the pantry is filled manually
+    picture = models.ImageField(blank=True, null=True)
+
+    # Relations
+    pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE)
+    shopping_list = models.ForeignKey('shop.ShoppingList', on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.pantry) + LINK_WORD + str(self.shopping_list)
+
+class PayReceipt(BaseModel):
+    coeff = models.FloatField(default=1)
+
+    # Relations
+    receipt = models.ForeignKey('Receipt', on_delete=models.CASCADE)
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE)

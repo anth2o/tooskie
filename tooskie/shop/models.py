@@ -4,10 +4,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
-
 from tooskie.utils.models import BaseModel, NameModel
 from tooskie import choices
-from tooskie.constants import LINK_WORD
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG
+
+import logging
+logging.basicConfig(**LOGGING_CONFIG)
 
 class ShoppingList(BaseModel):
     # Relations
@@ -18,6 +20,8 @@ class ShoppingList(BaseModel):
 
 class IsInShoppingList(BaseModel):
     quantity = models.FloatField(blank=True, null=True)
+    is_bought = models.BooleanField(default=False)
+    quantity_bought = models.FloatField(blank=True, null=True)
 
     #Relations
     shopping_list = models.ForeignKey('ShoppingList', on_delete=models.CASCADE)
@@ -25,6 +29,14 @@ class IsInShoppingList(BaseModel):
 
     def __str__(self):
         return str(self.measure_of_ingredient) + LINK_WORD + str(self.shopping_list)
+
+    def save(self, *args, **kwargs):
+        logging.debug(self.is_bought)
+        logging.debug(self.quantity)
+        logging.debug(self.quantity_bought)
+        if self.is_bought and self.quantity_bought is None and self.quantity is not None:
+            self.quantity_bought = self.quantity
+        super(IsInShoppingList, self).save(*args, **kwargs)
 
 class Brand(NameModel):
     description = models.TextField(blank=True)

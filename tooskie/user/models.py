@@ -20,6 +20,7 @@ class User(NameModel):
     pantry = models.ManyToManyField('pantry.Pantry')
     special_diet = models.ManyToManyField('recipe.SpecialDiet')
     doesnt_like = models.ManyToManyField('recipe.Ingredient')
+    receipt = models.ManyToManyField('pantry.Receipt', through='pantry.PayReceipt')
 
     def save(self, *args, **kwargs):
         self.name = self.first_name + ' ' + self.last_name
