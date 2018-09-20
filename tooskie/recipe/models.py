@@ -33,17 +33,18 @@ class Step(BaseModel):
         unique_together = (("step_number", "recipe"),)
 
 class DifficultyLevel(BaseModel):
-    level = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
     description = models.TextField()
 
     def __str__(self):
         return str(self.level)
 
 class Ustensil(NameModel):
+    description = models.TextField(blank=True, null=True)
     picture = models.ImageField(blank=True)
 
 class UstensilInRecipe(BaseModel):
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(blank=True)
 
     # Relations
     ustensil = models.ForeignKey('Ustensil', on_delete=models.CASCADE, verbose_name=_('Ustensil'))
@@ -54,7 +55,7 @@ class UstensilInRecipe(BaseModel):
 
 class Ingredient(NameModel):
     # average conservation time in hours
-    conservation_time = models.PositiveIntegerField(blank=True, null=True)
+    conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
 
     # Relations
     measurement = models.ManyToManyField('Measurement', through='MeasureOfIngredient')
@@ -74,7 +75,7 @@ class IngredientInRecipe(BaseModel):
         return str(self.measure_of_ingredient) + LINK_WORD + str(self.recipe)
 
 class MeasureOfIngredient(BaseModel):
-    average_price = models.FloatField(blank=True, null=True)
+    average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one measure'))
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
@@ -84,7 +85,7 @@ class MeasureOfIngredient(BaseModel):
         return str(self.ingredient) + LINK_WORD + str(self.measurement)
 
 class Measurement(NameModel):
-    unit = models.CharField(max_length=1000, choices=choices.unit_choices)
+    unit = models.CharField(max_length=1000, choices=choices.unit_choices, blank=True)
 
     def save(self, *args, **kwargs):
         self.permaname = slugify(self.name + LINK_WORD + self.unit)
