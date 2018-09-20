@@ -28,7 +28,8 @@ class NameModel(models.Model):
     def save(self, *args, **kwargs):
         if self.name == '':
             raise ValidationError('This model must have a non-empty name')
-        self.permaname = slugify(self.name)
+        if self.permaname == '':
+            self.permaname = slugify(self.name)
         try:
             super(NameModel, self).save(*args, **kwargs)
         except Exception as e:

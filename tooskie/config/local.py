@@ -7,7 +7,8 @@ class Local(Common):
         'tooskie.recipe',
         'tooskie.user',
         'tooskie.utils',
-        'tooskie.pantry'
+        'tooskie.pantry',
+        'tooskie.shop'
     ]
 
     # SECURITY WARNING: keep the secret key used in production secret!
