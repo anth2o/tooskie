@@ -11,7 +11,7 @@ unit_choices = (
     ('Gramme', 'g'),
     ('Kilogramme', 'kg'),
     ('Millilitre', 'mL'),
-    ('Centilitre', 'cL')
+    ('Centilitre', 'cL'),
     ('Litre', 'L'),
     ('Pincée', 'pincée'),
     ('Cuillère à café', 'càc'),

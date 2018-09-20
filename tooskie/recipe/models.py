@@ -7,7 +7,7 @@ from django.utils.text import slugify
 
 from tooskie.utils.models import BaseModel, NameModel
 from tooskie import choices
-from tooskie.constants import *
+from tooskie.constants import LINK_WORD
 
 class Recipe(NameModel):
     name = models.CharField(max_length=1000, verbose_name=_('Name'))
@@ -80,7 +80,7 @@ class Ingredient(NameModel):
     def save(self, *args, **kwargs):
         self.permaname = slugify(self.permaname + LINK_WORD + self.complement)
         super(Ingredient, self).save(*args, **kwargs)
-        
+
 class IngredientInRecipe(BaseModel):
     class Meta:
         verbose_name_plural = 'Ingredient in recipe'
