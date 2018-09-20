@@ -1,7 +1,10 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 
 from tooskie.abstract.models import BaseModel, NameModel
+from tooskie.constants import LINK_WORD
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,3 +29,31 @@ class User(NameModel):
 class Status(NameModel):
     class Meta:
         verbose_name_plural = 'Status'
+
+class RecipeSuggested(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Recipes suggested'
+
+    is_accepted = models.NullBooleanField(verbose_name=_('Recipe suggestion accepted'))
+    is_declined = models.NullBooleanField(verbose_name=_('Recipe suggestion declined'))
+    # If the two previous bool are false, it means "not today"
+    rating = models.PositiveIntegerField(blank=True, null=True, validators=[MaxValueValidator(5), MinValueValidator(1)], verbose_name=_('Rating'))
+    comment = models.TextField(blank=True, verbose_name=_('Comment'))
+    
+    # Relations
+    recipe = models.ForeignKey('recipe.Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe suggested'))
+    user = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name=_('Suggested to user'))
+
+    def __str__(self):
+        return str(self.recipe) + LINK_WORD + str(self.user) + LINK_WORD + str(self.created_at)
+
+    def save(self, *args, **kwargs):
+        if not self.is_accepted and self.rating:
+            raise ValidationError("You can't post a rating if you declined the suggestion")
+        super(RecipeSuggested, self).save(*args, **kwargs)
+
+class Picture(BaseModel):
+    picture = models.ImageField(verbose_name=_('Picture'))
+    
+    # Relations
+    recipe_suggested = models.ForeignKey('RecipeSuggested', on_delete=models.CASCADE, verbose_name=_('Recipe suggested'))
