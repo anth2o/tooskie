@@ -78,7 +78,10 @@ class Ingredient(NameModel):
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
    
     def save(self, *args, **kwargs):
-        self.permaname = slugify(self.permaname + LINK_WORD + self.complement)
+        if self.complement != '':
+            self.permaname = slugify(self.name + LINK_WORD + self.complement)
+        else:
+            self.permaname = slugify(self.name)
         super(Ingredient, self).save(*args, **kwargs)
 
 class IngredientInRecipe(BaseModel):

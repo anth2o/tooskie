@@ -18,6 +18,8 @@ class User(NameModel):
     playlist = models.ManyToManyField('Playlist', through='CanAccessPlaylist')
     social_media = models.ManyToManyField('SocialMedia', through='IsConnectedTo')
     pantry = models.ManyToManyField('pantry.Pantry')
+    special_diet = models.ManyToManyField('recipe.SpecialDiet')
+    doesnt_like = models.ManyToManyField('recipe.Ingredient')
 
     def save(self, *args, **kwargs):
         self.name = self.first_name + ' ' + self.last_name
