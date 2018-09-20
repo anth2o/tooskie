@@ -4,9 +4,9 @@ class Local(Common):
     DEBUG = True
 
     INSTALLED_APPS = Common.INSTALLED_APPS + [
-        'tooskie.abstract',
+        'tooskie.recipe',
         'tooskie.user',
-        'tooskie.recipe'
+        'tooskie.utils'
     ]
 
     # SECURITY WARNING: keep the secret key used in production secret!

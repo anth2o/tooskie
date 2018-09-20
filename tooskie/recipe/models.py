@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
 
-from tooskie.abstract.models import BaseModel, NameModel
+from tooskie.utils.models import BaseModel, NameModel
 from tooskie import choices
 from tooskie.constants import *
 
@@ -22,6 +22,7 @@ class Recipe(NameModel):
 class Step(BaseModel):
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
+    picture = models.ImageField(blank=True, null=True)
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))

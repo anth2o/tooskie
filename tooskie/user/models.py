@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 
-from tooskie.abstract.models import BaseModel, NameModel
+from tooskie.utils.models import BaseModel, NameModel
 from tooskie.constants import LINK_WORD
 
 class User(NameModel):
