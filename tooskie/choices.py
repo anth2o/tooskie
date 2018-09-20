@@ -9,12 +9,15 @@ status_choices = (
 
 unit_choices = (
     ('Gramme', 'g'),
-    ('Millilitre', 'mL'),
     ('Kilogramme', 'kg'),
+    ('Millilitre', 'mL'),
+    ('Centilitre', 'cL')
     ('Litre', 'L'),
     ('Pincée', 'pincée'),
     ('Cuillère à café', 'càc'),
-    ('Cuillère à soupe', 'càs')
+    ('Cuillère à soupe', 'càs'),
+    ('Botte', 'botte'),
+    ('Gousse', 'gousse'),
 )
 
 model_tagged_choices = (

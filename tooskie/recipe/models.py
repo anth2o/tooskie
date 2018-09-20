@@ -13,6 +13,8 @@ class Recipe(NameModel):
     name = models.CharField(max_length=1000, verbose_name=_('Name'))
     cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time'))
     preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
+    url = models.URLField(blank=True)
+    picture = models.ImageField(blank=True, null=True)
     
     # Relations
     difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
@@ -66,11 +68,19 @@ class UstensilInRecipe(BaseModel):
 class Ingredient(NameModel):
     # average conservation time in hours
     conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
+    picture = models.ImageField(blank=True, null=True)
+    name_plural = models.CharField(max_length=1000, blank=True)
+    complement = models.CharField(max_length=1000, blank=True)
+    complement_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
     measurement = models.ManyToManyField('Measurement', through='MeasureOfIngredient')
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
-
+   
+    def save(self, *args, **kwargs):
+        self.permaname = slugify(self.permaname + LINK_WORD + self.complement)
+        super(Ingredient, self).save(*args, **kwargs)
+        
 class IngredientInRecipe(BaseModel):
     class Meta:
         verbose_name_plural = 'Ingredient in recipe'

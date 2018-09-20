@@ -8,3 +8,8 @@ LOGGING_CONFIG = {
     "level": logging.getLevelName(LOGGING_LEVEL),
     "datefmt": '%d/%b/%Y %H:%M:%S'
 }
+
+LINKING_WORD_MARMITON = [
+    'de ',
+    'd'
+]   
