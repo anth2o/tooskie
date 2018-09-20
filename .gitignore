@@ -3,5 +3,5 @@ env
 *.pyc
 migrations/
 test.py
-test.csv
+*.csv
 media

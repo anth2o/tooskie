@@ -15,7 +15,8 @@ class Recipe(NameModel):
     preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
     
     # Relations
-    level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
+    difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
+    budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     measure_of_ingredient = models.ManyToManyField('MeasureOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag')
@@ -35,7 +36,14 @@ class Step(BaseModel):
         unique_together = (("step_number", "recipe"),)
 
 class DifficultyLevel(BaseModel):
-    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(4)])
+    description = models.TextField()
+
+    def __str__(self):
+        return str(self.level)
+
+class BudgetLevel(BaseModel):
+    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(4)])
     description = models.TextField()
 
     def __str__(self):
