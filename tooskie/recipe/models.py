@@ -18,6 +18,7 @@ class Recipe(NameModel):
     level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     measure_of_ingredient = models.ManyToManyField('MeasureOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
+    tag = models.ManyToManyField('utils.Tag')
 
 class Step(BaseModel):
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])

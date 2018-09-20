@@ -16,3 +16,7 @@ unit_choices = (
     ('Cuillère à café', 'càc'),
     ('Cuillère à soupe', 'càs')
 )
+
+model_tagged_choices = (
+    ('Recipe', 'Recipe'),
+)

@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
 from tooskie.constants import LOGGING_LEVEL
+from tooskie.choices import model_tagged_choices
 
 import logging
 logging.basicConfig(format='[%(asctime)s] [%(levelname)s] : %(message)s', level=logging.getLevelName(LOGGING_LEVEL), datefmt='%d/%b/%Y %H:%M:%S')
@@ -36,3 +37,6 @@ class NameModel(models.Model):
 
     class Meta:
         abstract = True
+
+class Tag(NameModel):
+    model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)
