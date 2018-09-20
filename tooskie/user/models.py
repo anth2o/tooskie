@@ -6,10 +6,6 @@ from django.core.exceptions import ValidationError
 from tooskie.abstract.models import BaseModel, NameModel
 from tooskie.constants import LINK_WORD
 
-import logging
-logger = logging.getLogger(__name__)
-#TODO: set logging level as an environment variable
-
 class User(NameModel):
     first_name = models.CharField(max_length=1000, verbose_name=_('First name'))
     last_name = models.CharField(max_length=1000, verbose_name=_('Full name'))
@@ -53,7 +49,6 @@ class RecipeSuggested(BaseModel):
         super(RecipeSuggested, self).save(*args, **kwargs)
 
 class Picture(BaseModel):
-    # TODO: store pictures in custom folder
     picture = models.ImageField(verbose_name=_('Picture'))
     
     # Relations

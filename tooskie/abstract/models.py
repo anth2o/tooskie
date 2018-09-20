@@ -3,9 +3,10 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
+from tooskie.constants import LOGGING_LEVEL
+
 import logging
-logger = logging.getLogger(__name__)
-#TODO: set logging level as an environment variable
+logging.basicConfig(format='[%(asctime)s] [%(levelname)s] : %(message)s', level=logging.getLevelName(LOGGING_LEVEL), datefmt='%d/%b/%Y %H:%M:%S')
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
