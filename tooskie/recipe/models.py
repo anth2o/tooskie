@@ -28,6 +28,9 @@ class Step(BaseModel):
 
     def __str__(self):
         return str(self.recipe) + LINK_WORD + str(self.step_number)
+    
+    class Meta:
+        unique_together = (("step_number", "recipe"),)
 
 class DifficultyLevel(BaseModel):
     level = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])

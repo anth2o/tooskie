@@ -53,6 +53,7 @@ class RecipeSuggested(BaseModel):
         super(RecipeSuggested, self).save(*args, **kwargs)
 
 class Picture(BaseModel):
+    # TODO: store pictures in custom folder
     picture = models.ImageField(verbose_name=_('Picture'))
     
     # Relations
