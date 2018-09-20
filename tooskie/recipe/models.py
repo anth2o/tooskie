@@ -54,9 +54,13 @@ class Ingredient(NameModel):
     conservation_time = models.PositiveIntegerField(blank=True, null=True)
 
     # Relations
-    measurement = models.ManyToManyField('Measurement')
+    measurement = models.ManyToManyField('Measurement', through='MeasureOfIngredient')
+    special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
 
 class IngredientInRecipe(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Ingredient in recipe'
+
     quantity = models.FloatField(blank=True, null=True)
 
     # Relations
@@ -66,9 +70,8 @@ class IngredientInRecipe(BaseModel):
     def __str__(self):
         return str(self.measure_of_ingredient) + LINK_WORD + str(self.recipe)
 
-
 class MeasureOfIngredient(BaseModel):
-    average_price = models.PositiveIntegerField(blank=True, null=True)
+    average_price = models.FloatField(blank=True, null=True)
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
@@ -80,7 +83,68 @@ class MeasureOfIngredient(BaseModel):
 class Measurement(NameModel):
     unit = models.CharField(max_length=1000, choices=choices.unit_choices)
 
+    def save(self, *args, **kwargs):
+        self.permaname = slugify(self.name + LINK_WORD + self.unit)
+        super(Measurement, self).save(*args, **kwargs)
+
+class NutritionalProperty(NameModel):
+    class Meta:
+        verbose_name_plural = 'Nutritional Properties'
+
+    description = models.TextField(blank=True)
+
+class MeasureOfNutritionalProperty(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Measure of nutritional properties'
+
+    # Relations
+    nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
+    measurement = models.ForeignKey('Measurement', on_delete=models.CASCADE)
+
     def __str__(self):
-        return str(self.permaname) + LINK_WORD + str(slugify(self.unit))
+        return str(self.nutritional_property) + LINK_WORD + str(self.measurement)
+
+class HasProperties(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Has properties'
+
+    nutritional_quantity = models.FloatField(blank=True, null=True, verbose_name=_('Nutritional quantity for one measure of ingredient'))
+
+    # Relations
+    measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE, verbose_name=_('One measure of ingredient'))
+    measure_of_nutritional_property = models.ForeignKey('MeasureOfNutritionalProperty', on_delete=models.CASCADE, verbose_name=_('The nutritional quantity in this measure'))
+
+    def __str__(self):
+        return str(self.measure_of_ingredient) + LINK_WORD + str(self.measure_of_nutritional_property)
 
 
+class CanReplace(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Can replace'
+
+    score = models.FloatField(default=0, verbose_name=_('A score representing how well this ingredient can replace an other'))
+    new_quantity = models.FloatField(blank=True, null=True, verbose_name=_('The quantity of the new ingredient'))
+
+    # Relations
+    new_measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE)
+    ingredient_in_recipe = models.ForeignKey('IngredientInRecipe', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.new_measure_of_ingredient) + '-replaces-' + str(self.ingredient_in_recipe)
+
+class SpecialDiet(NameModel):
+    description = models.TextField(blank=True)
+
+
+class IngredientCompatbibleWithDiet(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Ingredient compatible with diet'
+
+    is_compatible = models.NullBooleanField()
+
+    # Relations
+    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
+    special_diet = models.ForeignKey('SpecialDiet', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.ingredient) + LINK_WORD + str(self.special_diet)

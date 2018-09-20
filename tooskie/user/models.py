@@ -16,7 +16,7 @@ class User(NameModel):
     date_of_birth = models.DateTimeField(blank=True, null=True, verbose_name=_('Date of birth'))
 
     # Relations
-    recipe = models.ManyToManyField('recipe.Recipe', through='recipe.RecipeSuggested', verbose_name=_('Recipes suggested'))
+    recipe = models.ManyToManyField('recipe.Recipe', through='RecipeSuggested', verbose_name=_('Recipes suggested'))
     status = models.ForeignKey('Status', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Status'))
 
     def save(self, *args, **kwargs):
@@ -57,3 +57,6 @@ class Picture(BaseModel):
     
     # Relations
     recipe_suggested = models.ForeignKey('RecipeSuggested', on_delete=models.CASCADE, verbose_name=_('Recipe suggested'))
+
+    def __str__(self):
+        return str(self.recipe_suggested)
