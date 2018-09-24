@@ -38,5 +38,12 @@ class NameModel(models.Model):
     class Meta:
         abstract = True
 
+class LevelModel(NameModel):
+    level = models.PositiveIntegerField(blank=True, null=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        abstract = True
+
 class Tag(NameModel):
     model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)

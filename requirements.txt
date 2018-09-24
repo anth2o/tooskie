@@ -1,4 +1,5 @@
 Django==2.1.1
 django-configurations==2.1
-psycopg2-binary
+django-rest-framework
 Pillow
+psycopg2-binary

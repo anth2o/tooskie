@@ -5,12 +5,13 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
 
-from tooskie.utils.models import BaseModel, NameModel
+from tooskie.utils.models import BaseModel, NameModel, LevelModel
 from tooskie import choices
 from tooskie.constants import LINK_WORD
 
 class Recipe(NameModel):
     name = models.CharField(max_length=1000, verbose_name=_('Name'))
+    # time is in minutes
     cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time'))
     preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
     url = models.URLField(blank=True)
@@ -37,19 +38,11 @@ class Step(BaseModel):
     class Meta:
         unique_together = (("step_number", "recipe"),)
 
-class DifficultyLevel(BaseModel):
-    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(4)])
-    description = models.TextField()
+class DifficultyLevel(LevelModel):
+    pass
 
-    def __str__(self):
-        return str(self.level)
-
-class BudgetLevel(BaseModel):
-    level = models.PositiveIntegerField(unique=True, validators=[MinValueValidator(1), MaxValueValidator(4)])
-    description = models.TextField()
-
-    def __str__(self):
-        return str(self.level)
+class BudgetLevel(LevelModel):
+    pass
 
 class Ustensil(NameModel):
     description = models.TextField(blank=True, null=True)
