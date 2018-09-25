@@ -36,28 +36,22 @@ def process_recipe(global_data):
     try:
         recipe_model = Recipe.objects.get(name=global_data["recipe"])
         logging.info("Recipe already exists, updating it")
-        update_recipe(global_data)
     except ObjectDoesNotExist:
         logging.info("Recipe doesn't exists, creating it")
-        create_recipe(global_data) 
-
-def update_recipe(global_data):
+        recipe_data = get_fields(global_data)
+        logging.info(recipe_data)
+        recipe_model = Recipe(**recipe_data)
     try:
-        serializer = RecipeSerializer(global_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        recipe_model.save()
     except Exception as e:
-        raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})   
+        logging.error(e)
 
-def create_recipe(global_data):
+def get_fields(global_data):
     try:
         recipe_data = format_recipe_dict(global_data)
-        recipe_model = Recipe(**recipe_data)
-        recipe_model.save()
-        create_levels(global_data)
+        recipe_data.update(create_levels(global_data))
         create_ingredients(global_data)
-        # recipe_model = Recipe(**recipe_data)
-        # recipe_model.save()
+        return recipe_data
     except Exception as e:
         raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})
 
@@ -66,31 +60,36 @@ def create_model(model_class, model_data):
         logging.debug(model_data)
         name = model_data['name']
         logging.info(name)
-        level_model = model_class.objects.get(name=name)
+        model = model_class.objects.get(name=name)
     except Exception as e:
         logging.info(str(model_class.__name__) + ' ' + str(name) + " doesn't exist, creating it")
-        level_model = model_class(**model_data)
+        model = model_class(**model_data)
         try:
-            level_model.save()
+            model.save()
         except Exception as e:
             logging.error('Creation of the model failed')
             raise e
+    return model
+
 
 def create_levels(global_data):
+    model_dict = {}
     for level_type, level_model_class in LEVEL_TYPE_TO_MODEL.items():
         try:
             level_data = {
                 'name': global_data[level_type]
             }
-            create_model(level_model_class, level_data)
+            model = create_model(level_model_class, level_data)
+            model_dict[level_type] = model
         except Exception as e:
             logging.error(e)
+    return model_dict
     
 def create_ingredients(global_data):
     for ingredient_data in global_data['ingredients']:
         try:
             ingredient_data.pop('quantity', None)
-            create_model(Ingredient, ingredient_data)
+            model = create_model(Ingredient, ingredient_data)
         except Exception as e:
             logging.error(e)
 
