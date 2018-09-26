@@ -4,13 +4,14 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
-
 from tooskie.utils.models import BaseModel, NameModel, LevelModel
 from tooskie import choices
-from tooskie.constants import LINK_WORD
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG
+
+import logging
+logging.basicConfig(**LOGGING_CONFIG)
 
 class Recipe(NameModel):
-    name = models.CharField(max_length=1000, verbose_name=_('Name'))
     # time is in minutes
     cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time'))
     preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
@@ -24,7 +25,7 @@ class Recipe(NameModel):
     measure_of_ingredient = models.ManyToManyField('MeasureOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag')
 
-class Step(BaseModel):
+class Step(NameModel):
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
     picture = models.ImageField(blank=True, null=True)
@@ -34,6 +35,11 @@ class Step(BaseModel):
 
     def __str__(self):
         return str(self.recipe) + LINK_WORD + str(self.step_number)
+
+    def save(self, *args, **kwargs):
+        self.name = str(self.recipe) + ' ' + str(self.step_number)
+        logging.info(self.name)
+        super(Step, self).save(*args, **kwargs)
     
     class Meta:
         unique_together = (("step_number", "recipe"),)

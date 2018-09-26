@@ -12,7 +12,7 @@ logging.basicConfig(format='[%(asctime)s] [%(levelname)s] : %(message)s', level=
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Last updated at'))
-
+    
     class Meta:
         abstract = True
 
