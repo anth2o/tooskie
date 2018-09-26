@@ -23,7 +23,7 @@ RECIPE_FIELDS = {
     'preparation_time': 'preparation_time'
 }
 
-def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
+def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=4):
     with open(data_file) as f:
         data = json.load(f)
 
@@ -34,14 +34,13 @@ def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
 def process_recipe(global_data):
     logging.info(global_data["recipe"])
     try:
-        recipe_model = Recipe.objects.get(name=global_data["recipe"])
-        logging.info("Recipe already exists, updating it")
-    except ObjectDoesNotExist:
-        logging.info("Recipe doesn't exists, creating it")
         recipe_data = get_fields(global_data)
         logging.info(recipe_data)
-        recipe_model = Recipe(**recipe_data)
-    try:
+        recipe_model, created = Recipe.objects.update_or_create(**recipe_data)
+        if created:
+            logging.info('Recipe ' + str(recipe_data['name'] + ' has been created'))
+        else:
+            logging.info('Recipe ' + str(recipe_data['name'] + ' has been updated'))
         recipe_model.save()
     except Exception as e:
         logging.error(e)
