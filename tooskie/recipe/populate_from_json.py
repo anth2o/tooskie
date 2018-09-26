@@ -2,7 +2,7 @@ import json
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
-from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel
+from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel, Step
 from tooskie.recipe.serializers import RecipeSerializer
 from tooskie.utils.models import Tag
 
@@ -23,7 +23,12 @@ RECIPE_FIELDS = {
     'preparation_time': 'preparation_time'
 }
 
-def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=4):
+KEY_TO_MODEL = {
+    'ingredients': Ingredient,
+    'steps': Step
+}
+
+def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=2):
     with open(data_file) as f:
         data = json.load(f)
 
@@ -49,7 +54,7 @@ def get_fields(global_data):
     try:
         recipe_data = format_recipe_dict(global_data)
         recipe_data.update(create_levels(global_data))
-        create_ingredients(global_data)
+        create_model_list(global_data, 'ingredients', ['quantity'])
         return recipe_data
     except Exception as e:
         raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})
@@ -83,15 +88,31 @@ def create_levels(global_data):
         except Exception as e:
             logging.error(e)
     return model_dict
-    
-def create_ingredients(global_data):
-    for ingredient_data in global_data['ingredients']:
+
+def create_model_list(global_data, key, to_drop=None):
+    model_list = []
+    for data in global_data[key]:
         try:
-            ingredient_data.pop('quantity', None)
-            model = create_model(Ingredient, ingredient_data)
+            drop_colums(data, to_drop)
+            model = create_model(KEY_TO_MODEL[key], data)
+            model_list.append(model)
         except Exception as e:
             logging.error(e)
+    return model_list
+        
 
+def drop_colums(data, to_drop):
+    try:
+        logging.info('To drop')
+        logging.info(to_drop)
+        if to_drop:
+            if not isinstance(to_drop, list):
+                to_drop = [to_drop]
+            for key_to_drop in to_drop:
+                data.pop(key_to_drop, None)
+    except Exception as e:
+        logging.error(e)
+    return data
 
 def format_recipe_dict(global_data):
     recipe_data = dict((k,global_data[k]) for k in RECIPE_FIELDS.keys() if k in global_data)
