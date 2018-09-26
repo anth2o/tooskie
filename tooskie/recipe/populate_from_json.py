@@ -25,7 +25,8 @@ RECIPE_FIELDS = {
 
 KEY_TO_MODEL = {
     'ingredients': Ingredient,
-    'steps': Step
+    'steps': Step,
+    'tags': Tag
 }
 
 def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
@@ -39,9 +40,9 @@ def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
 def process_recipe(global_data):
     logging.info(global_data["recipe"])
     try:
-        recipe_data, model_has_recipe_fk = get_fields(global_data)
+        recipe_data = get_fields(global_data)
         logging.info(recipe_data)
-        logging.info(model_has_recipe_fk)
+        # logging.info(model_has_recipe_fk)
         recipe_model, created = Recipe.objects.update_or_create(**recipe_data)
         recipe_model.save()
     except Exception as e:
@@ -55,12 +56,39 @@ def get_fields(global_data):
             logging.info('Recipe ' + str(recipe_data['name'] + ' has been created'))
         else:
             logging.info('Recipe ' + str(recipe_data['name'] + ' has been updated'))
+        recipe_model.save()
         recipe_data.update(create_levels(global_data))
         create_model_list(global_data, 'ingredients', to_drop=['quantity'])
-        model_has_recipe_fk = create_model_list(global_data, 'steps', recipe_model=recipe_model)
-        return recipe_data, model_has_recipe_fk
+        create_model_list(global_data, 'steps', recipe_model=recipe_model)
+        create_tags(global_data,recipe_model)
+        return recipe_data
     except Exception as e:
         raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})
+
+def create_tags(global_data, recipe_model):
+    tag_to_dict = []
+    for tag in global_data['tags']:
+        tag_to_dict.append({'name': tag, 'model_tagged': 'Recipe'})
+    global_data['tags'] = tag_to_dict
+    tag_list = create_model_list(global_data, 'tags')
+    logging.info(tag_list)
+    for tag in tag_list:
+        recipe_model.tag.add(tag)
+
+
+def create_model_list(global_data, key, to_drop=None, recipe_model=None):
+    logging.info('Create model list')
+    logging.info(key)
+    model_list = []
+    for data in global_data[key]:
+        try:
+            drop_colums(data, to_drop)
+            model = create_model(key, data, global_data['recipe'], recipe_model=recipe_model)
+            model_list.append(model)
+        except Exception as e:
+            logging.error(e)
+    logging.info(model_list)
+    return model_list
 
 def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
     try:
@@ -74,16 +102,15 @@ def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
         logging.info(model_data)
         try:
             model = model_class.objects.get(name=name)
-            # model = model_class.objects.update(**model_data)
             created = False
         except:
-            model = model_class(**model_data)
             created = True
         if created:
+            model = model_class(**model_data)
             logging.info(str(model_class) + ' ' + name + ' has been created')
         else:
+            model_class.objects.filter(id=model.id).update(**model_data)
             logging.info(str(model_class) + ' ' + name + ' has been updated')
-        logging.info(model)
         model.save()
     except Exception as e:
         logging.error('Creation of the model failed')
@@ -109,22 +136,6 @@ def create_levels(global_data):
         except Exception as e:
             logging.error(e)
     return model_dict
-
-def create_model_list(global_data, key, to_drop=None, recipe_model=None):
-    logging.info('Create model list')
-    logging.info(key)
-    model_list = []
-    for data in global_data[key]:
-        try:
-            drop_colums(data, to_drop)
-            model = create_model(key, data, global_data['recipe'], recipe_model=recipe_model)
-            logging.info(model)
-            model_list.append(model)
-        except Exception as e:
-            logging.error(e)
-    logging.info(model_list)
-    return model_list
-        
 
 def drop_colums(data, to_drop):
     try:
