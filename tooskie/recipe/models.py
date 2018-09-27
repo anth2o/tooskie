@@ -26,6 +26,7 @@ class Recipe(NameModel):
     tag = models.ManyToManyField('utils.Tag')
 
 class Step(NameModel):
+    name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
     picture = models.ImageField(blank=True, null=True)
@@ -33,16 +34,12 @@ class Step(NameModel):
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
-    def __str__(self):
-        return str(self.recipe) + LINK_WORD + str(self.step_number)
-
     def save(self, *args, **kwargs):
-        self.name = str(self.recipe) + ' ' + str(self.step_number)
-        logging.info(self.name)
+        self.name = str(self.recipe.name) + ' ' + str(self.step_number)
         super(Step, self).save(*args, **kwargs)
     
-    class Meta:
-        unique_together = (("step_number", "recipe"),)
+    # class Meta:
+    #     unique_together = (("step_number", "recipe"),)
 
 class DifficultyLevel(LevelModel):
     pass
