@@ -2,10 +2,12 @@ import json
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils.text import slugify
+from fractions import Fraction
 
 from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe, Measurement, MeasureOfIngredient
 from tooskie.recipe.serializers import RecipeSerializer
 from tooskie.utils.models import Tag
+from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_create_then_save, drop_columns
 
 import logging
 from tooskie.constants import LOGGING_CONFIG, UNITS_MARMITON, LINKING_WORD_MARMITON
@@ -26,6 +28,24 @@ class PopulateConfig:
         'preparation_time': 'preparation_time'
     }
 
+    MEASUREMENT_FIELDS = [
+        'unit', 
+        'unit_plural'
+    ]
+
+    INGREDIENT_FIELDS = [
+        'picture',
+        'name',
+        'name_plural',
+        'complement', 
+        'complement_plural'
+    ]
+
+    MEASURE_OF_INGREDIENT_FIELDS = [
+        'linking_word',
+        'linking_word_plural'
+    ]
+
     KEY_TO_MODEL = {
         'steps': Step,
         'tags': Tag,
@@ -33,13 +53,13 @@ class PopulateConfig:
         'budget_level': BudgetLevel,
         'ustensils': Ustensil,
         'ustensils_in_recipe': UstensilInRecipe,
-        'ingredients': Ingredient,
-        'ingredients_in_recipe': IngredientInRecipe,
+        'ingredient': Ingredient,
+        'ingredient_in_recipe': IngredientInRecipe,
         'measurement': Measurement,
         'measure_of_ingredient': MeasureOfIngredient
     }
 
-def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
+def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=1):
     with open(data_file) as f:
         data = json.load(f)
     global_data = data[str(recipe_number)]
@@ -53,30 +73,6 @@ def process_recipe(global_data):
     except Exception as e:
         logging.error(e)
 
-def update_or_create_then_save(model_class, data):
-    try:
-        if 'name' in data:
-            permaname = slugify(data['name'])
-        else:
-            permaname = data['permaname']
-        model_instance = model_class.objects.get(permaname=permaname)
-        to_create = False
-    except Exception as e:
-        to_create = True
-    try:
-        if to_create:
-            model_instance = model_class.objects.create(**data)
-            logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
-        else:
-            # models = model_class.objects.filter(permaname=model_instance.permaname)
-            model_instance.__dict__.update(data)
-            logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
-        model_instance.save()
-    except Exception as e:
-        logging.error(e)
-        raise e
-    return model_instance
-
 def get_fields(global_data):
     try:
         recipe_data = format_recipe_dict(global_data)
@@ -88,7 +84,8 @@ def get_fields(global_data):
         create_ingredients(global_data, recipe_model)
         return recipe_data
     except Exception as e:
-        raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})
+        logging.error('Creation or update of recipe ' + recipe_data['name'] + ' failed')
+        raise e
 
 def create_levels(global_data):
     models_dict = {}
@@ -145,17 +142,43 @@ def create_ustensils(global_data, recipe_model):
     create_model_list(global_data, 'ustensils_in_recipe')
 
 def create_ingredients(global_data, recipe_model):
-    ingredients_to_dict = []
-    ingredients_in_recipe_to_dict = []
-    measurement_to_dict = []
-    measure_of_ingredient_to_dict = []
-    people_number = global_data['people_number']
-    for ingredient in global_data['ingredients']:
-        format_ingredient(ingredient)
+    people_number = float(Fraction(global_data['people_number']))
+    global_data['ingredient'] = []
+    global_data['measurement'] = [] 
+    global_data['measure_of_ingredient'] = []
+    global_data['ingredient_in_recipe'] = []
+    for ingredient_data in global_data['ingredients']:
+        logging.debug(ingredient_data)
+        ingredient_data.update(format_ingredient(ingredient_data))
+        logging.debug(ingredient_data)
+        global_data['measurement'].append(get_sub_dict(ingredient_data, PopulateConfig.MEASUREMENT_FIELDS))
+        global_data['ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_FIELDS))
+        global_data['measure_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.MEASURE_OF_INGREDIENT_FIELDS))
+        if ingredient_data['quantity'] != "null":
+            quantity = float(Fraction(ingredient_data['quantity'])) / people_number
+            global_data['ingredient_in_recipe'].append({
+                'quantity': quantity
+            })
+    measurement_list = create_model_list(global_data, 'measurement')
+    ingredient_list = create_model_list(global_data, 'ingredient')
+    for i in range(len(measurement_list)):
+        global_data['measure_of_ingredient'][i]['measurement'] = measurement_list[i]
+        global_data['measure_of_ingredient'][i]['ingredient'] = ingredient_list[i]
+    measure_of_ingredient_list = create_model_list(global_data, 'measure_of_ingredient')
+    for i in range(len(measure_of_ingredient_list)):
+        global_data['ingredient_in_recipe'][i]['measure_of_ingredient'] = measure_of_ingredient_list[i]
+        global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
 
 def format_ingredient(ingredient):
-    name_dict = format_ingredient_name(ingredient['name'])
-    name_dict.update(format_ingredient_name_plural(ingredient['name_plural'], name_dict))
+    try:
+        name_dict = format_ingredient_name(ingredient['name'])
+        logging.debug(name_dict)
+        name_dict.update(format_ingredient_name_plural(ingredient['name_plural'], name_dict))
+        if not name_dict['unit']:
+            name_dict['unit'] = 'none'
+    except Exception as e:
+        logging.error('Formatting of ingredient failed')
+        raise e
     return name_dict
 
 def format_ingredient_name(name):
@@ -171,7 +194,11 @@ def format_ingredient_name(name):
 
 def format_ingredient_name_plural(name_plural, name_dict):
     if not name_dict['unit']:
+        if name_dict['linking_word']:
+            logging.debug(name_dict)
         return {}
+    logging.debug('Name plural')
+    logging.debug(name_dict)
     name_plural_temp = name_plural[len(name_dict['unit']):]
     name_plural_temp = name_plural_temp.split(name_dict['linking_word'])
     unit_plural = name_plural[:len(name_dict['unit']) + len(name_plural_temp[0])].strip()
@@ -180,19 +207,7 @@ def format_ingredient_name_plural(name_plural, name_dict):
     for i in ('name_plural', 'unit_plural'):
         final_dict[i] = locals()[i]
     return final_dict
-
-def loop_to_remove_first_word(word_list, name):
-    word = None
-    if not isinstance(word_list, list):
-        word_list = [word_list]
-    for potential_word in word_list:
-        if name.startswith(potential_word):
-            word = potential_word
-            name = name[len(word):].strip()
-            break
-    return name, word
-                
-
+             
 def create_model_list(global_data, key, to_drop=None, recipe_model=None):
     logging.info('Create model list: ' + key)
     model_list = []
@@ -218,21 +233,10 @@ def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
         raise e
     return model
 
-def drop_columns(data, to_drop):
-    try:
-        if to_drop:
-            if not isinstance(to_drop, list):
-                to_drop = [to_drop]
-            for key_to_drop in to_drop:
-                data.pop(key_to_drop, None)
-    except Exception as e:
-        logging.error(e)
-    return data
-
 def format_recipe_dict(global_data):
     logging.debug('Format recipe dict')
     logging.debug(global_data)
-    recipe_data = dict((k,global_data[k]) for k in PopulateConfig.RECIPE_FIELDS.keys() if k in global_data)
+    recipe_data = get_sub_dict(global_data, PopulateConfig.RECIPE_FIELDS.keys())
     logging.debug(recipe_data)
     for key, value in PopulateConfig.RECIPE_FIELDS.items():
         if key != value:
@@ -251,6 +255,6 @@ def format_recipe_dict(global_data):
     logging.debug('Format recipe dict done')
     return recipe_data
     
-# data = get_data()
-# process_recipe(data)
+data = get_data()
+process_recipe(data)
 

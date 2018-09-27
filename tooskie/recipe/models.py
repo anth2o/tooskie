@@ -108,11 +108,16 @@ class MeasureOfIngredient(BaseModel):
         return str(self.ingredient) + LINK_WORD + str(self.measurement)
 
 class Measurement(NameModel):
-    unit = models.CharField(max_length=1000, blank=True)
+    name = models.CharField(max_length=1000, blank=True, verbose_name=_('Name'))
+    unit = models.CharField(max_length=1000)
     unit_plural = models.CharField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
-        self.permaname = slugify(self.name + LINK_WORD + self.unit)
+        if not self.name:
+            self.name = 'unknown'
+        if not self.unit:
+            self.unit = 'none'
+        self.permaname = slugify(self.unit)
         super(Measurement, self).save(*args, **kwargs)
 
 class NutritionalProperty(NameModel):
