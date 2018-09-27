@@ -98,11 +98,9 @@ def create_levels(global_data):
             models_dict[level_type] = model
         except Exception as e:
             logging.error(e)
-    logging.debug('Level models correctly saved\n')
     return models_dict
 
 def create_steps(global_data, recipe_model):
-    logging.debug('Beginning creation of steps')
     step_list = []
     for step in global_data['steps']:
         step['permaname'] = slugify(str(recipe_model) + ' ' + str(step['step_number']))
@@ -120,34 +118,31 @@ def create_tags(global_data, recipe_model):
         recipe_model.tag.add(tag)
 
 def create_ustensils(global_data, recipe_model):
-    try:
-        ustensils_to_dict = []
-        ustensils_in_recipe_to_dict = []
-        for ustensil in global_data['ustensils']:
-            name_split = ustensil['name'].split(' ')
-            quantity = int(name_split[0])
-            name = ' '.join(name_split[1:]).title()
-            ustensils_to_dict.append({
-                'name': name,
-                'picture': ustensil['picture']
-            })
-            ustensils_in_recipe_to_dict.append({
-                'quantity': quantity,
-                'permaname': slugify(recipe_model.permaname + ' ' + name),
-                'recipe': recipe_model
-            })
-        global_data['ustensils'] = ustensils_to_dict
-        ustensils_list = create_model_list(global_data, 'ustensils')
-        for i in range(len(ustensils_list)):
-            ustensils_in_recipe_to_dict[i]['ustensil'] = ustensils_list[i]
-        global_data['ustensils_in_recipe'] = ustensils_in_recipe_to_dict
-        create_model_list(global_data, 'ustensils_in_recipe')
-    except Exception as e:
-        logging.error(e)
-        logging.error('Ustensils models not created')
+    logging.info('Creation or update of the different ustensils')
+    ustensils_to_dict = []
+    ustensils_in_recipe_to_dict = []
+    for ustensil in global_data['ustensils']:
+        name_split = ustensil['name'].split(' ')
+        quantity = int(name_split[0])
+        name = ' '.join(name_split[1:]).title()
+        ustensils_to_dict.append({
+            'name': name,
+            'picture': ustensil['picture']
+        })
+        ustensils_in_recipe_to_dict.append({
+            'quantity': quantity,
+            'permaname': slugify(recipe_model.permaname + ' ' + name),
+            'recipe': recipe_model
+        })
+    global_data['ustensils'] = ustensils_to_dict
+    ustensils_list = create_model_list(global_data, 'ustensils')
+    for i in range(len(ustensils_list)):
+        ustensils_in_recipe_to_dict[i]['ustensil'] = ustensils_list[i]
+    global_data['ustensils_in_recipe'] = ustensils_in_recipe_to_dict
+    create_model_list(global_data, 'ustensils_in_recipe')
 
 def create_model_list(global_data, key, to_drop=None, recipe_model=None):
-    logging.debug('Create model list: ' + key)
+    logging.info('Create model list: ' + key)
     model_list = []
     for data in global_data[key]:
         try:
@@ -159,6 +154,7 @@ def create_model_list(global_data, key, to_drop=None, recipe_model=None):
     return model_list
 
 def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
+    logging.info('Create model: ' + model_key)
     try:
         model_class = PopulateConfig.KEY_TO_MODEL[model_key]
         if recipe_model:
