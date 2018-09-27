@@ -51,15 +51,17 @@ class Ustensil(NameModel):
     description = models.TextField(blank=True, null=True)
     picture = models.ImageField(blank=True)
 
-class UstensilInRecipe(BaseModel):
+class UstensilInRecipe(NameModel):
+    name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
     quantity = models.PositiveIntegerField(blank=True)
 
     # Relations
     ustensil = models.ForeignKey('Ustensil', on_delete=models.CASCADE, verbose_name=_('Ustensil'))
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
-    def __str__(self):
-        return str(self.ustensil) + LINK_WORD + str(self.recipe)
+    def save(self, *args, **kwargs):
+        self.name = str(self.recipe.name) + ' ' + str(self.ustensil.name)
+        super(UstensilInRecipe, self).save(*args, **kwargs)
 
 class Ingredient(NameModel):
     # average conservation time in hours

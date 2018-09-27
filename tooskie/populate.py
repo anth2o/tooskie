@@ -3,7 +3,7 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils.text import slugify
 
-from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel, Step
+from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe
 from tooskie.recipe.serializers import RecipeSerializer
 from tooskie.utils.models import Tag
 
@@ -31,7 +31,9 @@ class PopulateConfig:
         'steps': Step,
         'tags': Tag,
         'difficulty_level': DifficultyLevel,
-        'budget_level': BudgetLevel
+        'budget_level': BudgetLevel,
+        'ustensils': Ustensil,
+        'ustensils_in_recipe': UstensilInRecipe
     }
 
 def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=0):
@@ -44,8 +46,7 @@ def process_recipe(global_data):
     logging.debug(global_data["recipe"])
     try:
         recipe_data = get_fields(global_data)
-        recipe_model, created = Recipe.objects.update_or_create(**recipe_data)
-        recipe_model.save()
+        update_or_create_then_save(Recipe, recipe_data)
     except Exception as e:
         logging.error(e)
 
@@ -64,7 +65,8 @@ def update_or_create_then_save(model_class, data):
             model_instance = model_class.objects.create(**data)
             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
         else:
-            model_class.objects.filter(id=model_instance.id).update(**data)
+            # models = model_class.objects.filter(permaname=model_instance.permaname)
+            model_instance.__dict__.update(data)
             logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
         model_instance.save()
     except Exception as e:
@@ -80,6 +82,7 @@ def get_fields(global_data):
         # create_model_list(global_data, 'ingredients', to_drop=['quantity'])
         create_steps(global_data, recipe_model)
         create_tags(global_data, recipe_model)
+        create_ustensils(global_data, recipe_model)
         return recipe_data
     except Exception as e:
         raise ValueError({"error":"OBJECT UPDATE FAILED", "info":str(e)})
@@ -115,6 +118,33 @@ def create_tags(global_data, recipe_model):
     tag_list = create_model_list(global_data, 'tags')
     for tag in tag_list:
         recipe_model.tag.add(tag)
+
+def create_ustensils(global_data, recipe_model):
+    try:
+        ustensils_to_dict = []
+        ustensils_in_recipe_to_dict = []
+        for ustensil in global_data['ustensils']:
+            name_split = ustensil['name'].split(' ')
+            quantity = int(name_split[0])
+            name = ' '.join(name_split[1:]).title()
+            ustensils_to_dict.append({
+                'name': name,
+                'picture': ustensil['picture']
+            })
+            ustensils_in_recipe_to_dict.append({
+                'quantity': quantity,
+                'permaname': slugify(recipe_model.permaname + ' ' + name),
+                'recipe': recipe_model
+            })
+        global_data['ustensils'] = ustensils_to_dict
+        ustensils_list = create_model_list(global_data, 'ustensils')
+        for i in range(len(ustensils_list)):
+            ustensils_in_recipe_to_dict[i]['ustensil'] = ustensils_list[i]
+        global_data['ustensils_in_recipe'] = ustensils_in_recipe_to_dict
+        create_model_list(global_data, 'ustensils_in_recipe')
+    except Exception as e:
+        logging.error(e)
+        logging.error('Ustensils models not created')
 
 def create_model_list(global_data, key, to_drop=None, recipe_model=None):
     logging.debug('Create model list: ' + key)
@@ -153,7 +183,9 @@ def drop_columns(data, to_drop):
 
 def format_recipe_dict(global_data):
     logging.debug('Format recipe dict')
+    logging.debug(global_data)
     recipe_data = dict((k,global_data[k]) for k in PopulateConfig.RECIPE_FIELDS.keys() if k in global_data)
+    logging.debug(recipe_data)
     for key, value in PopulateConfig.RECIPE_FIELDS.items():
         if key != value:
             recipe_data[value] = recipe_data[key]
