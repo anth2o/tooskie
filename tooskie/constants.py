@@ -10,6 +10,28 @@ LOGGING_CONFIG = {
 }
 
 LINKING_WORD_MARMITON = [
-    'de ',
-    'd'
-]   
+    'de',
+    "d'"
+]
+
+UNITS_MARMITON = [
+    'g',
+    'kg',
+    'cL',
+    'L',
+    'cuillère à café',
+    'cuillère à soupe',
+    'pincée',
+    'brin',
+    'branche',
+    'feuille',
+    'gousse',
+    'sachet',
+    'boîte',
+    'grande boîte',
+    'petite boîte',
+    'brolivmax',
+    'botte'
+]
+
+# If any questions on the code, ask Boubou or Schmoulou

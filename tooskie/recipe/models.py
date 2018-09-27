@@ -97,6 +97,8 @@ class IngredientInRecipe(BaseModel):
 
 class MeasureOfIngredient(BaseModel):
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one measure'))
+    linking_word = models.CharField(max_length=1000, blank=True)
+    linking_word_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
@@ -106,7 +108,8 @@ class MeasureOfIngredient(BaseModel):
         return str(self.ingredient) + LINK_WORD + str(self.measurement)
 
 class Measurement(NameModel):
-    unit = models.CharField(max_length=1000, choices=choices.unit_choices, blank=True)
+    unit = models.CharField(max_length=1000, blank=True)
+    unit_plural = models.CharField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
         self.permaname = slugify(self.name + LINK_WORD + self.unit)
