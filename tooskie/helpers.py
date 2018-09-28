@@ -19,28 +19,24 @@ def loop_to_remove_first_word(word_list, name):
 
 def update_or_create_then_save(model_class, data):
     try:
-        permaname = None
-        if 'name' in data:
-            permaname = slugify(data['name'])
-        elif 'permaname' in data:
-            permaname = data['permaname']
-        elif 'unit' in data
-            permaname = data['unit']
-        else:
-            raise Exception('No permaname given')
-        model_instance = model_class.objects.get(permaname=permaname)
-        to_create = False
+        logging.debug(data)
+        model_instance = model_class(**data)
+        model_instance.save()
+        permaname = model_instance.permaname
+        created = True
     except Exception as e:
-        to_create = True
+        logging.debug('Model already exists')
+        logging.debug(model_instance)
+        permaname = model_instance.permaname
+        model_instance = model_class.objects.get(permaname=permaname)
+        model_instance.__dict__.update(data)
+        model_instance.save()
+        created = False
     try:
-        if to_create:
-            model_instance = model_class.objects.create(**data)
+        if created:
             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
         else:
-            # models = model_class.objects.filter(permaname=model_instance.permaname)
-            model_instance.__dict__.update(data)
             logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
-        model_instance.save()
     except Exception as e:
         logging.error(e)
         raise e

@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils.text import slugify
 from fractions import Fraction
 
-from tooskie.recipe.models import Recipe, Ingredient, Measurement, MeasureOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe, Measurement, MeasureOfIngredient
+from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe
 from tooskie.recipe.serializers import RecipeSerializer
 from tooskie.utils.models import Tag
 from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_create_then_save, drop_columns
@@ -28,7 +28,7 @@ class PopulateConfig:
         'preparation_time': 'preparation_time'
     }
 
-    MEASUREMENT_FIELDS = [
+    UNIT_FIELDS = [
         'unit', 
         'unit_plural'
     ]
@@ -41,7 +41,7 @@ class PopulateConfig:
         'complement_plural'
     ]
 
-    MEASURE_OF_INGREDIENT_FIELDS = [
+    UNIT_OF_INGREDIENT_FIELDS = [
         'linking_word',
         'linking_word_plural'
     ]
@@ -55,8 +55,8 @@ class PopulateConfig:
         'ustensils_in_recipe': UstensilInRecipe,
         'ingredient': Ingredient,
         'ingredient_in_recipe': IngredientInRecipe,
-        'measurement': Measurement,
-        'measure_of_ingredient': MeasureOfIngredient
+        'unit': Unit,
+        'unit_of_ingredient': UnitOfIngredient
     }
 
 def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=1):
@@ -144,46 +144,58 @@ def create_ustensils(global_data, recipe_model):
 def create_ingredients(global_data, recipe_model):
     people_number = float(Fraction(global_data['people_number']))
     global_data['ingredient'] = []
-    global_data['measurement'] = [] 
-    global_data['measure_of_ingredient'] = []
+    global_data['unit'] = [] 
+    global_data['unit_of_ingredient'] = []
     global_data['ingredient_in_recipe'] = []
     for ingredient_data in global_data['ingredients']:
+        logging.debug('Raw ingredient data')
         logging.debug(ingredient_data)
         ingredient_data.update(format_ingredient(ingredient_data))
+        logging.debug('Formatted ingredient data')
         logging.debug(ingredient_data)
-        global_data['measurement'].append(get_sub_dict(ingredient_data, PopulateConfig.MEASUREMENT_FIELDS))
+        unit_dict = get_sub_dict(ingredient_data, PopulateConfig.UNIT_FIELDS)
+        logging.debug(unit_dict)
+        unit_dict['name'] = unit_dict.pop('unit')
+        if 'unit_plural' in unit_dict:
+            unit_dict['name_plural'] = unit_dict.pop('unit_plural')
+        logging.debug(unit_dict)
+        global_data['unit'].append(unit_dict)
         global_data['ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_FIELDS))
-        global_data['measure_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.MEASURE_OF_INGREDIENT_FIELDS))
+        global_data['unit_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.UNIT_OF_INGREDIENT_FIELDS))
+        quantity = None
         if ingredient_data['quantity'] != "null":
             quantity = float(Fraction(ingredient_data['quantity'])) / people_number
-            global_data['ingredient_in_recipe'].append({
-                'quantity': quantity
-            })
-    measurement_list = create_model_list(global_data, 'measurement')
+        global_data['ingredient_in_recipe'].append({
+            'quantity': quantity
+        })
+    unit_list = create_model_list(global_data, 'unit')
     ingredient_list = create_model_list(global_data, 'ingredient')
-    for i in range(len(measurement_list)):
-        global_data['measure_of_ingredient'][i]['measurement'] = measurement_list[i]
-        global_data['measure_of_ingredient'][i]['ingredient'] = ingredient_list[i]
-    measure_of_ingredient_list = create_model_list(global_data, 'measure_of_ingredient')
-    for i in range(len(measure_of_ingredient_list)):
-        global_data['ingredient_in_recipe'][i]['measure_of_ingredient'] = measure_of_ingredient_list[i]
+    for i in range(len(unit_list)):
+        global_data['unit_of_ingredient'][i]['unit'] = unit_list[i]
+        global_data['unit_of_ingredient'][i]['ingredient'] = ingredient_list[i]
+    unit_of_ingredient_list = create_model_list(global_data, 'unit_of_ingredient')
+    logging.debug('Creation of ingredient in recipe will start')
+    logging.debug(unit_of_ingredient_list)
+    logging.debug(global_data['ingredient_in_recipe'])
+    for i in range(len(unit_of_ingredient_list)):
+        global_data['ingredient_in_recipe'][i]['unit_of_ingredient'] = unit_of_ingredient_list[i]
         global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
+    create_model_list(global_data, 'ingredient_in_recipe')
 
 def format_ingredient(ingredient):
     try:
         name_dict = format_ingredient_name(ingredient['name'])
         logging.debug(name_dict)
         name_dict.update(format_ingredient_name_plural(ingredient['name_plural'], name_dict))
-        if not name_dict['unit']:
-            name_dict['unit'] = 'none'
     except Exception as e:
         logging.error('Formatting of ingredient failed')
         raise e
     return name_dict
 
 def format_ingredient_name(name):
+    unit = ''
     name, unit = loop_to_remove_first_word(UNITS_MARMITON, name)
-    linking_word = None
+    linking_word = ''
     if unit:
         name, linking_word = loop_to_remove_first_word(LINKING_WORD_MARMITON, name)
     name = name.capitalize()

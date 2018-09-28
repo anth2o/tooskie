@@ -6,7 +6,8 @@ LOGGING_LEVEL = os.environ['LOGGING_LEVEL']
 LOGGING_CONFIG = {
     "format": '[%(asctime)s] [%(levelname)s] : %(message)s',
     "level": logging.getLevelName(LOGGING_LEVEL),
-    "datefmt": '%d/%b/%Y %H:%M:%S'
+    "datefmt": '%d/%b/%Y %H:%M:%S',
+    "filename": "populate.log"
 }
 
 LINKING_WORD_MARMITON = [
@@ -37,4 +38,3 @@ UNITS_MARMITON = [
 # If any questions on the code, ask Boubou or Schmoulou
 
 NONE_UNIT = 'None'
-NONE_MEASURE = 'Count'

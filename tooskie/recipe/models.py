@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 from tooskie.utils.models import BaseModel, NameModel, LevelModel
 from tooskie import choices
-from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_MEASURE, NONE_UNIT
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
 
 import logging
 logging.basicConfig(**LOGGING_CONFIG)
@@ -22,7 +22,7 @@ class Recipe(NameModel):
     difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
-    measure_of_ingredient = models.ManyToManyField('MeasureOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
+    unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag')
 
 class Step(NameModel):
@@ -35,7 +35,7 @@ class Step(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = self.recipe.name + ' ' + self.step_number
+        self.name = self.recipe.name + ' ' + str(self.step_number)
         super(Step, self).save(*args, **kwargs)
 
 class DifficultyLevel(LevelModel):
@@ -57,7 +57,7 @@ class UstensilInRecipe(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = self.ustensil.name + LINK_WORD + self.recipe.name
+        self.name = self.ustensil.name + LINK_WORD + self.recipe.name.lower()
         super(UstensilInRecipe, self).save(*args, **kwargs)
 
 class Ingredient(NameModel):
@@ -69,7 +69,7 @@ class Ingredient(NameModel):
     complement_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
-    measurement = models.ManyToManyField('Measurement', through='MeasureOfIngredient')
+    unit = models.ManyToManyField('Unit', through='UnitOfIngredient')
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
    
     def save(self, *args, **kwargs):
@@ -87,37 +87,32 @@ class IngredientInRecipe(NameModel):
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
-    measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name = self.measure_of_ingredient.name + LINK_WORD + self.recipe.name
+        self.name = self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
         super(IngredientInRecipe, self).save(*args, **kwargs)
 
-class MeasureOfIngredient(NameModel):
-    average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one measure'))
+class UnitOfIngredient(NameModel):
+    average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one unit'))
     linking_word = models.CharField(max_length=1000, blank=True)
     linking_word_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
-    measurement = models.ForeignKey('Measurement', on_delete=models.CASCADE)
+    unit = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name = self.ingredient.name + LINK_WORD + self.measurement.name
-        super(MeasureOfIngredient, self).save(*args, **kwargs)
+        self.name = self.ingredient.name + LINK_WORD + self.unit.name.lower()
+        super(UnitOfIngredient, self).save(*args, **kwargs)
 
-class Measurement(NameModel):
-    name = models.CharField(max_length=1000, blank=True, verbose_name=_('Name'))
-    unit = models.CharField(max_length=1000)
-    unit_plural = models.CharField(max_length=1000, blank=True)
+class Unit(NameModel):
+    name_plural = models.CharField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.name:
-            self.name = NONE_MEASURE
-        if not self.unit:
-            self.unit = NONE_UNIT
-        self.permaname = slugify(self.unit)
-        super(Measurement, self).save(*args, **kwargs)
+        if not self.name or self.name == '':
+            self.name = NONE_UNIT
+        super(Unit, self).save(*args, **kwargs)
 
 class NutritionalProperty(NameModel):
     class Meta:
@@ -125,32 +120,34 @@ class NutritionalProperty(NameModel):
 
     description = models.TextField(blank=True)
 
-class MeasureOfNutritionalProperty(BaseModel):
+class UnitOfNutritionalProperty(NameModel):
     class Meta:
-        verbose_name_plural = 'Measure of nutritional properties'
+        verbose_name_plural = 'Unit of nutritional properties'
 
     # Relations
     nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
-    measurement = models.ForeignKey('Measurement', on_delete=models.CASCADE)
+    unit = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.nutritional_property) + LINK_WORD + str(self.measurement)
+    def save(self, *args, **kwargs):
+        self.name =  self.nutritional_property.name + LINK_WORD + self.unit.name.lower()
+        super(UnitOfNutritionalProperty, self).save(*args, **kwargs)
 
-class HasProperties(BaseModel):
+class HasProperties(NameModel):
     class Meta:
         verbose_name_plural = 'Has properties'
 
-    nutritional_quantity = models.FloatField(blank=True, null=True, verbose_name=_('Nutritional quantity for one measure of ingredient'))
+    nutritional_quantity = models.FloatField(blank=True, null=True, verbose_name=_('Nutritional quantity for one unit of ingredient'))
 
     # Relations
-    measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE, verbose_name=_('One measure of ingredient'))
-    measure_of_nutritional_property = models.ForeignKey('MeasureOfNutritionalProperty', on_delete=models.CASCADE, verbose_name=_('The nutritional quantity in this measure'))
+    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE, verbose_name=_('One unit of ingredient'))
+    unit_of_nutritional_property = models.ForeignKey('UnitOfNutritionalProperty', on_delete=models.CASCADE, verbose_name=_('The nutritional quantity in this unit'))
 
-    def __str__(self):
-        return str(self.measure_of_ingredient) + LINK_WORD + str(self.measure_of_nutritional_property)
+    def save(self, *args, **kwargs):
+        self.name =  self.unit_of_nutritional_property.name + LINK_WORD + self.unit_of_ingredient.name.lower()
+        super(HasProperties, self).save(*args, **kwargs)
 
 
-class CanReplace(BaseModel):
+class CanReplace(NameModel):
     class Meta:
         verbose_name_plural = 'Can replace'
 
@@ -158,17 +155,18 @@ class CanReplace(BaseModel):
     new_quantity = models.FloatField(blank=True, null=True, verbose_name=_('The quantity of the new ingredient'))
 
     # Relations
-    new_measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE)
+    new_unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE)
     ingredient_in_recipe = models.ForeignKey('IngredientInRecipe', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.new_measure_of_ingredient) + '-replaces-' + str(self.ingredient_in_recipe)
+    def save(self, *args, **kwargs):
+        self.name =  self.new_unit_of_ingredient.name + ' can replace ' + self.ingredient_in_recipe.name.lower()
+        super(CanReplace, self).save(*args, **kwargs)
 
 class SpecialDiet(NameModel):
     description = models.TextField(blank=True)
 
 
-class IngredientCompatbibleWithDiet(BaseModel):
+class IngredientCompatbibleWithDiet(NameModel):
     class Meta:
         verbose_name_plural = 'Ingredient compatible with diet'
 
@@ -178,5 +176,6 @@ class IngredientCompatbibleWithDiet(BaseModel):
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
     special_diet = models.ForeignKey('SpecialDiet', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.ingredient) + LINK_WORD + str(self.special_diet)
+    def save(self, *args, **kwargs):
+        self.name =  self.ingredient.name + ' is compatible with ' + self.special_diet.name.lower()
+        super(IngredientCompatbibleWithDiet, self).save(*args, **kwargs)

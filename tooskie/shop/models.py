@@ -25,10 +25,10 @@ class IsInShoppingList(BaseModel):
 
     #Relations
     shopping_list = models.ForeignKey('ShoppingList', on_delete=models.CASCADE)
-    measure_of_ingredient = models.ForeignKey('recipe.MeasureOfIngredient', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.measure_of_ingredient) + LINK_WORD + str(self.shopping_list)
+        return str(self.unit_of_ingredient) + LINK_WORD + str(self.shopping_list)
 
     def save(self, *args, **kwargs):
         logging.debug(self.is_bought)
@@ -61,7 +61,7 @@ class IsInShop(BaseModel):
 
     # Relations
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE)
-    measure_of_ingredient = models.ForeignKey('recipe.MeasureOfIngredient', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.measure_of_ingredient) + LINK_WORD + str(self.shop)
+        return str(self.unit_of_ingredient) + LINK_WORD + str(self.shop)

@@ -27,10 +27,10 @@ class IngredientInPantry(BaseModel):
 
     # Relations
     pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE)
-    measure_of_ingredient = models.ForeignKey('recipe.MeasureOfIngredient', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.measure_of_ingredient) + LINK_WORD + str(self.pantry)
+        return str(self.unit_of_ingredient) + LINK_WORD + str(self.pantry)
 
 class UstensilInPantry(BaseModel):
     quantity = models.FloatField(blank=True, null=True)
