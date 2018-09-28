@@ -18,10 +18,12 @@ LINKING_WORD_MARMITON = [
 UNITS_MARMITON = [
     'g',
     'kg',
+    'mL',
     'cL',
     'L',
-    'l',
+    'ml',
     'cl',
+    'l',
     'cuillère à café',
     'cuillère à soupe',
     'pincée',

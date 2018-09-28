@@ -284,7 +284,3 @@ def format_recipe_dict(global_data):
         logging.error(e)
         raise e
     return recipe_data
-    
-data = get_data_file()
-process_recipe(data['0'])
-
