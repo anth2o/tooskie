@@ -20,6 +20,8 @@ UNITS_MARMITON = [
     'kg',
     'cL',
     'L',
+    'l',
+    'cl',
     'cuillère à café',
     'cuillère à soupe',
     'pincée',

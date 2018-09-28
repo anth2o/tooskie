@@ -31,6 +31,7 @@ class NameModel(models.Model):
         self.name = self.name.capitalize()
         if self.permaname == '':
             self.permaname = slugify(self.name)
+        logging.debug(self.permaname)
         try:
             super(NameModel, self).save(*args, **kwargs)
         except Exception as e:

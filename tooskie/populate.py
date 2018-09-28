@@ -59,11 +59,16 @@ class PopulateConfig:
         'unit_of_ingredient': UnitOfIngredient
     }
 
-def get_data(data_file='data/marmiton_scrap_2.json', recipe_number=1):
+def get_data_file(data_file='data/marmiton_scrap.json'):
     with open(data_file) as f:
         data = json.load(f)
-    global_data = data[str(recipe_number)]
-    return global_data
+    return data
+
+def populate_db():
+    data = get_data_file()
+    for i in range(len(data)):
+        recipe_data = data[str(i)]
+        process_recipe(recipe_data)
 
 def process_recipe(global_data):
     logging.debug(global_data["recipe"])
@@ -77,7 +82,10 @@ def get_fields(global_data):
     try:
         recipe_data = format_recipe_dict(global_data)
         recipe_model = update_or_create_then_save(Recipe, recipe_data)
-        recipe_data.update(create_levels(global_data))
+        levels = create_levels(global_data)
+        recipe_model.difficulty_level = levels['difficulty_level']
+        recipe_model.budget_level = levels['budget_level']
+        recipe_model.save()
         create_steps(global_data, recipe_model)
         create_tags(global_data, recipe_model)
         create_ustensils(global_data, recipe_model)
@@ -142,7 +150,10 @@ def create_ustensils(global_data, recipe_model):
     create_model_list(global_data, 'ustensils_in_recipe')
 
 def create_ingredients(global_data, recipe_model):
-    people_number = float(Fraction(global_data['people_number']))
+    if global_data['people_number'] == '':
+        people_number = None
+    else:
+        people_number = float(Fraction(global_data['people_number']))
     global_data['ingredient'] = []
     global_data['unit'] = [] 
     global_data['unit_of_ingredient'] = []
@@ -163,7 +174,7 @@ def create_ingredients(global_data, recipe_model):
         global_data['ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_FIELDS))
         global_data['unit_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.UNIT_OF_INGREDIENT_FIELDS))
         quantity = None
-        if ingredient_data['quantity'] != "null":
+        if ingredient_data['quantity'] != "null" and ingredient_data['quantity'] != "" and people_number:
             quantity = float(Fraction(ingredient_data['quantity'])) / people_number
         global_data['ingredient_in_recipe'].append({
             'quantity': quantity
@@ -248,25 +259,32 @@ def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
 def format_recipe_dict(global_data):
     logging.debug('Format recipe dict')
     logging.debug(global_data)
-    recipe_data = get_sub_dict(global_data, PopulateConfig.RECIPE_FIELDS.keys())
-    logging.debug(recipe_data)
-    for key, value in PopulateConfig.RECIPE_FIELDS.items():
-        if key != value:
-            recipe_data[value] = recipe_data[key]
-            recipe_data.pop(key, None)
-        if value[-5:] == '_time':
-            if 'h' in recipe_data[value]:
-                time_split = recipe_data[value].strip().split('h')
-                time = int(time_split[0].strip()) * 60 + int(time_split[1].strip())
-            elif 'min' in recipe_data[value]:
-                time = int(recipe_data[value].replace('min', '').strip())
-            else:
-                logging.error(recipe_data[value] + " isn't a valid format")
-                raise ValueError('Time formatting failed')
-            recipe_data[value] = time
-    logging.debug('Format recipe dict done')
+    try:
+        recipe_data = get_sub_dict(global_data, PopulateConfig.RECIPE_FIELDS.keys())
+        logging.debug(recipe_data)
+        for key, value in PopulateConfig.RECIPE_FIELDS.items():
+            if key != value:
+                recipe_data[value] = recipe_data[key]
+                recipe_data.pop(key, None)
+            if value[-5:] == '_time':
+                if 'h' in recipe_data[value]:
+                    time_split = recipe_data[value].strip().split('h')
+                    if time_split[1].strip() == '':
+                        time = int(time_split[0].strip()) * 60
+                    else:
+                        time = int(time_split[0].strip()) * 60 + int(time_split[1].strip())
+                elif 'min' in recipe_data[value]:
+                    time = int(recipe_data[value].replace('min', '').strip())
+                else:
+                    logging.error(recipe_data[value] + " isn't a valid format")
+                    raise ValueError('Time formatting failed')
+                recipe_data[value] = time
+        logging.debug('Format recipe dict done')
+    except Exception as e:
+        logging.error(e)
+        raise e
     return recipe_data
     
-data = get_data()
-process_recipe(data)
+data = get_data_file()
+process_recipe(data['0'])
 

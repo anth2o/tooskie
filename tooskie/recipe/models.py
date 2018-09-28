@@ -112,6 +112,8 @@ class Unit(NameModel):
     def save(self, *args, **kwargs):
         if not self.name or self.name == '':
             self.name = NONE_UNIT
+        if self.name_plural:
+            self.name_plural = self.name_plural.capitalize()
         super(Unit, self).save(*args, **kwargs)
 
 class NutritionalProperty(NameModel):
