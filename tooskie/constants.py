@@ -1,7 +1,7 @@
 import os
 import logging
 
-LINK_WORD = '-'
+LINK_WORD = ' in '
 LOGGING_LEVEL = os.environ['LOGGING_LEVEL']
 LOGGING_CONFIG = {
     "format": '[%(asctime)s] [%(levelname)s] : %(message)s',
@@ -35,3 +35,6 @@ UNITS_MARMITON = [
 ]
 
 # If any questions on the code, ask Boubou or Schmoulou
+
+NONE_UNIT = 'None'
+NONE_MEASURE = 'Count'

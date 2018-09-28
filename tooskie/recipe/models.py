@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 from tooskie.utils.models import BaseModel, NameModel, LevelModel
 from tooskie import choices
-from tooskie.constants import LINK_WORD, LOGGING_CONFIG
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_MEASURE, NONE_UNIT
 
 import logging
 logging.basicConfig(**LOGGING_CONFIG)
@@ -35,11 +35,8 @@ class Step(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = str(self.recipe.name) + ' ' + str(self.step_number)
+        self.name = self.recipe.name + ' ' + self.step_number
         super(Step, self).save(*args, **kwargs)
-    
-    # class Meta:
-    #     unique_together = (("step_number", "recipe"),)
 
 class DifficultyLevel(LevelModel):
     pass
@@ -60,7 +57,7 @@ class UstensilInRecipe(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = str(self.recipe.name) + ' ' + str(self.ustensil.name)
+        self.name = self.ustensil.name + LINK_WORD + self.recipe.name
         super(UstensilInRecipe, self).save(*args, **kwargs)
 
 class Ingredient(NameModel):
@@ -77,12 +74,12 @@ class Ingredient(NameModel):
    
     def save(self, *args, **kwargs):
         if self.complement != '':
-            self.permaname = slugify(self.name + LINK_WORD + self.complement)
+            self.permaname = slugify(self.name + ' ' + self.complement)
         else:
             self.permaname = slugify(self.name)
         super(Ingredient, self).save(*args, **kwargs)
 
-class IngredientInRecipe(BaseModel):
+class IngredientInRecipe(NameModel):
     class Meta:
         verbose_name_plural = 'Ingredient in recipe'
 
@@ -92,10 +89,11 @@ class IngredientInRecipe(BaseModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
     measure_of_ingredient = models.ForeignKey('MeasureOfIngredient', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.measure_of_ingredient) + LINK_WORD + str(self.recipe)
+    def save(self, *args, **kwargs):
+        self.name = self.measure_of_ingredient.name + LINK_WORD + self.recipe.name
+        super(IngredientInRecipe, self).save(*args, **kwargs)
 
-class MeasureOfIngredient(BaseModel):
+class MeasureOfIngredient(NameModel):
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one measure'))
     linking_word = models.CharField(max_length=1000, blank=True)
     linking_word_plural = models.CharField(max_length=1000, blank=True)
@@ -104,8 +102,9 @@ class MeasureOfIngredient(BaseModel):
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
     measurement = models.ForeignKey('Measurement', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.ingredient) + LINK_WORD + str(self.measurement)
+    def save(self, *args, **kwargs):
+        self.name = self.ingredient.name + LINK_WORD + self.measurement.name
+        super(MeasureOfIngredient, self).save(*args, **kwargs)
 
 class Measurement(NameModel):
     name = models.CharField(max_length=1000, blank=True, verbose_name=_('Name'))
@@ -114,9 +113,9 @@ class Measurement(NameModel):
 
     def save(self, *args, **kwargs):
         if not self.name:
-            self.name = 'unknown'
+            self.name = NONE_MEASURE
         if not self.unit:
-            self.unit = 'none'
+            self.unit = NONE_UNIT
         self.permaname = slugify(self.unit)
         super(Measurement, self).save(*args, **kwargs)
 
