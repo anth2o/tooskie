@@ -64,6 +64,7 @@ class Ingredient(NameModel):
     # average conservation time in hours
     conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
     picture = models.ImageField(blank=True, null=True)
+    name = models.CharField(max_length=1000, verbose_name=_('Name'))
     name_plural = models.CharField(max_length=1000, blank=True)
     complement = models.CharField(max_length=1000, blank=True)
     complement_plural = models.CharField(max_length=1000, blank=True)

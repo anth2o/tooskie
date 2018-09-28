@@ -278,7 +278,9 @@ def format_recipe_dict(global_data):
                 recipe_data[value] = recipe_data[key]
                 recipe_data.pop(key, None)
             if value[-5:] == '_time':
-                if 'h' in recipe_data[value]:
+                if recipe_data[value] == 'none':
+                    time = None
+                elif 'h' in recipe_data[value]:
                     time_split = recipe_data[value].strip().split('h')
                     if time_split[1].strip() == '':
                         time = int(time_split[0].strip()) * 60
