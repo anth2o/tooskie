@@ -11,7 +11,7 @@ def loop_to_remove_first_word(word_list, name):
     if not isinstance(word_list, list):
         word_list = [word_list]
     for potential_word in word_list:
-        if name.startswith(potential_word):
+        if name.startswith(potential_word) and (name.replace(potential_word, '', 1)[0] == ' ' or potential_word[-1] == "'"):
             word = potential_word
             name = name[len(word):].strip()
             break

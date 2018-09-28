@@ -36,7 +36,8 @@ UNITS_MARMITON = [
     'grande boîte',
     'petite boîte',
     'brolivmax',
-    'botte'
+    'botte',
+    'rouleau'
 ]
 
 # If any questions on the code, ask Boubou or Schmoulou

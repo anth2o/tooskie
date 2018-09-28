@@ -70,6 +70,12 @@ def populate_db():
         recipe_data = data[str(i)]
         process_recipe(recipe_data)
 
+def populate_db_one_recipe(recipe_number=0):
+    data = get_data_file()
+    recipe_data = data[str(recipe_number)]
+    process_recipe(recipe_data)
+
+
 def process_recipe(global_data):
     logging.debug(global_data["recipe"])
     try:
@@ -150,6 +156,22 @@ def create_ustensils(global_data, recipe_model):
     create_model_list(global_data, 'ustensils_in_recipe')
 
 def create_ingredients(global_data, recipe_model):
+    global_data = format_global_data_for_ingredient(global_data)
+    unit_list = create_model_list(global_data, 'unit')
+    ingredient_list = create_model_list(global_data, 'ingredient')
+    for i in range(len(unit_list)):
+        global_data['unit_of_ingredient'][i]['unit'] = unit_list[i]
+        global_data['unit_of_ingredient'][i]['ingredient'] = ingredient_list[i]
+    unit_of_ingredient_list = create_model_list(global_data, 'unit_of_ingredient')
+    logging.debug('Creation of ingredient in recipe will start')
+    logging.debug(unit_of_ingredient_list)
+    logging.debug(global_data['ingredient_in_recipe'])
+    for i in range(len(unit_of_ingredient_list)):
+        global_data['ingredient_in_recipe'][i]['unit_of_ingredient'] = unit_of_ingredient_list[i]
+        global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
+    create_model_list(global_data, 'ingredient_in_recipe')
+
+def format_global_data_for_ingredient(global_data):
     if global_data['people_number'] == '':
         people_number = None
     else:
@@ -179,19 +201,8 @@ def create_ingredients(global_data, recipe_model):
         global_data['ingredient_in_recipe'].append({
             'quantity': quantity
         })
-    unit_list = create_model_list(global_data, 'unit')
-    ingredient_list = create_model_list(global_data, 'ingredient')
-    for i in range(len(unit_list)):
-        global_data['unit_of_ingredient'][i]['unit'] = unit_list[i]
-        global_data['unit_of_ingredient'][i]['ingredient'] = ingredient_list[i]
-    unit_of_ingredient_list = create_model_list(global_data, 'unit_of_ingredient')
-    logging.debug('Creation of ingredient in recipe will start')
-    logging.debug(unit_of_ingredient_list)
-    logging.debug(global_data['ingredient_in_recipe'])
-    for i in range(len(unit_of_ingredient_list)):
-        global_data['ingredient_in_recipe'][i]['unit_of_ingredient'] = unit_of_ingredient_list[i]
-        global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
-    create_model_list(global_data, 'ingredient_in_recipe')
+    logging.debug('Formatting of global data for ingredients succeeded')
+    return global_data
 
 def format_ingredient(ingredient):
     try:
