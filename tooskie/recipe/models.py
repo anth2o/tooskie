@@ -75,8 +75,6 @@ class Ingredient(NameModel):
         self.name_plural = remove_useless_spaces(self.name_plural)
         super(Ingredient, self).save(*args, **kwargs)
 
-
-
 class IngredientInRecipe(NameModel):
     class Meta:
         verbose_name_plural = 'Ingredients in recipe'

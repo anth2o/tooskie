@@ -6,6 +6,7 @@ from django.utils.text import slugify
 
 
 from tooskie.utils.models import BaseModel, NameModel
+from tooskie.recipe.models import Ingredient, UnitOfIngredient, Unit
 from tooskie import choices
 from tooskie.constants import LINK_WORD
 
@@ -21,6 +22,22 @@ class Pantry(NameModel):
 
     # Relations
     shopping_list = models.ManyToManyField('shop.ShoppingList', through='Receipt')
+
+    def add_ingredients(self, ingredients):
+        # ingredients is a list of dict as :
+        #     "ingredients": [
+        #        {
+        #            "id": 1,
+        #            "name": "Poulet",
+        #        },
+        #        ...
+        #    ]
+
+        default_unit_model = Unit.objects.get_or_create(name='Default')
+        for ingredient in ingredients:
+            ingredient_model = Ingredient.objects.get_or_create(id=ingredient['id'])
+            default_ingredient_unit_model = UnitOfIngredient.objects.get_or_create(ingredient=ingredient_model, unit=default_unit_model)
+            ingredient_in_pantry_model = IngredientInPantry.objects.get_or_create(pantry=self, unit_of_ingredient=default_ingredient_unit_model)
 
 class IngredientInPantry(BaseModel):
     quantity = models.FloatField(blank=True, null=True)

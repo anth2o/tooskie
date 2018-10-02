@@ -1,3 +1,5 @@
+import os
+from os.path import join
 from tooskie.config.common import Common
 
 class Local(Common):
@@ -31,4 +33,5 @@ class Local(Common):
         },
     }
 
-    MEDIA_ROOT = './media/'
+    MEDIA_ROOT = join(os.path.dirname(Common.BASE_DIR), 'media')
+    MEDIA_URL = '/media/'

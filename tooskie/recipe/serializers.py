@@ -4,7 +4,7 @@ from tooskie.recipe.models import Ingredient
 
 
 
-class IngredientShortSerializer(serializers.ModelSerializer):
+class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = (
@@ -12,7 +12,7 @@ class IngredientShortSerializer(serializers.ModelSerializer):
             'name',
         )
 
-class IngredientShortSerializerWithPicture(serializers.ModelSerializer):
+class IngredientSerializerWithPicture(serializers.ModelSerializer):
     picture = serializers.URLField()
     class Meta:
         model = Ingredient
