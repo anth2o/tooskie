@@ -1,10 +1,6 @@
 from rest_framework import serializers
 
-from tooskie.recipe.models import Recipe, Ingredient
-
-class RecipeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recipe
+from tooskie.recipe.models import Ingredient
 
 
 class IngredientSerializer(serializers.ModelSerializer):

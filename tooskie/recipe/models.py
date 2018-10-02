@@ -64,27 +64,20 @@ class Ingredient(NameModel):
     # average conservation time in hours
     conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
     picture = models.ImageField(blank=True, null=True)
-    name = models.CharField(max_length=1000, verbose_name=_('Name'))
     name_plural = models.CharField(max_length=1000, blank=True)
-    complement = models.CharField(max_length=1000, blank=True)
-    complement_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
     unit = models.ManyToManyField('Unit', through='UnitOfIngredient')
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
-   
-    def save(self, *args, **kwargs):
-        if self.complement != '':
-            self.permaname = slugify(self.name + ' ' + self.complement)
-        else:
-            self.permaname = slugify(self.name)
-        super(Ingredient, self).save(*args, **kwargs)
+
 
 class IngredientInRecipe(NameModel):
     class Meta:
-        verbose_name_plural = 'Ingredient in recipe'
+        verbose_name_plural = 'Ingredients in recipe'
 
     quantity = models.FloatField(blank=True, null=True)
+    complement = models.CharField(max_length=1000, blank=True)
+    complement_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)

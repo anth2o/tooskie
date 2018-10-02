@@ -5,7 +5,6 @@ from django.utils.text import slugify
 from fractions import Fraction
 
 from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe
-from tooskie.recipe.serializers import RecipeSerializer
 from tooskie.utils.models import Tag
 from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_create_then_save, drop_columns
 
@@ -36,7 +35,10 @@ class PopulateConfig:
     INGREDIENT_FIELDS = [
         'picture',
         'name',
-        'name_plural',
+        'name_plural'
+    ]
+
+    INGREDIENT_IN_RECIPE_FIELDS = [
         'complement', 
         'complement_plural'
     ]
@@ -163,9 +165,6 @@ def create_ingredients(global_data, recipe_model):
         global_data['unit_of_ingredient'][i]['unit'] = unit_list[i]
         global_data['unit_of_ingredient'][i]['ingredient'] = ingredient_list[i]
     unit_of_ingredient_list = create_model_list(global_data, 'unit_of_ingredient')
-    logging.debug('Creation of ingredient in recipe will start')
-    logging.debug(unit_of_ingredient_list)
-    logging.debug(global_data['ingredient_in_recipe'])
     for i in range(len(unit_of_ingredient_list)):
         global_data['ingredient_in_recipe'][i]['unit_of_ingredient'] = unit_of_ingredient_list[i]
         global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
@@ -181,33 +180,26 @@ def format_global_data_for_ingredient(global_data):
     global_data['unit_of_ingredient'] = []
     global_data['ingredient_in_recipe'] = []
     for ingredient_data in global_data['ingredients']:
-        logging.debug('Raw ingredient data')
-        logging.debug(ingredient_data)
         ingredient_data.update(format_ingredient(ingredient_data))
-        logging.debug('Formatted ingredient data')
-        logging.debug(ingredient_data)
         unit_dict = get_sub_dict(ingredient_data, PopulateConfig.UNIT_FIELDS)
-        logging.debug(unit_dict)
         unit_dict['name'] = unit_dict.pop('unit')
         if 'unit_plural' in unit_dict:
             unit_dict['name_plural'] = unit_dict.pop('unit_plural')
-        logging.debug(unit_dict)
         global_data['unit'].append(unit_dict)
         global_data['ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_FIELDS))
         global_data['unit_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.UNIT_OF_INGREDIENT_FIELDS))
         quantity = None
         if ingredient_data['quantity'] != "null" and ingredient_data['quantity'] != "" and people_number:
             quantity = float(Fraction(ingredient_data['quantity'])) / people_number
-        global_data['ingredient_in_recipe'].append({
-            'quantity': quantity
-        })
+        ingredient_in_recipe_dict = get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_IN_RECIPE_FIELDS)
+        ingredient_in_recipe_dict.update({'quantity': quantity})
+        global_data['ingredient_in_recipe'].append(ingredient_in_recipe_dict)
     logging.debug('Formatting of global data for ingredients succeeded')
     return global_data
 
 def format_ingredient(ingredient):
     try:
         name_dict = format_ingredient_name(ingredient['name'])
-        logging.debug(name_dict)
         name_dict.update(format_ingredient_name_plural(ingredient['name_plural'], name_dict))
     except Exception as e:
         logging.error('Formatting of ingredient failed')
@@ -231,8 +223,6 @@ def format_ingredient_name_plural(name_plural, name_dict):
         if name_dict['linking_word']:
             logging.debug(name_dict)
         return {}
-    logging.debug('Name plural')
-    logging.debug(name_dict)
     name_plural_temp = name_plural[len(name_dict['unit']):]
     name_plural_temp = name_plural_temp.split(name_dict['linking_word'])
     unit_plural = name_plural[:len(name_dict['unit']) + len(name_plural_temp[0])].strip()
