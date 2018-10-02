@@ -84,6 +84,7 @@ class IngredientInRecipe(NameModel):
     quantity = models.FloatField(blank=True, null=True)
     complement = models.CharField(max_length=1000, blank=True)
     complement_plural = models.CharField(max_length=1000, blank=True)
+    is_essential = models.BooleanField(default=True)
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
