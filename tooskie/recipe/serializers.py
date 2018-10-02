@@ -13,6 +13,7 @@ class IngredientShortSerializer(serializers.ModelSerializer):
         )
 
 class IngredientShortSerializerWithPicture(serializers.ModelSerializer):
+    picture = serializers.URLField()
     class Meta:
         model = Ingredient
         fields = (

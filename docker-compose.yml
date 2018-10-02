@@ -13,6 +13,17 @@ services:
     volumes:
       - db_tooskie:/var/lib/postgresql/data
 
+  myadmin:
+    image: adminer
+    environment:
+      POSTGRES_USER: tooskie
+      POSTGRES_PASSWORD: tooskie
+      POSTGRES_DB: tooskie
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
   web:
     restart: always
     build: 
