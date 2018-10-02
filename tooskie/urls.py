@@ -22,7 +22,8 @@ from tooskie.recipe import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^ingredient/$', views.all_ingredients),
-    url(r'^ingredient/(?P<id>[0-9]+)$', views.ingredient),
+    url(r'^ingredient/(?P<id>[0-9]+)$', views.ingredient_by_id),
+    url(r'^ingredient/(?P<permaname>.+)$', views.ingredient_by_permaname),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
