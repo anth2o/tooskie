@@ -68,7 +68,8 @@ UNITS_MARMITON = [
     'pousse',
     'goutte',
     'brique',
-    'morceau'
+    'morceau',
+    'bâton'
 ]
 
 # If any questions on the code, ask Boubou or Schmoulou
