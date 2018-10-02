@@ -1,4 +1,5 @@
 from django.utils.text import slugify
+import re
 
 from tooskie.constants import LOGGING_CONFIG
 
@@ -58,3 +59,6 @@ def drop_columns(data, to_drop):
     except Exception as e:
         logging.error(e)
     return data
+
+def remove_useless_spaces(string):
+    return re.sub(' +', ' ', string)

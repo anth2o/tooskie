@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
+from tooskie.helpers import remove_useless_spaces
 from tooskie.constants import LOGGING_LEVEL
 from tooskie.choices import model_tagged_choices
 
@@ -29,6 +30,7 @@ class NameModel(models.Model):
         if self.name == '':
             raise ValidationError('This model must have a non-empty name')
         self.name = self.name.capitalize()
+        self.name = remove_useless_spaces(self.name)
         if self.permaname == '':
             self.permaname = slugify(self.name)
         logging.debug(self.permaname)

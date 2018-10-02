@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
 from tooskie.utils.models import BaseModel, NameModel, LevelModel
+from tooskie.helpers import remove_useless_spaces
 from tooskie import choices
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
 
@@ -70,6 +71,11 @@ class Ingredient(NameModel):
     unit = models.ManyToManyField('Unit', through='UnitOfIngredient')
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
 
+    def save(self, *args, **kwargs):
+        self.name_plural = remove_useless_spaces(self.name_plural)
+        super(Ingredient, self).save(*args, **kwargs)
+
+
 
 class IngredientInRecipe(NameModel):
     class Meta:
@@ -85,6 +91,8 @@ class IngredientInRecipe(NameModel):
 
     def save(self, *args, **kwargs):
         self.name = self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
+        self.complement = remove_useless_spaces(self.complement)
+        self.complement_plural = remove_useless_spaces(self.complement_plural)
         super(IngredientInRecipe, self).save(*args, **kwargs)
 
 class UnitOfIngredient(NameModel):
