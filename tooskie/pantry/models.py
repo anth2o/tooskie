@@ -9,6 +9,7 @@ from tooskie.utils.models import BaseModel, NameModel
 from tooskie.recipe.models import Ingredient, UnitOfIngredient, Unit
 from tooskie import choices
 from tooskie.constants import LINK_WORD
+from tooskie.helpers import get_or_create_then_save
 
 
 class Pantry(NameModel):
@@ -32,12 +33,11 @@ class Pantry(NameModel):
         #        },
         #        ...
         #    ]
-
-        default_unit_model = Unit.objects.get_or_create(name='Default')
+        default_unit_model = get_or_create_then_save(Unit, {'name': 'Default'})
         for ingredient in ingredients:
-            ingredient_model = Ingredient.objects.get_or_create(id=ingredient['id'])
-            default_ingredient_unit_model = UnitOfIngredient.objects.get_or_create(ingredient=ingredient_model, unit=default_unit_model)
-            ingredient_in_pantry_model = IngredientInPantry.objects.get_or_create(pantry=self, unit_of_ingredient=default_ingredient_unit_model)
+            ingredient_model = get_or_create_then_save(Ingredient, {'id': ingredient['id']})
+            default_ingredient_unit_model = get_or_create_then_save(UnitOfIngredient, {'ingredient': ingredient_model, 'unit': default_unit_model})
+            ingredient_in_pantry_model = get_or_create_then_save(IngredientInPantry, {'pantry': self, 'unit_of_ingredient': default_ingredient_unit_model})
 
 class IngredientInPantry(BaseModel):
     quantity = models.FloatField(blank=True, null=True)

@@ -43,6 +43,21 @@ def update_or_create_then_save(model_class, data):
         raise e
     return model_instance
 
+def get_or_create_then_save(model_class, data):
+    try:
+        logging.debug(data)
+        instance = model_class.objects.get(**data)
+        logging.debug('Instance already exists')
+        logging.debug(instance)
+        created = False
+    except Exception:
+        logging.debug('Instance will be created')
+        instance = model_class.objects.create(**data)
+        logging.debug(instance)
+        instance.save()        
+        created = True
+    return instance
+
 # Used to keep only a subset of keys of a dict
 def get_sub_dict(old_dict, to_keep):
     new_dict = dict((k,old_dict[k]) for k in to_keep if k in old_dict)
