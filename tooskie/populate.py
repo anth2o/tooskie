@@ -79,8 +79,7 @@ def populate_db_one_recipe(recipe_number=0):
 
 
 def process_recipe(global_data):
-    print(global_data["recipe"])
-    print(global_data["recipe"])
+    logging.debug(global_data["recipe"])
     try:
         recipe_data = get_fields(global_data)
         update_or_create_then_save(Recipe, recipe_data)
@@ -88,7 +87,6 @@ def process_recipe(global_data):
         logging.error(e)
 
 def get_fields(global_data):
-    print()
     try:
         recipe_data = format_recipe_dict(global_data)
         recipe_model = update_or_create_then_save(Recipe, recipe_data)
@@ -136,7 +134,7 @@ def create_tags(global_data, recipe_model):
         recipe_model.tag.add(tag)
 
 def create_ustensils(global_data, recipe_model):
-    print('Creation or update of the different ustensils')
+    logging.info('Creation or update of the different ustensils')
     ustensils_to_dict = []
     ustensils_in_recipe_to_dict = []
     for ustensil in global_data['ustensils']:
@@ -196,7 +194,7 @@ def format_global_data_for_ingredient(global_data):
         ingredient_in_recipe_dict = get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_IN_RECIPE_FIELDS)
         ingredient_in_recipe_dict.update({'quantity': quantity})
         global_data['ingredient_in_recipe'].append(ingredient_in_recipe_dict)
-    print('Formatting of global data for ingredients succeeded')
+    logging.debug('Formatting of global data for ingredients succeeded')
     return global_data
 
 def format_ingredient(ingredient):
@@ -223,7 +221,7 @@ def format_ingredient_name(name):
 def format_ingredient_name_plural(name_plural, name_dict):
     if not name_dict['unit']:
         if name_dict['linking_word']:
-            print(name_dict)
+            logging.debug(name_dict)
         return {}
     name_plural_temp = name_plural[len(name_dict['unit']):]
     name_plural_temp = name_plural_temp.split(name_dict['linking_word'])
@@ -235,7 +233,7 @@ def format_ingredient_name_plural(name_plural, name_dict):
     return final_dict
              
 def create_model_list(global_data, key, to_drop=None, recipe_model=None):
-    print('Create model list: ' + key)
+    logging.info('Create model list: ' + key)
     model_list = []
     for data in global_data[key]:
         try:
@@ -247,7 +245,7 @@ def create_model_list(global_data, key, to_drop=None, recipe_model=None):
     return model_list
 
 def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
-    print('Create model: ' + model_key)
+    logging.info('Create model: ' + model_key)
     try:
         model_class = PopulateConfig.KEY_TO_MODEL[model_key]
         if recipe_model:
@@ -260,11 +258,11 @@ def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
     return model
 
 def format_recipe_dict(global_data):
-    print('Format recipe dict')
-    print(global_data)
+    logging.debug('Format recipe dict')
+    logging.debug(global_data)
     try:
         recipe_data = get_sub_dict(global_data, PopulateConfig.RECIPE_FIELDS.keys())
-        print(recipe_data)
+        logging.debug(recipe_data)
         for key, value in PopulateConfig.RECIPE_FIELDS.items():
             if key != value:
                 recipe_data[value] = recipe_data[key]
@@ -284,7 +282,7 @@ def format_recipe_dict(global_data):
                     logging.error(recipe_data[value] + " isn't a valid format")
                     raise ValueError('Time formatting failed')
                 recipe_data[value] = time
-        print('Format recipe dict done')
+        logging.debug('Format recipe dict done')
     except Exception as e:
         logging.error(e)
         raise e
