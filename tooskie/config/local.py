@@ -7,6 +7,7 @@ class Local(Common):
 
     INSTALLED_APPS = Common.INSTALLED_APPS + [
         'rest_framework',
+        'autoslug',
         
         'tooskie.recipe',
         'tooskie.user',

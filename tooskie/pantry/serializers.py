@@ -17,6 +17,7 @@ class PantrySerializerWithIngredients(serializers.ModelSerializer):
     class Meta:
         model = Pantry
         fields = (
+            'permaname',
             'name',
             'ingredients'
         )

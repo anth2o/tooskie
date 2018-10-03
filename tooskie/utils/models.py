@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
+from autoslug import AutoSlugField
 
 from tooskie.helpers import remove_useless_spaces
 from tooskie.constants import LOGGING_LEVEL
@@ -18,8 +19,8 @@ class BaseModel(models.Model):
         abstract = True
 
 class NameModel(models.Model):
-    permaname = models.SlugField(max_length=1000, unique=True, blank=True, verbose_name=_('Permaname'))
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'))
+    permaname = models.SlugField(blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Last updated at'))
 
@@ -31,9 +32,8 @@ class NameModel(models.Model):
             raise ValidationError('This model must have a non-empty name')
         self.name = self.name.capitalize()
         self.name = remove_useless_spaces(self.name)
-        if self.permaname == '':
-            self.permaname = slugify(self.name)
-        logging.debug(self.permaname)
+        self.permaname = slugify(self.name)
+        logging.debug(self.name)
         try:
             super(NameModel, self).save(*args, **kwargs)
         except Exception as e:

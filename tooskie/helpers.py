@@ -19,6 +19,8 @@ def loop_to_remove_first_word(word_list, name):
     return name, word
 
 def update_or_create_then_save(model_class, data):
+    print('Update or create then save')
+    print(data)
     try:
         logging.debug(data)
         model_instance = model_class(**data)
@@ -46,20 +48,25 @@ def update_or_create_then_save(model_class, data):
 def get_or_create_then_save(model_class, data):
     try:
         logging.debug(data)
+        print(data)
         instance = model_class.objects.get(**data)
         logging.debug('Instance already exists')
         logging.debug(instance)
         created = False
-    except Exception:
+    except Exception as e:
+        print(e)
         logging.debug('Instance will be created')
         instance = model_class.objects.create(**data)
         logging.debug(instance)
         instance.save()        
         created = True
+    print(created)
     return instance
 
 # Used to keep only a subset of keys of a dict
 def get_sub_dict(old_dict, to_keep):
+    if isinstance(to_keep, str):
+        to_keep = [to_keep]
     new_dict = dict((k,old_dict[k]) for k in to_keep if k in old_dict)
     return new_dict
 

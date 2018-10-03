@@ -1,5 +1,6 @@
 Django==2.1.1
 django-configurations==2.1
 django-rest-framework
+django-autoslug-iplweb
 Pillow
 psycopg2-binary
