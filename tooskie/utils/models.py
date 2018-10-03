@@ -5,11 +5,11 @@ from django.utils.text import slugify
 from autoslug import AutoSlugField
 
 from tooskie.helpers import remove_useless_spaces
-from tooskie.constants import LOGGING_LEVEL
+from tooskie.constants import LOGGING_CONFIG
 from tooskie.choices import model_tagged_choices
 
 import logging
-logging.basicConfig(format='[%(asctime)s] [%(levelname)s] : %(message)s', level=logging.getLevelName(LOGGING_LEVEL), datefmt='%d/%b/%Y %H:%M:%S')
+logging.basicConfig(**LOGGING_CONFIG)
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))

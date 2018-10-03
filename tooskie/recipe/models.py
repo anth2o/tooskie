@@ -36,8 +36,11 @@ class Step(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = self.recipe.name + ' ' + str(self.step_number)
+        self.name = self.get_name()
         super(Step, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.recipe.name + ' ' + str(self.step_number)
 
 class DifficultyLevel(LevelModel):
     pass
@@ -58,8 +61,11 @@ class UstensilInRecipe(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
-        self.name = self.ustensil.name + LINK_WORD + self.recipe.name.lower()
+        self.name = self.get_name()
         super(UstensilInRecipe, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.ustensil.name + LINK_WORD + self.recipe.name.lower()
 
 class Ingredient(NameModel):
     # average conservation time in hours
@@ -89,10 +95,13 @@ class IngredientInRecipe(NameModel):
     unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name = self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
+        self.name = self.get_name()
         self.complement = remove_useless_spaces(self.complement)
         self.complement_plural = remove_useless_spaces(self.complement_plural)
         super(IngredientInRecipe, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
 
 class UnitOfIngredient(NameModel):
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one unit'))
@@ -104,8 +113,11 @@ class UnitOfIngredient(NameModel):
     unit = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name = self.ingredient.name + LINK_WORD + self.unit.name.lower()
+        self.name = self.get_name()
         super(UnitOfIngredient, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.ingredient.name + LINK_WORD + self.unit.name.lower()
 
 class Unit(NameModel):
     name_plural = models.CharField(max_length=1000, blank=True)
@@ -132,8 +144,11 @@ class UnitOfNutritionalProperty(NameModel):
     unit = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name =  self.nutritional_property.name + LINK_WORD + self.unit.name.lower()
+        self.name =  self.get_name()
         super(UnitOfNutritionalProperty, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.nutritional_property.name + LINK_WORD + self.unit.name.lower()
 
 class HasProperties(NameModel):
     class Meta:
@@ -146,9 +161,11 @@ class HasProperties(NameModel):
     unit_of_nutritional_property = models.ForeignKey('UnitOfNutritionalProperty', on_delete=models.CASCADE, verbose_name=_('The nutritional quantity in this unit'))
 
     def save(self, *args, **kwargs):
-        self.name =  self.unit_of_nutritional_property.name + LINK_WORD + self.unit_of_ingredient.name.lower()
+        self.name = self.get_name()
         super(HasProperties, self).save(*args, **kwargs)
 
+    def get_name(self):
+        return self.unit_of_nutritional_property.name + LINK_WORD + self.unit_of_ingredient.name.lower()
 
 class CanReplace(NameModel):
     class Meta:
@@ -162,8 +179,11 @@ class CanReplace(NameModel):
     ingredient_in_recipe = models.ForeignKey('IngredientInRecipe', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name =  self.new_unit_of_ingredient.name + ' can replace ' + self.ingredient_in_recipe.name.lower()
+        self.name = self.get_name()
         super(CanReplace, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.new_unit_of_ingredient.name + ' can replace ' + self.ingredient_in_recipe.name.lower()
 
 class SpecialDiet(NameModel):
     description = models.TextField(blank=True)
@@ -180,5 +200,8 @@ class IngredientCompatbibleWithDiet(NameModel):
     special_diet = models.ForeignKey('SpecialDiet', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        self.name =  self.ingredient.name + ' is compatible with ' + self.special_diet.name.lower()
+        self.name = self.get_name()
         super(IngredientCompatbibleWithDiet, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.ingredient.name + ' is compatible with ' + self.special_diet.name.lower()

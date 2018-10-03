@@ -5,15 +5,20 @@ from django.utils.text import slugify
 
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.serializers import PantrySerializer, PantrySerializerWithIngredients
-from tooskie.helpers import get_or_create_then_save,get_sub_dict, remove_useless_spaces
+from tooskie.helpers import get_or_create,get_sub_dict, remove_useless_spaces
+
+from tooskie.constants import LOGGING_CONFIG
+
+import logging
+logging.basicConfig(**LOGGING_CONFIG)
 
 @api_view(['POST'])
 def pantry(request):
     if request.method == 'POST':
-        request.data['name'] = request.data['name'].capitalize()
         serializer = PantrySerializerWithIngredients(request.data)
-        pantry_model, created = get_or_create_then_save(Pantry, get_sub_dict(serializer.data, ['name']))
-        print(created)
-        print(pantry_model)
-        pantry_model.add_ingredients(serializer.data['ingredients'])
+        logging.debug(serializer.data)
+        pantry_model, created = Pantry.objects.get_or_create(permaname=slugify(serializer.data['name']))
+        pantry_model.name = serializer.data['name']
+        pantry_model.save()
+        pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
         return Response(PantrySerializer(pantry).data)

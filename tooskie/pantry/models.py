@@ -9,7 +9,7 @@ from tooskie.utils.models import BaseModel, NameModel
 from tooskie.recipe.models import Ingredient, UnitOfIngredient, Unit
 from tooskie import choices
 from tooskie.constants import LINK_WORD
-from tooskie.helpers import get_or_create_then_save
+from tooskie.helpers import get_or_create
 
 
 class Pantry(NameModel):
@@ -24,7 +24,7 @@ class Pantry(NameModel):
     # Relations
     shopping_list = models.ManyToManyField('shop.ShoppingList', through='Receipt')
 
-    def add_ingredients(self, ingredients):
+    def add_ingredients(self, ingredients, pantry):
         # ingredients is a list of dict as :
         #     "ingredients": [
         #        {
@@ -33,21 +33,30 @@ class Pantry(NameModel):
         #        },
         #        ...
         #    ]
-        default_unit_model = get_or_create_then_save(Unit, {'name': 'Default'})
+        default_unit_model = Unit.objects.get_or_create(permaname='default')
+        default_unit_model.name = 'Default'
+        default_unit_model.save()
         for ingredient in ingredients:
-            ingredient_model = get_or_create_then_save(Ingredient, {'id': ingredient['id']})
-            default_ingredient_unit_model = get_or_create_then_save(UnitOfIngredient, {'ingredient': ingredient_model, 'unit': default_unit_model})
-            ingredient_in_pantry_model = get_or_create_then_save(IngredientInPantry, {'pantry': self, 'unit_of_ingredient': default_ingredient_unit_model})
+            ingredient_model = Ingredient.objects.get(id=ingredient['id'])
+            default_ingredient_unit_model = UnitOfIngredient.objects.get_or_create(slugify(ingredient['name'] + LINK_WORD + 'default'))
+            default_ingredient_unit_model.unit = default_unit_model
+            default_ingredient_unit_model.ingredient = ingredient_model
+            default_ingredient_unit_model.save()
+            ingredient_in_pantry_model = IngredientInPantry.get_or_create(slugify(default_ingredient_unit_model.permaname + LINK_WORD + pantry.permaname))
+            ingredient_in_pantry_model.unit_of_ingredient = default_ingredient_unit_model
+            ingredient_in_pantry_model.pantry = pantry
+            ingredient_in_pantry_model.save()
 
-class IngredientInPantry(BaseModel):
+class IngredientInPantry(NameModel):
     quantity = models.FloatField(blank=True, null=True)
 
     # Relations
     pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE)
     unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.unit_of_ingredient) + LINK_WORD + str(self.pantry)
+    def save(self, *args, **kwargs):
+        self.name = self.unit_of_ingredient.name + LINK_WORD + self.pantry.name.lower()
+        super(IngredientInPantry, self).save(*args, **kwargs)
 
 class UstensilInPantry(BaseModel):
     quantity = models.FloatField(blank=True, null=True)

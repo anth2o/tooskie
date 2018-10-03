@@ -45,23 +45,14 @@ def update_or_create_then_save(model_class, data):
         raise e
     return model_instance
 
-def get_or_create_then_save(model_class, data):
+def get_or_create(object_, permaname_):
     try:
-        logging.debug(data)
-        print(data)
-        instance = model_class.objects.get(**data)
-        logging.debug('Instance already exists')
-        logging.debug(instance)
-        created = False
-    except Exception as e:
-        print(e)
-        logging.debug('Instance will be created')
-        instance = model_class.objects.create(**data)
-        logging.debug(instance)
-        instance.save()        
-        created = True
-    print(created)
-    return instance
+        instance = object_.objects.get(permaname=permaname_)
+        return instance, False
+    except:
+        instance = object_(permaname=permaname_)
+        instance.save()
+        return instance, True
 
 # Used to keep only a subset of keys of a dict
 def get_sub_dict(old_dict, to_keep):
