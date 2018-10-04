@@ -1,7 +1,7 @@
 from tooskie.pantry.models import Pantry, IngredientInPantry
 from tooskie.recipe.models import Recipe, Ingredient, UnitOfIngredient, IngredientInRecipe
 
-def get_ingredients(pantry=Pantry.objects.get(name='Ios')):
+def get_ingredients(pantry):
     ingredients = []
     for ingredient_in_pantry in pantry.ingredients_in_pantry.all():
         ingredients.append(ingredient_in_pantry.unit_of_ingredient.ingredient)

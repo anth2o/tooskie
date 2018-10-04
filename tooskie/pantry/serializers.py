@@ -12,8 +12,8 @@ class PantrySerializer(serializers.ModelSerializer):
         )
 
 class PantrySerializerWithIngredients(serializers.ModelSerializer):
-    ingredients = IngredientSerializer(many=True)
-    
+    ingredients = serializers.ListField(child=serializers.CharField())
+        
     class Meta:
         model = Pantry
         fields = (

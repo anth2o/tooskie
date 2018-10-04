@@ -30,8 +30,6 @@ class NameModel(models.Model):
     def save(self, *args, **kwargs):
         if self.name == '':
             raise ValidationError('This model must have a non-empty name')
-        self.name = self.name.capitalize()
-        self.name = remove_useless_spaces(self.name)
         logging.debug(self.name)
         try:
             super(NameModel, self).save(*args, **kwargs)

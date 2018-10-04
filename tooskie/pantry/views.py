@@ -16,8 +16,8 @@ def pantry(request):
         try:
             serializer = PantrySerializerWithIngredients(request.data)
             logging.debug(serializer.data)
-            logging.debug(serializer.data['name'].capitalize())
-            pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'].capitalize())
+            logging.debug(serializer.data['name'])
+            pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'])
             pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
             return Response(PantrySerializer(pantry_model).data, status=status.HTTP_201_CREATED)
         except Exception as e:

@@ -24,7 +24,7 @@ class IngredientSerializerWithPicture(serializers.ModelSerializer):
         )
 
 class RecipeShortSerializer(serializers.ModelSerializer):
-    tag = TagSerializer(many=True, read_only=True)
+    tag = serializers.SerializerMethodField('get_tags_name')
     budget_level = serializers.SerializerMethodField('get_budget_level_name')
     difficulty_level = serializers.SerializerMethodField('get_difficulty_level_name')
 
@@ -33,6 +33,12 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 
     def get_difficulty_level_name(self, obj):
         return obj.difficulty_level.name
+
+    def get_tags_name(self, obj):
+        names = []
+        for tag in obj.tag.all():
+            names.append(tag.name)
+        return names
 
     class Meta:
         model = Recipe

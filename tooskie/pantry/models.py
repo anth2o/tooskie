@@ -38,10 +38,10 @@ class Pantry(NameModel):
         default_unit_model.save()
         for ingredient in ingredients:
             try:
-                print(ingredient['name'])
-                ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient['name']))
+                print(ingredient)
+                ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient))
             except Exception:
-                raise ValueError(ingredient['name'] + " isn't a valid ingredient")
+                raise ValueError(ingredient + " isn't a valid ingredient")
             default_ingredient_unit_model, created = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
             IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
 
