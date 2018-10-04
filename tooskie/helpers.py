@@ -51,7 +51,6 @@ def get_or_create(object_, permaname_):
         return instance, False
     except:
         instance = object_(permaname=permaname_)
-        instance.save()
         return instance, True
 
 # Used to keep only a subset of keys of a dict

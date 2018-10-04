@@ -123,8 +123,11 @@ class Unit(NameModel):
     name_plural = models.CharField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.name or self.name == '':
-            self.name = NONE_UNIT
+        if (not self.name or self.name == ''):
+            if not self.permaname or self.permaname == '':
+                self.name = NONE_UNIT
+            else:
+                self.name = self.permaname.capitalize()
         if self.name_plural:
             self.name_plural = self.name_plural.capitalize()
         super(Unit, self).save(*args, **kwargs)

@@ -33,19 +33,13 @@ class Pantry(NameModel):
         #        },
         #        ...
         #    ]
-        default_unit_model = Unit.objects.get_or_create(permaname='default')
+        default_unit_model, created = Unit.objects.get_or_create(permaname='default')
         default_unit_model.name = 'Default'
         default_unit_model.save()
         for ingredient in ingredients:
-            ingredient_model = Ingredient.objects.get(id=ingredient['id'])
-            default_ingredient_unit_model = UnitOfIngredient.objects.get_or_create(slugify(ingredient['name'] + LINK_WORD + 'default'))
-            default_ingredient_unit_model.unit = default_unit_model
-            default_ingredient_unit_model.ingredient = ingredient_model
-            default_ingredient_unit_model.save()
-            ingredient_in_pantry_model = IngredientInPantry.get_or_create(slugify(default_ingredient_unit_model.permaname + LINK_WORD + pantry.permaname))
-            ingredient_in_pantry_model.unit_of_ingredient = default_ingredient_unit_model
-            ingredient_in_pantry_model.pantry = pantry
-            ingredient_in_pantry_model.save()
+            ingredient_model, created = Ingredient.objects.get_or_create(name=ingredient['name'])
+            default_ingredient_unit_model, created = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
+            ingredient_in_pantry_model, created = IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
 
 class IngredientInPantry(NameModel):
     quantity = models.FloatField(blank=True, null=True)
