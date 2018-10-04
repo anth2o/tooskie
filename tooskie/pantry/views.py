@@ -15,8 +15,12 @@ logging.basicConfig(**LOGGING_CONFIG)
 @api_view(['POST'])
 def pantry(request):
     if request.method == 'POST':
-        serializer = PantrySerializerWithIngredients(request.data)
-        logging.debug(serializer.data)
-        pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'].capitalize())
-        pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
-        return Response(PantrySerializer(pantry_model).data)
+        try:
+            serializer = PantrySerializerWithIngredients(request.data)
+            logging.debug(serializer.data)
+            logging.debug(serializer.data['name'].capitalize())
+            pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'].capitalize())
+            pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
+            return Response(PantrySerializer(pantry_model).data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_404_NOT_FOUND)

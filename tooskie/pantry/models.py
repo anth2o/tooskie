@@ -37,7 +37,11 @@ class Pantry(NameModel):
         default_unit_model.name = 'Default'
         default_unit_model.save()
         for ingredient in ingredients:
-            ingredient_model, created = Ingredient.objects.get_or_create(name=ingredient['name'])
+            try:
+                print(ingredient['name'])
+                ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient['name']))
+            except Exception as e:
+                raise ValueError(ingredient['name'] + " isn't a valid ingredient")
             default_ingredient_unit_model, created = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
             ingredient_in_pantry_model, created = IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
 
@@ -45,7 +49,7 @@ class IngredientInPantry(NameModel):
     quantity = models.FloatField(blank=True, null=True)
 
     # Relations
-    pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE)
+    pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE, related_name='ingredients_in_pantry')
     unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
