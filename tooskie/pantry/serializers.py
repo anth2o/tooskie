@@ -21,6 +21,3 @@ class PantrySerializerWithIngredients(serializers.ModelSerializer):
             'name',
             'ingredients'
         )
-
-
-

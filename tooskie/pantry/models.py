@@ -40,10 +40,10 @@ class Pantry(NameModel):
             try:
                 print(ingredient['name'])
                 ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient['name']))
-            except Exception as e:
+            except Exception:
                 raise ValueError(ingredient['name'] + " isn't a valid ingredient")
             default_ingredient_unit_model, created = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
-            ingredient_in_pantry_model, created = IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
+            IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
 
 class IngredientInPantry(NameModel):
     quantity = models.FloatField(blank=True, null=True)

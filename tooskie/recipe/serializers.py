@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from tooskie.recipe.models import Ingredient
+from tooskie.recipe.models import Ingredient, Recipe
+from tooskie.utils.serializers import TagSerializer
 
 
 
@@ -22,4 +23,26 @@ class IngredientSerializerWithPicture(serializers.ModelSerializer):
             'picture'
         )
 
+class RecipeShortSerializer(serializers.ModelSerializer):
+    tag = TagSerializer(many=True, read_only=True)
+    budget_level = serializers.SerializerMethodField('get_budget_level_name')
+    difficulty_level = serializers.SerializerMethodField('get_difficulty_level_name')
 
+    def get_budget_level_name(self, obj):
+        return obj.budget_level.name
+
+    def get_difficulty_level_name(self, obj):
+        return obj.difficulty_level.name
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'name',
+            'picture',
+            'cooking_time',
+            'preparation_time',
+            'budget_level',
+            'difficulty_level',
+            'tag',
+            'number_of_steps'
+        )

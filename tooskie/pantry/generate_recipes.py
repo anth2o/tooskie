@@ -12,7 +12,7 @@ def get_recipes():
     recipe_list = []
     for recipe in recipes:
         recipe_dict = {
-            'id': recipe.id,
+            'recipe': recipe,
             'ingredients': []
         }
         ingredients_in_recipe = recipe.unit_of_ingredient.all()
@@ -21,13 +21,9 @@ def get_recipes():
         recipe_list.append(recipe_dict)
     return recipe_list
 
-def filter_recipes(ingredients=get_ingredients(), recipe_list=get_recipes()):
-    print(len(ingredients))
-    print(ingredients)
-    print(recipe_list[0]['ingredients'])
+def filter_recipes(ingredients, recipe_list):
     recipe_to_keep = []
     for recipe in recipe_list:
         if set(recipe['ingredients']).issubset(set(ingredients)) and recipe['ingredients'] != []:
-            print(recipe['ingredients'])
-            recipe_to_keep.append(recipe['id'])
+            recipe_to_keep.append(recipe['recipe'])
     return recipe_to_keep

@@ -1,15 +1,14 @@
-from django.utils.translation import ugettext_lazy as _
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.exceptions import ValidationError
-from django.utils.text import slugify
-
-from tooskie.utils.models import BaseModel, NameModel, LevelModel
-from tooskie.helpers import remove_useless_spaces
-from tooskie import choices
-from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
-
 import logging
+
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
+from tooskie.helpers import remove_useless_spaces
+from tooskie.utils.models import LevelModel, NameModel
+
 logging.basicConfig(**LOGGING_CONFIG)
 
 class Recipe(NameModel):
@@ -18,13 +17,17 @@ class Recipe(NameModel):
     preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
     url = models.URLField(blank=True)
     picture = models.ImageField(blank=True, null=True)
-    
     # Relations
     difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag')
+
+
+    @property
+    def number_of_steps(self):
+        return self.steps.all().count()
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
@@ -33,7 +36,7 @@ class Step(NameModel):
     picture = models.ImageField(blank=True, null=True)
 
     # Relations
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()

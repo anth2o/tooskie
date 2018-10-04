@@ -1,11 +1,9 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.utils.text import slugify
-
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.serializers import PantrySerializer, PantrySerializerWithIngredients
-from tooskie.helpers import get_or_create,get_sub_dict, remove_useless_spaces
+from tooskie.helpers import get_sub_dict, remove_useless_spaces
 
 from tooskie.constants import LOGGING_CONFIG
 
