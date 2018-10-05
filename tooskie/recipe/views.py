@@ -43,11 +43,11 @@ def ingredient_by_permaname(request, permaname):
         return Response(serializer.data)
 
 @api_view(['GET'])
-def recipe_with_pantry(request, pantry_id):
+def recipe_with_pantry(request, pantry_permaname):
     try:
         recipes = get_recipes()
         logging.debug('Number of recipes scanned: ' + str(len(recipes)))
-        pantry = Pantry.objects.get(id=pantry_id)
+        pantry = Pantry.objects.get(permaname=pantry_permaname)
         ingredients = get_ingredients(pantry)
         logging.debug('Ingredients in pantry: ' + str(len(ingredients)))
     except Exception as e:

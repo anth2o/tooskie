@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^ingredient/(?P<id>[0-9]+)$', recipe_views.ingredient_by_id),
     url(r'^ingredient/(?P<permaname>.+)$', recipe_views.ingredient_by_permaname),
     url(r'^pantry/$', pantry_views.pantry),
-    url(r'^recipe/(?P<pantry_id>[0-9]+)$', recipe_views.recipe_with_pantry),
+    url(r'^recipe/(?P<pantry_permaname>.+)$', recipe_views.recipe_with_pantry),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
