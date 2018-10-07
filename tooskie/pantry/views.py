@@ -1,6 +1,7 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,renderer_classes
 from rest_framework.response import Response
+from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.serializers import PantrySerializer, PantrySerializerWithIngredients
 from tooskie.helpers import get_sub_dict, remove_useless_spaces
