@@ -24,6 +24,7 @@ class IngredientSerializerWithPicture(serializers.ModelSerializer):
         )
 
 class RecipeShortSerializer(serializers.ModelSerializer):
+    picture = serializers.URLField()
     tag = serializers.SerializerMethodField('get_tags_name')
     budget_level = serializers.SerializerMethodField('get_budget_level_name')
     difficulty_level = serializers.SerializerMethodField('get_difficulty_level_name')
