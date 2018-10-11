@@ -8,9 +8,11 @@ from django.utils.text import slugify
 from tooskie.utils.models import BaseModel, NameModel
 from tooskie.recipe.models import Ingredient, UnitOfIngredient, Unit
 from tooskie import choices
-from tooskie.constants import LINK_WORD
+from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 from tooskie.helpers import get_or_create
 
+import logging 
+logging.basicConfig(**LOGGING_CONFIG)
 
 class Pantry(NameModel):
     class Meta:
@@ -23,6 +25,13 @@ class Pantry(NameModel):
 
     # Relations
     shopping_list = models.ManyToManyField('shop.ShoppingList', through='Receipt')
+
+    @property
+    def ingredients(self):
+        ingredients = []
+        for ingredient_in_pantry in self.ingredients_in_pantry.all():
+            ingredients.append(ingredient_in_pantry.unit_of_ingredient.ingredient)
+        return ingredients
 
     def add_ingredients(self, ingredients, pantry):
         # ingredients is a list of dict as :
