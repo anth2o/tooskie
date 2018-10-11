@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.serializers import PantrySerializer, PantrySerializerWithIngredients, PantrySerializerWithIngredientsDetailed
+from tooskie.recipe.serializers import IngredientSerializerWithPicture
 from tooskie.helpers import get_sub_dict, remove_useless_spaces
 
 from tooskie.constants import LOGGING_CONFIG
@@ -37,8 +38,8 @@ def pantry(request):
 def pantry_by_permaname(request, permaname):
     if request.method == 'GET':
         try:
-            pantry = Pantry.objects.get(permaname=permaname)
-            serializer = PantrySerializerWithIngredientsDetailed(pantry)
+            ingredients = Pantry.objects.get(permaname=permaname).ingredients
+            serializer = IngredientSerializerWithPicture(ingredients, many=True)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response(str(e), status=status.HTTP_404_NOT_FOUND)
