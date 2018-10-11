@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tooskie.recipe.models import Ingredient, Recipe
+from tooskie.recipe.models import Ingredient, Recipe, Step
 from tooskie.utils.serializers import TagSerializer
 
 
@@ -52,4 +52,27 @@ class RecipeShortSerializer(serializers.ModelSerializer):
             'difficulty_level',
             'tag',
             'number_of_steps'
+        )
+
+class StepSerializer(serializers.ModelSerializer):
+    picture = serializers.URLField()
+
+    class Meta:
+        model = Step
+        fields = (
+            'step_number',
+            'description',
+            'picture'
+        )
+
+class RecipeSerializer(serializers.ModelSerializer):
+    picture = serializers.URLField()
+    steps = StepSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'name',
+            'picture',
+            'steps'
         )

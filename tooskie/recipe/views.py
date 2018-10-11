@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from tooskie.recipe.models import Ingredient, Recipe
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes
-from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeShortSerializer
+from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeShortSerializer, RecipeSerializer
 
 import logging
 from tooskie.constants import LOGGING_CONFIG
@@ -43,12 +43,12 @@ def ingredient_by_permaname(request, permaname):
         return Response(serializer.data)
 
 @api_view(['GET'])
-def recipe_with_pantry(request, pantry_permaname):
+def recipe_with_pantry(request, permaname):
     # TODO: optimize filter recipes
     # try:
     #     recipes = get_recipes()
     #     logging.debug('Number of recipes scanned: ' + str(len(recipes)))
-    #     pantry = Pantry.objects.get(permaname=pantry_permaname)
+    #     pantry = Pantry.objects.get(permaname=permaname)
     #     ingredients = get_ingredients(pantry)
     #     logging.debug('Ingredients in pantry: ' + str(len(ingredients)))
     # except Exception as e:
@@ -60,6 +60,16 @@ def recipe_with_pantry(request, pantry_permaname):
             # logging.debug('Recipes filtered: ' + str(recipes))
             recipes = Recipe.objects.filter(id__lte=1035)
             serializer = RecipeShortSerializer(recipes, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def recipe(request, permaname):
+    if request.method == 'GET':
+        try:
+            recipe = Recipe.objects.get(permaname=permaname)
+            serializer = RecipeSerializer(recipe)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
