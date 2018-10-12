@@ -6,6 +6,8 @@ from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes
 from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeShortSerializer, RecipeSerializer
 
+import time
+
 import logging
 from tooskie.constants import LOGGING_CONFIG
 
@@ -45,20 +47,27 @@ def ingredient_by_permaname(request, permaname):
 @api_view(['GET'])
 def recipe_with_pantry(request, permaname):
     # TODO: optimize filter recipes
-    # try:
-    #     recipes = get_recipes()
-    #     logging.debug('Number of recipes scanned: ' + str(len(recipes)))
-    #     pantry = Pantry.objects.get(permaname=permaname)
-    #     ingredients = get_ingredients(pantry)
-    #     logging.debug('Ingredients in pantry: ' + str(len(ingredients)))
-    # except Exception as e:
-    #     return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    try:
+        t0 = time.time()
+        recipes = get_recipes()
+        t1 = time.time()
+        logging.debug('Get recipes execution time: ' + str(t1 - t0))
+        logging.debug('Number of recipes scanned: ' + str(len(recipes)))
+        pantry = Pantry.objects.get(permaname=permaname)
+        ingredients = get_ingredients(pantry)
+        t2 = time.time()
+        logging.debug('Get ingredients execution time: ' + str(t2 - t1))
+        logging.debug('Ingredients in pantry: ' + str(len(ingredients)))
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'GET':
         try:
-            # recipes = filter_recipes(recipe_list=recipes, ingredients=ingredients)
-            # logging.debug('Recipes filtered: ' + str(recipes))
-            recipes = Recipe.objects.filter(id__lte=1035)
+            recipes = filter_recipes(recipe_list=recipes, ingredients=ingredients)
+            t3 = time.time()
+            logging.debug('Filter recipes execution time: ' + str(t3 - t2))
+            logging.debug('Recipes filtered: ' + str(recipes))
+            # recipes = Recipe.objects.filter(id__lte=1035)
             serializer = RecipeShortSerializer(recipes, many=True)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
