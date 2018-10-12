@@ -26,6 +26,11 @@ def get_recipes():
 def get_recipes_pickle():
     return pickle.load(open(RECIPE_PICKLE, "rb"))
 
+def save_recipes_pickle():
+        recipes = get_recipes()
+        pickle.dump(recipes, open(RECIPE_PICKLE, "wb"))
+        return recipes
+
 def filter_recipes(ingredients, recipe_list):
     recipe_to_keep = []
     for recipe in recipe_list:
