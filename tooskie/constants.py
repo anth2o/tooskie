@@ -74,3 +74,5 @@ UNITS_MARMITON = [
 # If any questions on the code, ask Boubou or Schmoulou
 
 NONE_UNIT = 'None'
+
+RECIPE_PICKLE = "/app/recipes.pickle"

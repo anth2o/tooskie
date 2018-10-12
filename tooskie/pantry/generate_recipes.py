@@ -1,5 +1,7 @@
 from tooskie.pantry.models import Pantry, IngredientInPantry
 from tooskie.recipe.models import Recipe, Ingredient, UnitOfIngredient, IngredientInRecipe
+from tooskie.constants import RECIPE_PICKLE
+import pickle
 
 def get_ingredients(pantry):
     ingredients = []
@@ -20,6 +22,9 @@ def get_recipes():
             recipe_dict['ingredients'].append(ingredient_in_recipe.ingredient)
         recipe_list.append(recipe_dict)
     return recipe_list
+
+def get_recipes_pickle():
+    return pickle.load(open(RECIPE_PICKLE, "rb"))
 
 def filter_recipes(ingredients, recipe_list):
     recipe_to_keep = []

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from tooskie.recipe.models import Ingredient, Recipe
 from tooskie.pantry.models import Pantry
-from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes
+from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle
 from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeShortSerializer, RecipeSerializer
 
 import time
@@ -49,7 +49,7 @@ def recipe_with_pantry(request, permaname):
     # TODO: optimize filter recipes
     try:
         t0 = time.time()
-        recipes = get_recipes()
+        recipes = get_recipes_pickle()
         t1 = time.time()
         logging.debug('Get recipes execution time: ' + str(t1 - t0))
         logging.debug('Number of recipes scanned: ' + str(len(recipes)))
