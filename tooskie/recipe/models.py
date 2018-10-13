@@ -24,10 +24,9 @@ class Recipe(NameModel):
     unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag')
 
-
-    @property
-    def number_of_steps(self):
-        return self.steps.all().count()
+    # @property
+    # def number_of_steps(self):
+    #     return self.steps.all().count()
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
@@ -94,8 +93,12 @@ class IngredientInRecipe(NameModel):
     is_essential = models.BooleanField(default=True)
 
     # Relations
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
-    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='ingredients')
+    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE, related_name='in_recipe')
+
+    @property
+    def picture(self):
+        return self.unit_of_ingredient.ingredient.all()
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()
