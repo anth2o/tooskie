@@ -98,7 +98,7 @@ class IngredientInRecipe(NameModel):
 
     @property
     def picture(self):
-        return self.unit_of_ingredient.ingredient.all()
+        return self.unit_of_ingredient.ingredient.picture
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()

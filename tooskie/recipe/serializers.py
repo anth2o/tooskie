@@ -68,6 +68,7 @@ class StepSerializer(serializers.ModelSerializer):
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_ingredient_name')
     name_plural = serializers.SerializerMethodField('get_ingredient_name_plural')
+    picture = serializers.URLField()
 
     unit = serializers.SerializerMethodField()
     unit_plural = serializers.SerializerMethodField()
