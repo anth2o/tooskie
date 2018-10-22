@@ -7,7 +7,6 @@ test.py
 test.json
 media
 .DS_Store
-data
 *.log
 *.pickle
 scripts
