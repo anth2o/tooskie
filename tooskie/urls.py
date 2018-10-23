@@ -15,15 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.urlpatterns import format_suffix_patterns
 from tooskie.recipe import views as recipe_views
 from tooskie.pantry import views as pantry_views
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
+api_urls = [
     url(r'^ingredient/$', recipe_views.all_ingredients),
     url(r'^ingredient/(?P<id>[0-9]+)$', recipe_views.ingredient_by_id),
     url(r'^ingredient/(?P<permaname>.+)$', recipe_views.ingredient_by_permaname),
@@ -31,6 +30,11 @@ urlpatterns = [
     url(r'^pantry/(?P<permaname>.+)$', pantry_views.pantry_by_permaname),
     url(r'^recipe/(?P<permaname>.+)$', recipe_views.recipe),
     url(r'^recipe-with-pantry/(?P<permaname>.+)$', recipe_views.recipe_with_pantry),
+]
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    url(r'^api/', include(api_urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
