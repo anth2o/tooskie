@@ -1,5 +1,6 @@
 import os
 import logging
+from django.conf import settings
 
 LINK_WORD = ' in '
 LOGGING_LEVEL = os.environ['LOGGING_LEVEL']
@@ -75,4 +76,4 @@ UNITS_MARMITON = [
 
 NONE_UNIT = 'None'
 
-RECIPE_PICKLE = "/app/recipes.pickle"
+RECIPE_PICKLE = settings.BASE_DIR + '/recipes.pickle'
