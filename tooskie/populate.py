@@ -69,8 +69,11 @@ def get_data_file(data_file='data/marmiton_scrap.json'):
 def populate_db():
     data = get_data_file()
     for i in range(len(data)):
-        recipe_data = data[str(i)]
-        process_recipe(recipe_data)
+        try:
+            recipe_data = data[str(i)]
+            process_recipe(recipe_data)
+        except Exception:
+            pass
 
 def populate_db_one_recipe(recipe_number=0):
     data = get_data_file()

@@ -5,10 +5,13 @@ class Command(BaseCommand):
     help = 'Populate database from scrapped data'
 
     def add_arguments(self, parser):
-        parser.add_argument('recipe_id', nargs='+', type=int)
-
+        parser.add_argument(
+            '--recipe_id',
+            dest='recipe_id',
+            help='Populate a specific recipe',
+        )
     def handle(self, *args, **options):
-        if 'recipe_id' in options and len(options['recipe_id']) > 0:
+        if 'recipe_id' in options and options['recipe_id']:
             for recipe_id in options['recipe_id']:
                 populate_db_one_recipe(recipe_id)
         else:
