@@ -42,7 +42,7 @@ class Pantry(NameModel):
         #        },
         #        ...
         #    ]
-        default_unit_model, created = Unit.objects.get_or_create(permaname='default')
+        default_unit_model, _ = Unit.objects.get_or_create(permaname='default')
         default_unit_model.name = 'Default'
         default_unit_model.save()
         for ingredient in ingredients:
@@ -51,7 +51,7 @@ class Pantry(NameModel):
                 ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient))
             except Exception:
                 raise ValueError(ingredient + " isn't a valid ingredient")
-            default_ingredient_unit_model, created = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
+            default_ingredient_unit_model, _ = UnitOfIngredient.objects.get_or_create(unit=default_unit_model, ingredient=ingredient_model)
             IngredientInPantry.objects.get_or_create(unit_of_ingredient=default_ingredient_unit_model, pantry=pantry)
 
 class IngredientInPantry(NameModel):

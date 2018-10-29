@@ -18,41 +18,21 @@ def loop_to_remove_first_word(word_list, name):
             break
     return name, word
 
-# def update_or_create_then_save(model_class, data):
-#     try:
-#         logging.debug(data)
-#         model_instance = model_class(**data)
-#         model_instance.save()
-#         permaname = model_instance.permaname
-#         created = True
-#     except Exception as e:
-#         logging.debug('Model already exists')
-#         logging.debug(model_instance)
-#         permaname = model_instance.permaname
-#         model_instance = model_class.objects.get(permaname=permaname)
-#         model_instance.__dict__.update(data)
-#         model_instance.save()
-#         created = False
-#     try:
-#         if created:
-#             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
-#         else:
-#             logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
-#     except Exception as e:
-#         logging.error(e)
-#         raise e
-#     return model_instance
-
 def update_or_create_then_save(model_class, data):
     try:
         logging.debug(data)
-        model_instance = model_class.objects.get(**data)
-        model_instance.__dict__.update(data)
-        created = False
-    except Exception as e:
-        model_instance = model_class.objects.create(**data)
+        model_instance = model_class(**data)
+        model_instance.save()
+        permaname = model_instance.permaname
         created = True
-    permaname = model_instance.permaname
+    except Exception as e:
+        logging.debug('Model already exists')
+        logging.debug(model_instance)
+        permaname = model_instance.permaname
+        model_instance = model_class.objects.get(permaname=permaname)
+        model_instance.__dict__.update(data)
+        model_instance.save()
+        created = False
     try:
         if created:
             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
@@ -62,6 +42,26 @@ def update_or_create_then_save(model_class, data):
         logging.error(e)
         raise e
     return model_instance
+
+# def update_or_create_then_save(model_class, data):
+#     try:
+#         logging.debug(data)
+#         model_instance = model_class.objects.get(**data)
+#         model_instance.__dict__.update(data)
+#         created = False
+#     except Exception as e:
+#         model_instance = model_class.objects.create(**data)
+#         created = True
+#     permaname = model_instance.permaname
+#     try:
+#         if created:
+#             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
+#         else:
+#             logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
+#     except Exception as e:
+#         logging.error(e)
+#         raise e
+#     return model_instance
 
 def get_or_create(object_, permaname_):
     try:

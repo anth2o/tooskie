@@ -144,15 +144,16 @@ def create_ustensils(global_data, recipe_model):
         name_split = ustensil['name'].split(' ')
         quantity = int(name_split[0])
         name = ' '.join(name_split[1:]).capitalize()
-        ustensils_to_dict.append({
-            'name': name,
-            'picture': ustensil['picture']
-        })
-        ustensils_in_recipe_to_dict.append({
-            'quantity': quantity,
-            'permaname': slugify(recipe_model.permaname + ' ' + name),
-            'recipe': recipe_model
-        })
+        if name[-6:].lower() != 'Amazon':
+            ustensils_to_dict.append({
+                'name': name,
+                'picture': ustensil['picture']
+            })
+            ustensils_in_recipe_to_dict.append({
+                'quantity': quantity,
+                'permaname': slugify(recipe_model.permaname + ' ' + name),
+                'recipe': recipe_model
+            })
     global_data['ustensils'] = ustensils_to_dict
     ustensils_list = create_model_list(global_data, 'ustensils')
     for i in range(len(ustensils_list)):
