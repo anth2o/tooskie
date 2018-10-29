@@ -142,7 +142,11 @@ def create_ustensils(global_data, recipe_model):
     ustensils_in_recipe_to_dict = []
     for ustensil in global_data['ustensils']:
         name_split = ustensil['name'].split(' ')
-        quantity = int(name_split[0])
+        try:
+            quantity = int(name_split[0])
+        except Exception:
+            logging.error('Quantity is not Integer')
+            continue
         name = ' '.join(name_split[1:]).capitalize()
         if name[-6:].lower() != 'Amazon':
             ustensils_to_dict.append({
