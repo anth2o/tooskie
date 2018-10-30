@@ -148,7 +148,7 @@ def create_ustensils(global_data, recipe_model):
             logging.error('Quantity is not Integer')
             continue
         name = ' '.join(name_split[1:]).capitalize()
-        if name[-6:].lower() != 'Amazon':
+        if name[-6:].lower() != 'amazon':
             ustensils_to_dict.append({
                 'name': name,
                 'picture': ustensil['picture']
