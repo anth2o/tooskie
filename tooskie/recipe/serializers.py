@@ -73,6 +73,9 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     unit = serializers.SerializerMethodField()
     unit_plural = serializers.SerializerMethodField()
 
+    linking_word = serializers.SerializerMethodField()
+    linking_word_plural = serializers.SerializerMethodField()
+
     class Meta:
         model = IngredientInRecipe
         fields = (
@@ -82,6 +85,8 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
             'complement_plural',
             'unit',
             'unit_plural',
+            'linking_word',
+            'linking_word_plural',
             'quantity',
             'picture'
         )
@@ -92,14 +97,17 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     def get_ingredient_name_plural(self, obj):
         return obj.unit_of_ingredient.ingredient.name_plural
 
-    # def get_picture(self, obj):
-    #     return obj.unit_of_ingredient.ingredient.picture
-
     def get_unit(self, obj):
         return obj.unit_of_ingredient.unit.name
     
     def get_unit_plural(self, obj):
         return obj.unit_of_ingredient.unit.name_plural
+
+    def get_linking_word(self, obj):
+        return obj.unit_of_ingredient.linking_word
+    
+    def get_linking_word_plural(self, obj):
+        return obj.unit_of_ingredient.linking_word_plural
 
 class RecipeSerializer(serializers.ModelSerializer):
     picture = serializers.URLField()
