@@ -24,7 +24,8 @@ class PopulateConfig:
         'recipe': 'name',
         'url': 'url',
         'cooking_time': 'cooking_time',
-        'preparation_time': 'preparation_time'
+        'preparation_time': 'preparation_time',
+        'picture': 'picture'
     }
 
     UNIT_FIELDS = [
