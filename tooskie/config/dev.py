@@ -19,7 +19,7 @@ class Dev(Common):
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = 'x4mjy^)4_!4v9bx1#vas9tgw%ds044d2@ht=a=z43m@*ae4ujb'
 
-    ALLOWED_HOSTS = ['ec2-52-47-163-208.eu-west-3.compute.amazonaws.com']
+    ALLOWED_HOSTS = ['ec2-52-47-135-186.eu-west-3.compute.amazonaws.com']
 
     # Database
     # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
