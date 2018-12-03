@@ -81,6 +81,8 @@ class Common(Configuration):
 
     USE_TZ = True
 
+    DATE_FORMAT = '%d/%b/%Y %H:%M:%S'
+
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
