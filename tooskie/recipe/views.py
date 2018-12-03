@@ -34,7 +34,6 @@ def ingredient_by_id(request, id):
 def ingredient_by_permaname(request, permaname):
     try:
         ingredient = Ingredient.objects.get(permaname=permaname)
-        print(ingredient.picture)
     except Ingredient.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 

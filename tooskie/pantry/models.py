@@ -47,7 +47,6 @@ class Pantry(NameModel):
         default_unit_model.save()
         for ingredient in ingredients:
             try:
-                print(ingredient)
                 ingredient_model = Ingredient.objects.get(permaname=slugify(ingredient))
             except Exception:
                 raise ValueError(ingredient + " isn't a valid ingredient")
