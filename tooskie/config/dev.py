@@ -84,5 +84,10 @@ class Dev(Common):
                 'propagate': False,
                 'level':'DEBUG',
             },
+            'django.template': {
+                'handlers': ['null'],  # Quiet by default!
+                'propagate': False,
+                'level':'DEBUG',
+            },
         },
     }

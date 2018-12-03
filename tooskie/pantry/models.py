@@ -77,8 +77,7 @@ class IngredientInPantry(NameModel):
     # Relations
     pantry = models.ForeignKey(
         'Pantry', on_delete=models.CASCADE, related_name='ingredients_in_pantry')
-    unit_of_ingredient = models.ForeignKey(
-        'recipe.UnitOfIngredient', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.DO_NOTHING)
 
     def save(self, *args, **kwargs):
         self.name = self.unit_of_ingredient.name + LINK_WORD + self.pantry.name.lower()
