@@ -26,9 +26,9 @@ def pantry(request):
     if request.method == 'POST':
         try:
             serializer = PantrySerializerWithIngredients(request.data)
-            logger.debug(serializer.data)
             logger.debug(serializer.data['name'])
-            pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'])
+            logger.debug("Ingredients in pantry : " + str(len(serializer.data["ingredients"])))
+            pantry_model, _ = Pantry.objects.get_or_create(name=serializer.data['name'])
             pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
             return Response(PantrySerializer(pantry_model).data, status=status.HTTP_201_CREATED)
         except Exception as e:
