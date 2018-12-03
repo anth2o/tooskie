@@ -20,7 +20,7 @@ class IngredientSerializerWithPicture(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-            'name_plural',
+             'name_plural',
             'picture'
         )
 

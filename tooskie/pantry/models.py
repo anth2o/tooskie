@@ -12,7 +12,7 @@ from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 from tooskie.helpers import get_or_create
 
 import logging 
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 class Pantry(NameModel):
     class Meta:

@@ -9,7 +9,7 @@ from tooskie.constants import LOGGING_CONFIG
 from tooskie.choices import model_tagged_choices
 
 import logging
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
@@ -30,7 +30,7 @@ class NameModel(models.Model):
     def save(self, *args, **kwargs):
         if self.name == '':
             raise ValidationError('This model must have a non-empty name')
-        logging.debug(self.name)
+        logger.debug(self.name)
         try:
             super(NameModel, self).save(*args, **kwargs)
         except Exception as e:

@@ -4,7 +4,7 @@ import sys, inspect
 
 from tooskie.constants import LOGGING_CONFIG
 import logging
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 for name, obj in inspect.getmembers(models):
     if inspect.isclass(obj):

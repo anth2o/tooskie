@@ -47,3 +47,25 @@ class Dev(Common):
 
     MEDIA_ROOT = join(os.path.dirname(Common.BASE_DIR), 'media')
     MEDIA_URL = '/media/'
+
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': '/home/ec2-user/tooskie/dev.log',
+            },
+            'console': {
+                'class': 'logging.StreamHandler',
+            }
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file', 'console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+        },
+    }

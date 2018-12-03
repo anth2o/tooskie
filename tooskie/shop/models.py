@@ -9,7 +9,7 @@ from tooskie import choices
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 
 import logging
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 class ShoppingList(BaseModel):
     # Relations
@@ -31,9 +31,9 @@ class IsInShoppingList(BaseModel):
         return str(self.unit_of_ingredient) + LINK_WORD + str(self.shopping_list)
 
     def save(self, *args, **kwargs):
-        logging.debug(self.is_bought)
-        logging.debug(self.quantity)
-        logging.debug(self.quantity_bought)
+        logger.debug(self.is_bought)
+        logger.debug(self.quantity)
+        logger.debug(self.quantity_bought)
         if self.is_bought and self.quantity_bought is None and self.quantity is not None:
             self.quantity_bought = self.quantity
         super(IsInShoppingList, self).save(*args, **kwargs)

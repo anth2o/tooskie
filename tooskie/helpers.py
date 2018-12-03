@@ -4,7 +4,7 @@ import re
 from tooskie.constants import LOGGING_CONFIG
 
 import logging
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 
 def loop_to_remove_first_word(word_list, name):
@@ -20,14 +20,14 @@ def loop_to_remove_first_word(word_list, name):
 
 def update_or_create_then_save(model_class, data):
     try:
-        logging.debug(data)
+        logger.debug(data)
         model_instance = model_class(**data)
         model_instance.save()
         permaname = model_instance.permaname
         created = True
     except Exception as e:
-        logging.debug('Model already exists')
-        logging.debug(model_instance)
+        logger.debug('Model already exists')
+        logger.debug(model_instance)
         permaname = model_instance.permaname
         model_instance = model_class.objects.get(permaname=permaname)
         model_instance.__dict__.update(data)
@@ -35,17 +35,17 @@ def update_or_create_then_save(model_class, data):
         created = False
     try:
         if created:
-            logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
+            logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
         else:
-            logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
+            logger.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         raise e
     return model_instance
 
 # def update_or_create_then_save(model_class, data):
 #     try:
-#         logging.debug(data)
+#         logger.debug(data)
 #         model_instance = model_class.objects.get(**data)
 #         model_instance.__dict__.update(data)
 #         created = False
@@ -55,11 +55,11 @@ def update_or_create_then_save(model_class, data):
 #     permaname = model_instance.permaname
 #     try:
 #         if created:
-#             logging.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
+#             logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
 #         else:
-#             logging.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
+#             logger.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
 #     except Exception as e:
-#         logging.error(e)
+#         logger.error(e)
 #         raise e
 #     return model_instance
 
@@ -87,7 +87,7 @@ def drop_columns(data, to_drop):
             for key_to_drop in to_drop:
                 data.pop(key_to_drop, None)
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
     return data
 
 def remove_useless_spaces(string):

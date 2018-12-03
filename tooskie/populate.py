@@ -11,7 +11,7 @@ from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_c
 import logging
 from tooskie.constants import LOGGING_CONFIG, UNITS_MARMITON, LINKING_WORD_MARMITON
 
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 
 class PopulateConfig:
@@ -83,12 +83,12 @@ def populate_db_one_recipe(recipe_number=0):
 
 
 def process_recipe(global_data):
-    logging.debug(global_data["recipe"])
+    logger.debug(global_data["recipe"])
     try:
         recipe_data = get_fields(global_data)
         update_or_create_then_save(Recipe, recipe_data)
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
 
 def get_fields(global_data):
     try:
@@ -104,7 +104,7 @@ def get_fields(global_data):
         create_ingredients(global_data, recipe_model)
         return recipe_data
     except Exception as e:
-        logging.error('Creation or update of recipe ' + recipe_data['name'] + ' failed')
+        logger.error('Creation or update of recipe ' + recipe_data['name'] + ' failed')
         raise e
 
 def create_levels(global_data):
@@ -117,7 +117,7 @@ def create_levels(global_data):
             model = create_model(level_type, level_data)
             models_dict[level_type] = model
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
     return models_dict
 
 def create_steps(global_data, recipe_model):
@@ -138,7 +138,7 @@ def create_tags(global_data, recipe_model):
         recipe_model.tag.add(tag)
 
 def create_ustensils(global_data, recipe_model):
-    logging.info('Creation or update of the different ustensils')
+    logger.info('Creation or update of the different ustensils')
     ustensils_to_dict = []
     ustensils_in_recipe_to_dict = []
     for ustensil in global_data['ustensils']:
@@ -146,7 +146,7 @@ def create_ustensils(global_data, recipe_model):
         try:
             quantity = int(name_split[0])
         except Exception:
-            logging.error('Quantity is not Integer')
+            logger.error('Quantity is not Integer')
             continue
         name = ' '.join(name_split[1:]).capitalize()
         if name[-6:].lower() != 'amazon':
@@ -203,7 +203,7 @@ def format_global_data_for_ingredient(global_data):
         ingredient_in_recipe_dict = get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_IN_RECIPE_FIELDS)
         ingredient_in_recipe_dict.update({'quantity': quantity})
         global_data['ingredient_in_recipe'].append(ingredient_in_recipe_dict)
-    logging.debug('Formatting of global data for ingredients succeeded')
+    logger.debug('Formatting of global data for ingredients succeeded')
     return global_data
 
 def format_ingredient(ingredient):
@@ -211,7 +211,7 @@ def format_ingredient(ingredient):
         name_dict = format_ingredient_name(ingredient['name'])
         name_dict.update(format_ingredient_name_plural(ingredient['name_plural'], name_dict))
     except Exception as e:
-        logging.error('Formatting of ingredient failed')
+        logger.error('Formatting of ingredient failed')
         raise e
     return name_dict
 
@@ -230,7 +230,7 @@ def format_ingredient_name(name):
 def format_ingredient_name_plural(name_plural, name_dict):
     if not name_dict['unit']:
         if name_dict['linking_word']:
-            logging.debug(name_dict)
+            logger.debug(name_dict)
         return {}
     name_plural_temp = name_plural[len(name_dict['unit']):]
     name_plural_temp = name_plural_temp.split(name_dict['linking_word'])
@@ -242,7 +242,7 @@ def format_ingredient_name_plural(name_plural, name_dict):
     return final_dict
              
 def create_model_list(global_data, key, to_drop=None, recipe_model=None):
-    logging.info('Create model list: ' + key)
+    logger.info('Create model list: ' + key)
     model_list = []
     for data in global_data[key]:
         try:
@@ -250,28 +250,28 @@ def create_model_list(global_data, key, to_drop=None, recipe_model=None):
             model = create_model(key, data, global_data['recipe'], recipe_model=recipe_model)
             model_list.append(model)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
     return model_list
 
 def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
-    logging.info('Create model: ' + model_key)
+    logger.info('Create model: ' + model_key)
     try:
         model_class = PopulateConfig.KEY_TO_MODEL[model_key]
         if recipe_model:
             model_data['recipe'] = recipe_model
         model = update_or_create_then_save(model_class, model_data)
     except Exception as e:
-        logging.error('Creation of the model failed')
-        logging.error(e)
+        logger.error('Creation of the model failed')
+        logger.error(e)
         raise e
     return model
 
 def format_recipe_dict(global_data):
-    logging.debug('Format recipe dict')
-    logging.debug(global_data)
+    logger.debug('Format recipe dict')
+    logger.debug(global_data)
     try:
         recipe_data = get_sub_dict(global_data, PopulateConfig.RECIPE_FIELDS.keys())
-        logging.debug(recipe_data)
+        logger.debug(recipe_data)
         for key, value in PopulateConfig.RECIPE_FIELDS.items():
             if key != value:
                 recipe_data[value] = recipe_data[key]
@@ -288,11 +288,11 @@ def format_recipe_dict(global_data):
                 elif 'min' in recipe_data[value]:
                     time = int(recipe_data[value].replace('min', '').strip())
                 else:
-                    logging.error(recipe_data[value] + " isn't a valid format")
+                    logger.error(recipe_data[value] + " isn't a valid format")
                     raise ValueError('Time formatting failed')
                 recipe_data[value] = time
-        logging.debug('Format recipe dict done')
+        logger.debug('Format recipe dict done')
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         raise e
     return recipe_data

@@ -10,14 +10,14 @@ from tooskie.helpers import get_sub_dict, remove_useless_spaces
 from tooskie.constants import LOGGING_CONFIG
 
 import logging
-logging.basicConfig(**LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 @api_view(['GET', 'POST'])
 def pantry(request):
     if request.method == 'GET':
         try:
             pantries = Pantry.objects.all()
-            logging.debug(pantries)
+            logger.debug(pantries)
             serializer = PantrySerializer(pantries, many=True)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
@@ -26,8 +26,8 @@ def pantry(request):
     if request.method == 'POST':
         try:
             serializer = PantrySerializerWithIngredients(request.data)
-            logging.debug(serializer.data)
-            logging.debug(serializer.data['name'])
+            logger.debug(serializer.data)
+            logger.debug(serializer.data['name'])
             pantry_model, created = Pantry.objects.get_or_create(name=serializer.data['name'])
             pantry_model.add_ingredients(serializer.data['ingredients'], pantry_model)
             return Response(PantrySerializer(pantry_model).data, status=status.HTTP_201_CREATED)
