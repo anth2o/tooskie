@@ -61,7 +61,7 @@ class Dev(Common):
             'file': {
                 'level': 'DEBUG',
                 'class': 'logging.FileHandler',
-                'filename': '/home/ec2-user/tooskie/dev.log',
+                'filename': './dev.log',
                 'formatter': 'default'
             },
             'console': {

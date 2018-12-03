@@ -49,16 +49,15 @@ class Pantry(NameModel):
         default_unit_model, _ = Unit.objects.get_or_create(permaname='default')
         default_unit_model.name = 'Default'
         default_unit_model.save()
-        for current_ingredient in self.ingredients:
+        for current_ingredient_in_pantry in self.ingredients_in_pantry.all():
             was_present = False
             for new_ingredient in ingredients:
-                if current_ingredient.name == new_ingredient["name"]:
+                if current_ingredient_in_pantry.unit_of_ingredient.ingredient.name == new_ingredient:
                     was_present = True
                     break
             if not was_present:
-                current_ingredient.delete()
-                logger.debug("Deleting " + str(current_ingredient) + " from pantry " + str(self.permaname))
-                
+                current_ingredient_in_pantry.delete()
+                logger.debug("Deleting " + str(current_ingredient_in_pantry.unit_of_ingredient.ingredient.permaname) + " from pantry " + str(self.permaname))
         for ingredient in ingredients:
             try:
                 ingredient_model = Ingredient.objects.get(
@@ -77,7 +76,7 @@ class IngredientInPantry(NameModel):
     # Relations
     pantry = models.ForeignKey(
         'Pantry', on_delete=models.CASCADE, related_name='ingredients_in_pantry')
-    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.DO_NOTHING)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         self.name = self.unit_of_ingredient.name + LINK_WORD + self.pantry.name.lower()
