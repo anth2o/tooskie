@@ -11,7 +11,7 @@ from tooskie.helpers import get_or_create
 from tooskie.recipe.models import Ingredient, Unit, UnitOfIngredient
 from tooskie.utils.models import BaseModel, NameModel
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 class Pantry(NameModel):

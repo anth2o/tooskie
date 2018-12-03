@@ -9,7 +9,7 @@ from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
 from tooskie.helpers import remove_useless_spaces
 from tooskie.utils.models import LevelModel, NameModel
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 class Recipe(NameModel):
     # time is in minutes

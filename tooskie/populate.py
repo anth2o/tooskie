@@ -11,7 +11,7 @@ from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_c
 import logging
 from tooskie.constants import LOGGING_CONFIG, UNITS_MARMITON, LINKING_WORD_MARMITON
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 class PopulateConfig:

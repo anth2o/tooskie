@@ -9,7 +9,7 @@ from tooskie import choices
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 class ShoppingList(BaseModel):
     # Relations

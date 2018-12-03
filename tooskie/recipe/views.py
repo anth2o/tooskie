@@ -9,7 +9,7 @@ from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeSe
 import logging
 from tooskie.constants import LOGGING_CONFIG
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 @api_view(['GET'])

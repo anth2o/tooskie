@@ -4,7 +4,7 @@ import re
 from tooskie.constants import LOGGING_CONFIG
 
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 def loop_to_remove_first_word(word_list, name):

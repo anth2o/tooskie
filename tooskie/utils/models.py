@@ -9,7 +9,7 @@ from tooskie.constants import LOGGING_CONFIG
 from tooskie.choices import model_tagged_choices
 
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))

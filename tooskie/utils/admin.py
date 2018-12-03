@@ -4,7 +4,7 @@ import sys, inspect
 
 from tooskie.constants import LOGGING_CONFIG
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 for name, obj in inspect.getmembers(models):
     if inspect.isclass(obj):

@@ -12,7 +12,7 @@ from tooskie.pantry.serializers import (PantrySerializer,
                                         PantrySerializerWithIngredientsDetailed)
 from tooskie.recipe.serializers import IngredientSerializerWithPicture
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 @api_view(['GET', 'POST'])
 def pantry(request):
