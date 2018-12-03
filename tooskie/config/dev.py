@@ -65,7 +65,7 @@ class Dev(Common):
             'django': {
                 'handlers': ['file', 'console'],
                 'level': 'DEBUG',
-                'propagate': True,
+                'propagate': False,
             },
         },
     }
