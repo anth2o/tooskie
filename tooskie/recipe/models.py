@@ -27,7 +27,7 @@ class Recipe(NameModel):
     tag = models.ManyToManyField('utils.Tag', blank=True)
 
 class Step(NameModel):
-    name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
+    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
     picture = models.ImageField(blank=True, null=True)
@@ -53,7 +53,7 @@ class Ustensil(NameModel):
     picture = models.ImageField(blank=True)
 
 class UstensilInRecipe(NameModel):
-    name = models.CharField(max_length=1000, blank=True, unique=True, verbose_name=_('Name'))
+    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     quantity = models.PositiveIntegerField(blank=True)
 
     # Relations
@@ -176,7 +176,7 @@ class SpecialDiet(NameModel):
 class IngredientCompatbibleWithDiet(NameModel):
     class Meta:
         verbose_name_plural = 'Ingredient compatible with diet'
-
+    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     is_compatible = models.NullBooleanField()
 
     # Relations
@@ -188,4 +188,7 @@ class IngredientCompatbibleWithDiet(NameModel):
         super(IngredientCompatbibleWithDiet, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.ingredient.name + ' is compatible with ' + self.special_diet.name.lower()
+        temp = ''
+        if not self.is_compatible:
+            temp = 'not'
+        return self.ingredient.name + ' is {} compatible with '.format(temp) + self.special_diet.name.lower()
