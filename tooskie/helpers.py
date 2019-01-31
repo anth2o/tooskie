@@ -18,16 +18,20 @@ def loop_to_remove_first_word(word_list, name):
             break
     return name, word
 
-def update_or_create_then_save(model_class, data):
+def get_or_create_from_data(model_class, data):
     logger.debug(data)
     created = False
     try:
         model_instance = model_class.objects.get(**data)
-    except Exception as e:
-        logger.debug(e)
+    except Exception:
         model_instance = model_class(**data)
-        model_instance.save()
-        created = True
+        try:
+            model_instance.save()
+            created = True
+        except Exception as e:
+            logger.error("Model {} hasn't been created because there is already an instance with the same name".format(model_class))
+            logger.error(data)
+            raise e
     permaname = model_instance.permaname
     if created:
         logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')

@@ -6,7 +6,7 @@ from fractions import Fraction
 
 from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe
 from tooskie.utils.models import Tag
-from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, update_or_create_then_save, drop_columns
+from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, get_or_create_from_data, drop_columns
 
 import logging
 from tooskie.constants import LOGGING_CONFIG, UNITS_MARMITON, LINKING_WORD_MARMITON
@@ -93,7 +93,7 @@ def process_recipe(global_data):
 def get_fields(global_data):
     try:
         recipe_data = format_recipe_dict(global_data)
-        recipe_model = update_or_create_then_save(Recipe, recipe_data)
+        recipe_model = get_or_create_from_data(Recipe, recipe_data)
         levels = create_levels(global_data)
         recipe_model.difficulty_level = levels['difficulty_level']
         recipe_model.budget_level = levels['budget_level']
@@ -259,7 +259,7 @@ def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
         model_class = PopulateConfig.KEY_TO_MODEL[model_key]
         if recipe_model:
             model_data['recipe'] = recipe_model
-        model = update_or_create_then_save(model_class, model_data)
+        model = get_or_create_from_data(model_class, model_data)
     except Exception as e:
         logger.error('Creation of the model failed')
         logger.error(e)

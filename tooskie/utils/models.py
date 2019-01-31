@@ -19,7 +19,7 @@ class BaseModel(models.Model):
         abstract = True
 
 class NameModel(models.Model):
-    name = models.CharField(max_length=1000, verbose_name=_('Name'))
+    name = models.CharField(max_length=1000, verbose_name=_('Name'), unique=True)
     permaname = AutoSlugField(always_update=True, populate_from='name', unique=True, max_length=256)
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Last updated at'))
