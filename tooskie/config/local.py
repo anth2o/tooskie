@@ -34,6 +34,25 @@ class Local(Common):
         },
     }
 
+    LOGGING = Common.LOGGING
+    LOGGING['loggers'] = {
+            'django': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': False,
+            },
+            'django.db.backends': {
+                'handlers': ['null'],  # Quiet by default!
+                'propagate': False,
+                'level':'DEBUG',
+            },
+            'django.template': {
+                'handlers': ['null'],  # Quiet by default!
+                'propagate': False,
+                'level':'DEBUG',
+            }
+        }
+
     REST_FRAMEWORK = {
 
         'DEFAULT_RENDERER_CLASSES': (

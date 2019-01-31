@@ -20,7 +20,7 @@ class BaseModel(models.Model):
 
 class NameModel(models.Model):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'))
-    permaname = AutoSlugField(always_update=False, populate_from='name')
+    permaname = AutoSlugField(always_update=True, populate_from='name', unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Last updated at'))
 
@@ -30,7 +30,6 @@ class NameModel(models.Model):
     def save(self, *args, **kwargs):
         if self.name == '':
             raise ValidationError('This model must have a non-empty name')
-        logger.debug(self.name)
         try:
             super(NameModel, self).save(*args, **kwargs)
         except Exception as e:
@@ -48,3 +47,4 @@ class LevelModel(NameModel):
 
 class Tag(NameModel):
     model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)
+    is_compatible_with = models.BooleanField(default=True)
