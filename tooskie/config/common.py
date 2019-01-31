@@ -47,33 +47,6 @@ class Common(Configuration):
         },
     ]
 
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'default': {
-                'format': '[{asctime}] [{levelname}] : {message}',
-                'style': '{',
-            },
-        },
-        'handlers': {
-            'file': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': './dev.log',
-                'formatter': 'default'
-            },
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'default'
-            },
-            'null': {
-                'level': 'DEBUG',
-                'class':'logging.NullHandler',
-            },
-        }
-    }
-
     WSGI_APPLICATION = 'tooskie.wsgi.application'
 
     # Password validation

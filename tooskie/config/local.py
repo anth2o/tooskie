@@ -34,10 +34,34 @@ class Local(Common):
         },
     }
 
-    LOGGING = Common.LOGGING
-    LOGGING['loggers'] = {
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'default': {
+                'format': '[{asctime}] [{levelname}] : {message}',
+                'style': '{',
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'default'
+            },
+            'error': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': './error.log',
+                'formatter': 'default'
+            },
+            'null': {
+                'level': 'DEBUG',
+                'class':'logging.NullHandler',
+            },
+        },
+        'loggers': {
             'django': {
-                'handlers': ['console'],
+                'handlers': ['console', 'error'],
                 'level': 'DEBUG',
                 'propagate': False,
             },
@@ -52,6 +76,7 @@ class Local(Common):
                 'level':'DEBUG',
             }
         }
+    }
 
     REST_FRAMEWORK = {
 

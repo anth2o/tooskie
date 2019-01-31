@@ -86,7 +86,7 @@ def process_recipe(global_data):
     logger.debug(global_data["recipe"])
     try:
         recipe_data = get_fields(global_data)
-        update_or_create_then_save(Recipe, recipe_data)
+        # update_or_create_then_save(Recipe, recipe_data)
     except Exception as e:
         logger.error(e)
 

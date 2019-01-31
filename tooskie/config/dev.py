@@ -48,10 +48,41 @@ class Dev(Common):
     MEDIA_ROOT = join(os.path.dirname(Common.BASE_DIR), 'media')
     MEDIA_URL = '/media/'
 
-    LOGGING = Common.LOGGING
-    LOGGING['loggers'] = {
+
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'default': {
+                'format': '[{asctime}] [{levelname}] : {message}',
+                'style': '{',
+            },
+        },
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': './dev.log',
+                'formatter': 'default'
+            },
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'default'
+            },
+            'error': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': './error.log',
+                'formatter': 'default'
+            },
+            'null': {
+                'level': 'DEBUG',
+                'class':'logging.NullHandler',
+            },
+        },
+        'loggers': {
             'django': {
-                'handlers': ['file', 'console'],
+                'handlers': ['file', 'console', 'error'],
                 'level': 'DEBUG',
                 'propagate': False,
             },
@@ -66,3 +97,4 @@ class Dev(Common):
                 'level':'DEBUG',
             }
         }
+    }

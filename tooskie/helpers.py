@@ -19,49 +19,21 @@ def loop_to_remove_first_word(word_list, name):
     return name, word
 
 def update_or_create_then_save(model_class, data):
+    logger.debug(data)
+    created = False
     try:
-        logger.debug(data)
+        model_instance = model_class.objects.get(**data)
+    except Exception as e:
+        logger.debug(e)
         model_instance = model_class(**data)
         model_instance.save()
-        permaname = model_instance.permaname
         created = True
-    except Exception as e:
-        logger.debug('Model already exists')
-        logger.debug(model_instance)
-        permaname = model_instance.permaname
-        model_instance = model_class.objects.get(permaname=permaname)
-        model_instance.__dict__.update(data)
-        model_instance.save()
-        created = False
-    try:
-        if created:
-            logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
-        else:
-            logger.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
-    except Exception as e:
-        logger.error(e)
-        raise e
+    permaname = model_instance.permaname
+    if created:
+        logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
+    else:
+        logger.info(model_class.__name__ + ' ' + permaname + ' was already in the database\n')
     return model_instance
-
-# def update_or_create_then_save(model_class, data):
-#     try:
-#         logger.debug(data)
-#         model_instance = model_class.objects.get(**data)
-#         model_instance.__dict__.update(data)
-#         created = False
-#     except Exception as e:
-#         model_instance = model_class.objects.create(**data)
-#         created = True
-#     permaname = model_instance.permaname
-#     try:
-#         if created:
-#             logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
-#         else:
-#             logger.info(model_class.__name__ + ' ' + permaname + ' has been updated\n')
-#     except Exception as e:
-#         logger.error(e)
-#         raise e
-#     return model_instance
 
 def get_or_create(object_, permaname_):
     try:
