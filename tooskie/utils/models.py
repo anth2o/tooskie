@@ -25,7 +25,7 @@ class NameModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, verbose_name=_('Last updated at'))
 
     def __str__(self):
-        return str(self.permaname)
+        return str(self.name)
 
     def save(self, *args, **kwargs):
         if self.name == '':

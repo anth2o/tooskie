@@ -29,6 +29,13 @@ class Recipe(NameModel):
 class RecipeTagged(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
 
+    def save(self, *args, **kwargs):
+        self.name = self.get_name()
+        super(RecipeTagged, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.recipe.name + LINK_WORD + str(self.tag)
+
     # Relations
     tag = models.ForeignKey('utils.Tag', on_delete=models.CASCADE)
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
@@ -49,7 +56,7 @@ class Step(NameModel):
         super(Step, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.recipe.name + ' ' + str(self.step_number)
+        return self.recipe.name + ' step ' + str(self.step_number)
 
 class DifficultyLevel(LevelModel):
     pass
