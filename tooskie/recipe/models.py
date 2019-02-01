@@ -23,7 +23,7 @@ class Recipe(NameModel):
     difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
-    ingredient = models.ManyToManyField('Ingredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
+    unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag', blank=True, through='RecipeTagged')
 
 class RecipeTagged(NameModel):
@@ -98,7 +98,7 @@ class Ingredient(NameModel):
         super(Ingredient, self).save(*args, **kwargs)
 
 class IngredientInRecipe(NameModel):
-    # Is through M2M Recipe - Ingredient
+    # Is through M2M Recipe - UnitOfIngredient
     class Meta:
         verbose_name_plural = 'Ingredients in recipe'
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
@@ -109,12 +109,11 @@ class IngredientInRecipe(NameModel):
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='ingredients')
-    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE, related_name='in_recipe')
-    unit = models.ForeignKey('Unit', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE, related_name='in_recipe')
 
     @property
     def picture(self):
-        return self.ingredient.picture
+        return self.unit_of_ingredient.ingredient.picture
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()
@@ -123,27 +122,33 @@ class IngredientInRecipe(NameModel):
         super(IngredientInRecipe, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.ingredient.name + LINK_WORD + self.unit.name.lower() + LINK_WORD + self.recipe.name.lower()
+        return self.unit_of_ingredient + LINK_WORD + self.recipe.name.lower()
 
 class UnitOfIngredient(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one unit'))
     linking_word = models.CharField(max_length=1000, blank=True)
     linking_word_plural = models.CharField(max_length=1000, blank=True)
-    quantity_of_nutritional_property =  models.FloatField(default=0)
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
-    unit_of_ingredient = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name="unit_of_ingredient")
-    nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
-    unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name="unit_of_nutritional_property")
+    unit = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name="unit_of_ingredient")
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()
         super(UnitOfIngredient, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.ingredient.name + LINK_WORD + self.unit_of_ingredient.name.lower()
+        return self.ingredient.name + LINK_WORD + self.unit.name.lower()
+
+class UnitOfIngredientHasNutrionalProperty(NameModel):
+    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
+    quantity_of_nutritional_property =  models.FloatField(blank=True, null=True)
+
+    # Relations
+    unit_of_ingredient = models.ForeignKey('UnitOfIngredient', on_delete=models.CASCADE)
+    nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
+    unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
 class RecipeHasNutritionalProperty(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
@@ -152,7 +157,6 @@ class RecipeHasNutritionalProperty(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
     nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
     unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE)
-
 
 class Unit(NameModel):
     name_plural = models.CharField(max_length=1000, blank=True)

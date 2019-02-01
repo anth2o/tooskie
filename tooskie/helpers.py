@@ -21,8 +21,16 @@ def loop_to_remove_first_word(word_list, name):
 def get_or_create_from_data(model_class, data):
     logger.debug(data)
     created = False
+    data_ic = {}
     try:
-        model_instance = model_class.objects.get(**data)
+        for key in data.keys():
+            data_ic[key + '__iexact'] = data[key]
+    except Exception as e:
+        logger.error(data)
+        logger.error(e)
+        raise e
+    try:
+        model_instance = model_class.objects.get(**data_ic)
     except Exception:
         model_instance = model_class(**data)
         try:
