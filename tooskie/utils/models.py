@@ -47,4 +47,5 @@ class LevelModel(NameModel):
 
 class Tag(NameModel):
     model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)
-    is_compatible_with = models.BooleanField(default=True)
+    picture = models.ImageField(blank=True, null=True)
+    to_display = models.BooleanField(default=False)

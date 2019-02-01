@@ -1,7 +1,10 @@
-from tooskie.pantry.models import Pantry, IngredientInPantry
-from tooskie.recipe.models import Recipe, Ingredient, UnitOfIngredient, IngredientInRecipe
-from tooskie.constants import RECIPE_PICKLE
 import pickle
+
+from tooskie.constants import RECIPE_PICKLE
+from tooskie.pantry.models import IngredientInPantry, Pantry
+from tooskie.recipe.models import (Ingredient, IngredientInRecipe, Recipe,
+                                   UnitOfIngredient)
+
 
 def get_ingredients(pantry):
     ingredients = []

@@ -11,12 +11,16 @@ from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 import logging
 logger = logging.getLogger("django")
 
-class ShoppingList(BaseModel):
+class ShoppingList(NameModel):
     # Relations
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return (str(self.user)) + LINK_WORD + str(self.created_at)
+    def save(self, *args, **kwargs):
+        self.name = self.get_name()
+        super(ShoppingList, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return self.user.name + str(self.created_at)
 
 class IsInShoppingList(BaseModel):
     quantity = models.FloatField(blank=True, null=True)
@@ -25,10 +29,11 @@ class IsInShoppingList(BaseModel):
 
     #Relations
     shopping_list = models.ForeignKey('ShoppingList', on_delete=models.CASCADE)
-    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
+    ingredient = models.ForeignKey('recipe.Ingredient', on_delete=models.CASCADE)
+    unit = models.ForeignKey('recipe.Unit', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.unit_of_ingredient) + LINK_WORD + str(self.shopping_list)
+        return self.ingredient.name + LINK_WORD + self.shopping_list.name.lower()
 
     def save(self, *args, **kwargs):
         logger.debug(self.is_bought)
