@@ -26,7 +26,7 @@ class Dev(Common):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'tooskie-dev',
+            'NAME': 'tooskie_dev',
             'USER': 'tooskie',
             'PASSWORD': 'tooskie_DB_dev',
             'HOST': 'tooskie-dev.c19qlgqvcgnf.eu-west-3.rds.amazonaws.com',
