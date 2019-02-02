@@ -62,7 +62,7 @@ class Dev(Common):
             'file': {
                 'level': 'DEBUG',
                 'class': 'logging.FileHandler',
-                'filename': './dev.log',
+                'filename': 'logs/dev.log',
                 'formatter': 'default'
             },
             'console': {
@@ -72,7 +72,7 @@ class Dev(Common):
             'error': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
-                'filename': './error.log',
+                'filename': 'logs/error.log',
                 'formatter': 'default'
             },
             'null': {

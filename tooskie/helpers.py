@@ -1,4 +1,5 @@
 from django.utils.text import slugify
+from django.db.models import Model
 import re
 
 from tooskie.constants import LOGGING_CONFIG
@@ -21,18 +22,7 @@ def loop_to_remove_first_word(word_list, name):
 def get_or_create_from_data(model_class, data):
     logger.debug(data)
     created = False
-    data_ic = {}
-    try:
-        for key, value in data.items():
-            if isinstance(value, str):
-                data_ic[key + '__iexact'] = data[key]
-            else:
-                data_ic[key] = data[key]
-    except Exception as e:
-        logger.error(data)
-        logger.error(e)
-        raise e
-    logger.debug(data_ic)
+    data_ic = get_ic_dictionary(data)
     try:
         model_instance = model_class.objects.get(**data_ic)
     except Exception:
@@ -40,16 +30,43 @@ def get_or_create_from_data(model_class, data):
         try:
             model_instance.save()
             created = True
-        except Exception as e:
-            logger.error("Model {} hasn't been created because there is already an instance with the same name".format(model_class))
-            logger.error(data)
-            raise e
+        except Exception:
+            try:
+                if 'name' in data:
+                    model_instance = model_class.objects.get(name__iexact=data['name'])
+                else:
+                    model_instance = model_class.objects.get(**keep_model_values(data))
+            except Exception as e:
+                logger.error("Model {} hasn't been created because there is already an instance with the same name".format(model_class))
+                logger.error(data)
+                raise e
     permaname = model_instance.permaname
     if created:
         logger.info(model_class.__name__ + ' ' + permaname + ' has been created\n')
     else:
         logger.info(model_class.__name__ + ' ' + permaname + ' was already in the database\n')
     return model_instance
+
+def get_ic_dictionary(data):
+    data_ic = {}
+    try:
+        for key, value in data.items():
+            if isinstance(value, str):
+                data_ic[key + '__iexact'] = value
+            else:
+                data_ic[key] = value
+    except Exception as e:
+        logger.error(data)
+        logger.error(e)
+        raise e
+    return data_ic
+
+def keep_model_values(data):
+    res = {}
+    for key, value in data.items():
+        if isinstance(value, Model):
+            res[key] = value
+    return res
 
 def get_or_create(object_, permaname_):
     try:

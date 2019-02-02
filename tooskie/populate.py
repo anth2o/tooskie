@@ -252,7 +252,7 @@ def format_global_data_for_ingredient(global_data):
         global_data['unit_of_ingredient'].append(get_sub_dict(ingredient_data, PopulateConfig.UNIT_OF_INGREDIENT_FIELDS))
         quantity = None
         if ingredient_data['quantity'] != "null" and ingredient_data['quantity'] != "" and people_number:
-            quantity = float(Fraction(ingredient_data['quantity'])) / people_number
+            quantity = round(float(Fraction(ingredient_data['quantity'])) / people_number, 1)
         ingredient_in_recipe_dict = get_sub_dict(ingredient_data, PopulateConfig.INGREDIENT_IN_RECIPE_FIELDS)
         ingredient_in_recipe_dict.update({'quantity': quantity})
         global_data['ingredient_in_recipe'].append(ingredient_in_recipe_dict)

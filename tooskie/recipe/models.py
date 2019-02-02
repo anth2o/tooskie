@@ -122,7 +122,10 @@ class IngredientInRecipe(NameModel):
         super(IngredientInRecipe, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
+        pref = ''
+        if self.quantity is not None:
+            pref = str(self.quantity) + ' '
+        return  pref + self.unit_of_ingredient.name.lower() + LINK_WORD + self.recipe.name.lower()
 
 class UnitOfIngredient(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
@@ -139,7 +142,13 @@ class UnitOfIngredient(NameModel):
         super(UnitOfIngredient, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.ingredient.name + LINK_WORD + self.unit.name.lower()
+        pref = ''
+        pref2 = ''
+        if self.unit.name.lower() != 'none':
+            pref = self.unit.name.lower() + ' '
+        if self.linking_word != '':
+            pref2 = self.linking_word + ' '
+        return pref + pref2 + self.ingredient.name.lower()
 
 class UnitOfIngredientHasNutrionalProperty(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)

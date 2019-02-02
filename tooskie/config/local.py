@@ -51,7 +51,7 @@ class Local(Common):
             'error': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
-                'filename': './error.log',
+                'filename': 'logs/error.log',
                 'formatter': 'default'
             },
             'null': {
