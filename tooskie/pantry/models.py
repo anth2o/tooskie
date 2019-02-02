@@ -71,6 +71,9 @@ class Pantry(NameModel):
 
 
 class IngredientInPantry(NameModel):
+    class Meta:
+        verbose_name_plural = 'Ingredients in pantry'
+
     quantity = models.FloatField(blank=True, null=True)
 
     # Relations
@@ -84,6 +87,9 @@ class IngredientInPantry(NameModel):
 
 
 class UstensilInPantry(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Ustensils in pantry'
+
     quantity = models.FloatField(blank=True, null=True)
 
     # Relations

@@ -27,6 +27,8 @@ class Recipe(NameModel):
     tag = models.ManyToManyField('utils.Tag', blank=True, through='RecipeTagged')
 
 class RecipeTagged(NameModel):
+    class Meta:
+        verbose_name_plural = 'Recipes tagged'
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
 
     def save(self, *args, **kwargs):
@@ -69,6 +71,9 @@ class Ustensil(NameModel):
     picture = models.ImageField(blank=True)
 
 class UstensilInRecipe(NameModel):
+    class Meta:
+        verbose_name_plural = 'Ustensils in recipe'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     quantity = models.PositiveIntegerField(blank=True)
 
@@ -101,6 +106,7 @@ class IngredientInRecipe(NameModel):
     # Is through M2M Recipe - UnitOfIngredient
     class Meta:
         verbose_name_plural = 'Ingredients in recipe'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     quantity = models.FloatField(blank=True, null=True)
     complement = models.CharField(max_length=1000, blank=True)
@@ -128,6 +134,9 @@ class IngredientInRecipe(NameModel):
         return  pref + self.unit_of_ingredient.name.lower() + LINK_WORD + self.recipe.name.lower()
 
 class UnitOfIngredient(NameModel):
+    class Meta:
+        verbose_name_plural = 'Unit of ingredients'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one unit'))
     linking_word = models.CharField(max_length=1000, blank=True)
@@ -151,6 +160,9 @@ class UnitOfIngredient(NameModel):
         return pref + pref2 + self.ingredient.name.lower()
 
 class UnitOfIngredientHasNutrionalProperty(NameModel):
+    class Meta:
+        verbose_name_plural = 'Unit of ingredients has nutritional properties'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     quantity_of_nutritional_property =  models.FloatField(blank=True, null=True)
 
@@ -160,6 +172,9 @@ class UnitOfIngredientHasNutrionalProperty(NameModel):
     unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
 class RecipeHasNutritionalProperty(NameModel):
+    class Meta:
+        verbose_name_plural = 'Recipes has nutritional properties'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
 
     # Relations
@@ -189,6 +204,7 @@ class NutritionalProperty(NameModel):
 class CanReplace(NameModel):
     class Meta:
         verbose_name_plural = 'Can replace'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     score = models.FloatField(default=0, verbose_name=_('A score representing how well this ingredient can replace an other'))
     new_quantity = models.FloatField(blank=True, null=True, verbose_name=_('The quantity of the new ingredient'))
@@ -208,10 +224,10 @@ class CanReplace(NameModel):
 class SpecialDiet(NameModel):
     description = models.TextField(blank=True)
 
-
 class IngredientCompatbibleWithDiet(NameModel):
     class Meta:
-        verbose_name_plural = 'Ingredient compatible with diet'
+        verbose_name_plural = 'Ingredients compatible with diet'
+
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     is_compatible = models.NullBooleanField()
 

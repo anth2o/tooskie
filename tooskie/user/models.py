@@ -30,10 +30,10 @@ class User(NameModel):
             raise e            
 
 class Status(NameModel):
-    description = models.TextField(blank=True)
-
     class Meta:
         verbose_name_plural = 'Status'
+
+    description = models.TextField(blank=True)
 
 class RecipeSuggested(BaseModel):
     class Meta:
@@ -67,6 +67,8 @@ class Picture(BaseModel):
         return str(self.recipe_suggested)
 
 class ReplacedIngredient(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Replaced ingredient'
     proportion_replaced = models.FloatField(blank=True, null=True, verbose_name=_('Proportion of original ingredient replaced'))
 
     # Relations
@@ -96,6 +98,9 @@ class CanAccessPlaylist(BaseModel):
         return str(self.user) + LINK_WORD + str(self.playlist)
 
 class IsInPlaylist(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Are in playlist'
+
     rank = models.PositiveIntegerField(blank=True, null=True)
 
     # Relations
@@ -106,10 +111,16 @@ class IsInPlaylist(BaseModel):
         return str(self.playlist) + LINK_WORD + str(self.recipe)
 
 class SocialMedia(NameModel):
+    class Meta:
+        verbose_name_plural = 'Social media'
+
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True)
 
 class IsConnectedTo(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Are connected to'
+
     token = models.CharField(max_length=1000, blank=True, verbose_name=_('Token to access social media'))
 
     # Relations

@@ -23,17 +23,19 @@ class ShoppingList(NameModel):
         return self.user.name + str(self.created_at)
 
 class IsInShoppingList(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Are in shopping list'
+
     quantity = models.FloatField(blank=True, null=True)
     is_bought = models.BooleanField(default=False)
     quantity_bought = models.FloatField(blank=True, null=True)
 
     #Relations
     shopping_list = models.ForeignKey('ShoppingList', on_delete=models.CASCADE)
-    ingredient = models.ForeignKey('recipe.Ingredient', on_delete=models.CASCADE)
-    unit = models.ForeignKey('recipe.Unit', on_delete=models.CASCADE)
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.ingredient.name + LINK_WORD + self.shopping_list.name.lower()
+        return self.unit_of_ingredient.name + LINK_WORD + self.shopping_list.name.lower()
 
     def save(self, *args, **kwargs):
         logger.debug(self.is_bought)
@@ -62,6 +64,9 @@ class Shop(NameModel):
 
 
 class IsInShop(BaseModel):
+    class Meta:
+        verbose_name_plural = 'Are in shop'
+        
     price = models.FloatField(blank=True, null=True)
 
     # Relations
