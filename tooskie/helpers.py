@@ -23,12 +23,16 @@ def get_or_create_from_data(model_class, data):
     created = False
     data_ic = {}
     try:
-        for key in data.keys():
-            data_ic[key + '__iexact'] = data[key]
+        for key, value in data.items():
+            if isinstance(value, str):
+                data_ic[key + '__iexact'] = data[key]
+            else:
+                data_ic[key] = data[key]
     except Exception as e:
         logger.error(data)
         logger.error(e)
         raise e
+    logger.debug(data_ic)
     try:
         model_instance = model_class.objects.get(**data_ic)
     except Exception:

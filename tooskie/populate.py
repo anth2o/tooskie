@@ -83,17 +83,9 @@ def populate_db_one_recipe(recipe_number=0):
     recipe_data = data[str(recipe_number)]
     process_recipe(recipe_data)
 
-
-def process_recipe(recipe_data):
-    logger.debug(recipe_data["recipe"])
+def process_recipe(global_data):
     try:
-        recipe_data = get_fields(recipe_data)
-        get_or_create_from_data(Recipe, recipe_data)
-    except Exception as e:
-        logger.error(e)
-
-def get_fields(global_data):
-    try:
+        logger.debug(global_data["recipe"])
         recipe_data = format_recipe_dict(global_data)
         logger.debug(recipe_data)
         recipe_model = create_model('recipe', recipe_data)
@@ -111,7 +103,7 @@ def get_fields(global_data):
         raise e
 
 def format_recipe_dict(global_data):
-    logger.debug('Format recipe dict')
+    logger.debug('Starting formatting of recipe dict')
     logger.debug(global_data)
     logger.debug('')
     try:
@@ -124,6 +116,9 @@ def format_recipe_dict(global_data):
             if value[-5:] == '_time':
                 if recipe_data[value] == 'none':
                     time = None
+                elif 'j' in recipe_data[value]:
+                    time_split = recipe_data[value].strip().split('j')
+                    time = int(time_split[0].strip()) * 24 * 60
                 elif 'h' in recipe_data[value]:
                     time_split = recipe_data[value].strip().split('h')
                     if time_split[1].strip() == '':
@@ -203,7 +198,7 @@ def create_ustensils(global_data, recipe_model):
         try:
             quantity = int(name_split[0])
         except Exception:
-            logger.error('Quantity is not Integer')
+            logger.error('Formatting of ustensil {} failed because quantity is not integer'.format(ustensil))
             continue
         name = ' '.join(name_split[1:]).capitalize()
         if name[-6:].lower() != 'amazon':
@@ -227,13 +222,12 @@ def create_ingredients(global_data, recipe_model):
     unit_list = create_model_list(global_data, 'unit')
     ingredient_list = create_model_list(global_data, 'ingredient')
     for i in range(len(unit_list)):
-        global_data['unit_of_ingredient'][i]['unit_of_ingredient'] = unit_list[i]
+        global_data['unit_of_ingredient'][i]['unit'] = unit_list[i]
         global_data['unit_of_ingredient'][i]['ingredient'] = ingredient_list[i]
     unit_of_ingredient_list = create_model_list(global_data, 'unit_of_ingredient')
-    for i in range(len(unit_list)):
-        global_data['ingredient_in_recipe'][i]['unit'] = unit_list[i]
+    for i in range(len(unit_of_ingredient_list)):
+        global_data['ingredient_in_recipe'][i]['unit_of_ingredient'] = unit_of_ingredient_list[i]
         global_data['ingredient_in_recipe'][i]['recipe'] = recipe_model
-        global_data['ingredient_in_recipe'][i]['ingredient'] = ingredient_list[i]
     create_model_list(global_data, 'ingredient_in_recipe')
 
 def format_global_data_for_ingredient(global_data):

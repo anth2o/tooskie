@@ -122,7 +122,7 @@ class IngredientInRecipe(NameModel):
         super(IngredientInRecipe, self).save(*args, **kwargs)
 
     def get_name(self):
-        return self.unit_of_ingredient + LINK_WORD + self.recipe.name.lower()
+        return self.unit_of_ingredient.name + LINK_WORD + self.recipe.name.lower()
 
 class UnitOfIngredient(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
