@@ -59,10 +59,6 @@ class Shop(NameModel):
     # Relations
     brand = models.ForeignKey('Brand', on_delete=models.DO_NOTHING, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        self.permaname = slugify(str(self.name) + '-lat-' + str(self.latitude) + '-lon-' + str(self.longitude))
-        super(Shop, self).save(*args, **kwargs)
-
 class IsInShop(BaseModel):
     class Meta:
         verbose_name_plural = 'Are in shop'
