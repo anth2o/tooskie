@@ -100,7 +100,7 @@ def process_recipe(global_data):
         logger.debug(recipe_data)
         recipe_data_to_create = add_suffix(recipe_data, PopulateConfig.TRANSLATED_FIELDS, PopulateConfig.TRANSLATION_SUFFIX)
         logger.debug(recipe_data_to_create)
-        recipe_model = create_model('recipe', recipe_data, recipe_data_to_create)
+        recipe_model = create_model('recipe', recipe_data_to_create)
         levels = create_levels(global_data)
         recipe_model.difficulty_level = levels['difficulty_level']
         recipe_model.budget_level = levels['budget_level']
@@ -149,13 +149,15 @@ def format_recipe_dict(global_data):
         raise e
     return recipe_data
 
-def create_model(model_key, model_data, model_data_to_create, recipe_name=None, recipe_model=None):
+def create_model(model_key, model_data, recipe_name=None, recipe_model=None):
     logger.info('Create model: ' + model_key)
+    logger.debug('Model data: ' + str(model_data))
+    
     try:
         model_class = PopulateConfig.KEY_TO_MODEL[model_key]
         if recipe_model:
             model_data['recipe'] = recipe_model
-        model = get_or_create_from_data(model_class, model_data_to_create)
+        model = get_or_create_from_data(model_class, model_data)
     except Exception as e:
         raise e
     return model
@@ -168,8 +170,8 @@ def create_model_list(global_data, key, to_drop=None, recipe_model=None):
     for data in global_data[key]:
         try:
             drop_columns(data, to_drop)
-            data_to_create = add_suffix(data, PopulateConfig.TRANSLATED_FIELDS, PopulateConfig.TRANSLATION_SUFFIX)
-            model = create_model(key, data, data_to_create, global_data['recipe'], recipe_model=recipe_model)
+            data = add_suffix(data, PopulateConfig.TRANSLATED_FIELDS, PopulateConfig.TRANSLATION_SUFFIX)
+            model = create_model(key, data, global_data['recipe'], recipe_model=recipe_model)
             model_list.append(model)
         except Exception as e:
             logger.error(e)
@@ -182,7 +184,7 @@ def create_levels(global_data):
             level_data = {
                 'name': global_data[level_type]
             }
-            model = create_model(level_type, level_data, add_suffix(level_data, PopulateConfig.TRANSLATED_FIELDS, PopulateConfig.TRANSLATION_SUFFIX))
+            model = create_model(level_type, add_suffix(level_data, PopulateConfig.TRANSLATED_FIELDS, PopulateConfig.TRANSLATION_SUFFIX))
             models_dict[level_type] = model
         except Exception as e:
             logger.error(e)
