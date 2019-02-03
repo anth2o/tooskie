@@ -23,6 +23,7 @@ def get_or_create_from_data(model_class, data):
     logger.debug(data)
     created = False
     data_ic = get_ic_dictionary(data)
+    logger.debug(data_ic)
     try:
         model_instance = model_class.objects.get(**data_ic)
     except Exception:
@@ -97,3 +98,12 @@ def drop_columns(data, to_drop):
 
 def remove_useless_spaces(string):
     return re.sub(' +', ' ', string)
+
+def add_suffix(data, keys, suffixes):
+    new_data = data.copy()
+    for key, value in data.items():
+        if key in keys:
+            for suffix in suffixes:
+                new_data[key + '_' + suffix] = value
+            new_data.pop(key)
+    return new_data

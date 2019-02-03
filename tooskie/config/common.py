@@ -90,9 +90,6 @@ class Common(Configuration):
         ('en', gettext('English')),
     )
 
-    MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
-    MODELTRANSLATION_LANGUAGES = ('fr', 'en')
-
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
