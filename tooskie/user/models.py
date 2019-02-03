@@ -8,8 +8,8 @@ from tooskie.utils.models import BaseModel, NameModel
 from tooskie.constants import LINK_WORD
 
 class User(NameModel):
-    first_name = models.CharField(max_length=1000, verbose_name=_('First name'))
-    last_name = models.CharField(max_length=1000, verbose_name=_('Full name'))
+    first_name = models.CharField(max_length=1000, verbose_name=_('First name'), blank=True)
+    last_name = models.CharField(max_length=1000, verbose_name=_('Full name'), blank=True)
     date_of_birth = models.DateTimeField(blank=True, null=True, verbose_name=_('Date of birth'))
 
     # Relations
@@ -17,17 +17,10 @@ class User(NameModel):
     status = models.ForeignKey('Status', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Status'))
     playlist = models.ManyToManyField('Playlist', through='CanAccessPlaylist')
     social_media = models.ManyToManyField('SocialMedia', through='IsConnectedTo')
-    pantry = models.ManyToManyField('pantry.Pantry')
-    special_diet = models.ManyToManyField('recipe.SpecialDiet')
-    doesnt_like = models.ManyToManyField('recipe.Ingredient')
+    pantry = models.ManyToManyField('pantry.Pantry', blank=True)
+    special_diet = models.ManyToManyField('recipe.SpecialDiet', blank=True)
+    doesnt_like = models.ManyToManyField('recipe.Ingredient', blank=True)
     receipt = models.ManyToManyField('pantry.Receipt', through='pantry.PayReceipt')
-
-    def save(self, *args, **kwargs):
-        self.name = self.first_name + ' ' + self.last_name
-        try:
-            super(User, self).save(*args, **kwargs)
-        except Exception as e:
-            raise e            
 
 class Status(NameModel):
     class Meta:
@@ -80,6 +73,7 @@ class ReplacedIngredient(BaseModel):
         return str(self.can_replace) + LINK_WORD + str(self.recipe_suggested)
 
 class Playlist(NameModel):
+    description = models.TextField(blank=True)
     is_public = models.BooleanField(default=True)
     is_favorite = models.BooleanField(default=False)
 

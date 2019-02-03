@@ -11,3 +11,6 @@ class NamePluralTranslationOptions(TranslationOptions):
 
 class NamePluralDescriptionTranslationOptions(TranslationOptions):
     fields = ('name', 'name_plural', 'description')
+
+class DescriptionTranslationOptions(TranslationOptions):
+    fields = ('description', )

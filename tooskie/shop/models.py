@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger("django")
 
 class ShoppingList(NameModel):
+    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     # Relations
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
@@ -61,7 +62,6 @@ class Shop(NameModel):
     def save(self, *args, **kwargs):
         self.permaname = slugify(str(self.name) + '-lat-' + str(self.latitude) + '-lon-' + str(self.longitude))
         super(Shop, self).save(*args, **kwargs)
-
 
 class IsInShop(BaseModel):
     class Meta:
