@@ -53,8 +53,8 @@ class Brand(NameModel):
 class Shop(NameModel):
     description = models.TextField(blank=True)
     is_partner = models.NullBooleanField()
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
     # Relations
     brand = models.ForeignKey('Brand', on_delete=models.DO_NOTHING, blank=True, null=True)
