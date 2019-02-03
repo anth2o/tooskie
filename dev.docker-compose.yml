@@ -15,7 +15,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "800:8000"
+      - "8000:8000"
 
   phppgadmin:
     restart: always
