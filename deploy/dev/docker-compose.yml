@@ -6,7 +6,7 @@ services:
     restart: always
     build: 
       context: .
-      dockerfile: ../../Dockerfile
+      dockerfile: Dockerfile
     environment:
       DJANGO_CONFIGURATION: Dev
       DJANGO_SETTINGS_MODULE: tooskie.config
