@@ -11,7 +11,7 @@ services:
       DJANGO_CONFIGURATION: Dev
       DJANGO_SETTINGS_MODULE: tooskie.config
       LOGGING_LEVEL: DEBUG
-    command: bash -c "sleep 5 && python manage.py migrate && python manage.py makemigrations utils user recipe pantry shop && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "sleep 5 && python manage.py migrate && python manage.py makemigrations utils user recipe pantry shop && python manage.py migrate && python manage.py update_translation_fields && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
