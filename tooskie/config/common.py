@@ -11,6 +11,7 @@ class Common(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
+        'modeltranslation',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
@@ -83,6 +84,14 @@ class Common(Configuration):
 
     DATE_FORMAT = '%d/%b/%Y %H:%M:%S'
 
+    gettext = lambda s: s
+    LANGUAGES = (
+        ('fr', gettext('French')),
+        ('en', gettext('English')),
+    )
+
+    MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
+    MODELTRANSLATION_LANGUAGES = ('fr', 'en')
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/

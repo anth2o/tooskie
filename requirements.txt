@@ -3,6 +3,7 @@ django-configurations==2.1
 django-rest-framework
 djangorestframework-camel-case
 django-autoslug-iplweb
+django-modeltranslation==0.13b1
 Pillow
 psycopg2-binary
 six

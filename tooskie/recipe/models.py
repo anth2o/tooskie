@@ -67,6 +67,7 @@ class BudgetLevel(LevelModel):
     pass
 
 class Ustensil(NameModel):
+    name_plural = models.CharField(max_length=1000, blank=True)
     description = models.TextField(blank=True)
     picture = models.ImageField(blank=True)
 
