@@ -49,3 +49,4 @@ class Tag(NameModel):
     model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)
     picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
