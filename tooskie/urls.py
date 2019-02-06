@@ -35,9 +35,14 @@ api_urls = [
     url(r'^tag/$', tag_views.all_tags),
 ]
 
+form_urls = [
+    url(r'^recipe/$', recipe_views.get_name),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api/', include(api_urls))
+    url(r'^api/', include(api_urls)),
+    url(r'^form/', include(form_urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)

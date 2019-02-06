@@ -1,10 +1,13 @@
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from tooskie.recipe.models import Ingredient, Recipe
+from .forms import RecipeForm
+from .models import Ingredient, Recipe
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
-from tooskie.recipe.serializers import IngredientSerializerWithPicture, RecipeSerializer
+from .serializers import IngredientSerializerWithPicture, RecipeSerializer
 
 import logging
 from tooskie.constants import LOGGING_CONFIG
@@ -70,3 +73,15 @@ def recipe(request, permaname):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+def get_name(request):
+    logger.debug(request)
+    if request.method == 'POST':
+        form = RecipeForm(request.POST)
+        if form.is_valid():
+            logger.debug('form is valid')
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = RecipeForm()
+    logger.debug(form)
+    return render(request, 'base.html', {'form': form})
