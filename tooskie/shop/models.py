@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
 from tooskie.utils.models import BaseModel, NameModel
-from tooskie import choices
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 
 import logging

@@ -6,7 +6,6 @@ from autoslug import AutoSlugField
 
 from tooskie.helpers import remove_useless_spaces
 from tooskie.constants import LOGGING_CONFIG
-from tooskie.choices import model_tagged_choices
 
 import logging
 logger = logging.getLogger("django")
@@ -46,7 +45,6 @@ class LevelModel(NameModel):
         abstract = True
 
 class Tag(NameModel):
-    model_tagged = models.CharField(max_length=255, blank=True, choices=model_tagged_choices)
     picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
     description = models.TextField(blank=True)

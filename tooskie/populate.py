@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils.text import slugify
 from fractions import Fraction
 
-from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe, RecipeTagged
+from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe
 from tooskie.utils.models import Tag
 from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, get_or_create_from_data, drop_columns, add_suffix
 
@@ -61,7 +61,6 @@ class PopulateConfig:
         'unit': Unit,
         'unit_of_ingredient': UnitOfIngredient,
         'recipe': Recipe,
-        'recipe_tagged': RecipeTagged
     }
 
     TRANSLATED_FIELDS = [
@@ -196,14 +195,12 @@ def create_steps(global_data, recipe_model):
 def create_tags(global_data, recipe_model):
     tag_to_dict = []
     for tag in global_data['tags']:
-        tag_to_dict.append({'name': tag, 'model_tagged': 'Recipe'})
+        tag_to_dict.append({'name': tag})
     global_data['tags'] = tag_to_dict
     tag_list = create_model_list(global_data, 'tags')
-    recipe_tagged_to_dict = []
     for tag in tag_list:
-        recipe_tagged_to_dict.append({'tag': tag, 'recipe': recipe_model})
-    global_data['recipe_tagged'] = recipe_tagged_to_dict
-    create_model_list(global_data, 'recipe_tagged')
+        recipe_model.tag.add(tag)
+    recipe_model.save()
 
 def create_ustensils(global_data, recipe_model):
     ustensils_to_dict = []

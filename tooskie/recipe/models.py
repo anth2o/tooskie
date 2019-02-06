@@ -24,24 +24,7 @@ class Recipe(NameModel):
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
-    tag = models.ManyToManyField('utils.Tag', blank=True, through='RecipeTagged', related_name="recipes_not_filtered")
-
-class RecipeTagged(NameModel):
-    class Meta:
-        verbose_name_plural = 'Recipes tagged'
-    name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
-
-    def save(self, *args, **kwargs):
-        self.name = self.get_name()
-        super(RecipeTagged, self).save(*args, **kwargs)
-
-    def get_name(self):
-        return self.recipe.name + LINK_WORD + str(self.tag)
-
-    # Relations
-    tag = models.ForeignKey('utils.Tag', on_delete=models.CASCADE)
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
-
+    tag = models.ManyToManyField('utils.Tag', blank=True, related_name="recipes_not_filtered")
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
