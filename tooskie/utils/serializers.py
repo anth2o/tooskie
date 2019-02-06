@@ -12,8 +12,12 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 class TagWithRecipesSerializer(serializers.ModelSerializer):
-    picture = serializers.URLField()    
+    picture = serializers.SerializerMethodField()
     recipes = RecipeWithoutTagsSerializer(many=True)
+
+    def get_picture(self, tag):
+        request = self.context.get('request')
+        return request.build_absolute_uri(tag.picture.url)
 
     class Meta:
         model = Tag

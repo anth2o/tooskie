@@ -14,7 +14,7 @@ def all_tags(request):
     if request.method == 'GET':
         try:
             tags = Tag.objects.filter(to_display=True)
-            serializer = TagWithRecipesSerializer(tags, many=True)
+            serializer = TagWithRecipesSerializer(tags, many=True, context={"request": request})
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
