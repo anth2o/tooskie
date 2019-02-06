@@ -13,8 +13,8 @@ logger = logging.getLogger("django")
 
 class Recipe(NameModel):
     # time is in minutes
-    cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time'))
-    preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time'))
+    cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time (min.)'))
+    preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time (min.)'))
     url = models.URLField(blank=True)
     picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
@@ -31,7 +31,7 @@ class Step(NameModel):
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
     picture = models.ImageField(blank=True, null=True)
-    time_start = models.IntegerField(blank=True, null=True)
+    time_start = models.IntegerField(blank=True, null=True, verbose_name=_('Time start of the step (min.)'))
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', verbose_name=_('Recipe'))
