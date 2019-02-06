@@ -1,9 +1,6 @@
 from rest_framework import serializers
 
 from tooskie.recipe.models import Ingredient, Recipe, Step, IngredientInRecipe
-from tooskie.utils.serializers import TagSerializer
-
-
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,37 +19,6 @@ class IngredientSerializerWithPicture(serializers.ModelSerializer):
             'name',
              'name_plural',
             'picture'
-        )
-
-class RecipeShortSerializer(serializers.ModelSerializer):
-    picture = serializers.URLField()
-    tag = serializers.SerializerMethodField('get_tags_name')
-    budget_level = serializers.SerializerMethodField('get_budget_level_name')
-    difficulty_level = serializers.SerializerMethodField('get_difficulty_level_name')
-
-    def get_budget_level_name(self, obj):
-        return obj.budget_level.name
-
-    def get_difficulty_level_name(self, obj):
-        return obj.difficulty_level.name
-
-    def get_tags_name(self, obj):
-        names = []
-        for tag in obj.tag.all():
-            names.append(tag.name)
-        return names
-
-    class Meta:
-        model = Recipe
-        fields = (
-            'name',
-            'picture',
-            'cooking_time',
-            'preparation_time',
-            'budget_level',
-            'difficulty_level',
-            'tag',
-            'number_of_steps'
         )
 
 class StepSerializer(serializers.ModelSerializer):
@@ -109,6 +75,41 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     
     def get_linking_word_plural(self, obj):
         return obj.unit_of_ingredient.linking_word_plural
+
+class RecipeWithoutTagsSerializer(serializers.ModelSerializer):
+    picture = serializers.URLField()
+    budget_level = serializers.SerializerMethodField('get_budget_level_name')
+    difficulty_level = serializers.SerializerMethodField('get_difficulty_level_name')
+    ustensils = serializers.SerializerMethodField('get_ustensils_name')
+
+    def get_budget_level_name(self, obj):
+        return obj.budget_level.name
+
+    def get_difficulty_level_name(self, obj):
+        return obj.difficulty_level.name
+
+    def get_ustensils_name(self, obj):
+        names = []
+        for ustensil in obj.ustensil.all():
+            names.append(ustensil.name)
+        return names
+    
+    steps = StepSerializer(many=True)
+    ingredients = IngredientInRecipeSerializer(many=True)
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'name',
+            'picture',
+            'budget_level',
+            'difficulty_level',
+            'ustensils',
+            'steps',
+            'ingredients',
+            'cooking_time',
+            'preparation_time',
+        )
 
 class RecipeSerializer(serializers.ModelSerializer):
     picture = serializers.URLField()

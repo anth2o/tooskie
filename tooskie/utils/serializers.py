@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from tooskie.utils.models import Tag
+from .models import Tag
+from tooskie.recipe.serializers import RecipeWithoutTagsSerializer
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,4 +9,17 @@ class TagSerializer(serializers.ModelSerializer):
 
         fields = (
             'name',
+        )
+
+class TagWithRecipesSerializer(serializers.ModelSerializer):
+    picture = serializers.URLField()    
+    recipes = RecipeWithoutTagsSerializer(many=True)
+
+    class Meta:
+        model = Tag
+
+        fields = (
+            'name',
+            'picture',
+            'recipes'
         )

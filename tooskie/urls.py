@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from rest_framework.urlpatterns import format_suffix_patterns
 from tooskie.recipe import views as recipe_views
 from tooskie.pantry import views as pantry_views
+from tooskie.utils import views as tag_views
+
 
 api_urls = [
     url(r'^ingredient/$', recipe_views.all_ingredients),
@@ -30,6 +32,7 @@ api_urls = [
     url(r'^pantry/(?P<permaname>.+)$', pantry_views.pantry_by_permaname),
     url(r'^recipe/(?P<permaname>.+)$', recipe_views.recipe),
     url(r'^recipe-with-pantry/(?P<permaname>.+)$', recipe_views.recipe_with_pantry),
+    url(r'^tag/$', tag_views.all_tags),
 ]
 
 urlpatterns = [
