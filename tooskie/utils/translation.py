@@ -16,4 +16,7 @@ class NamePluralDescriptionTranslationOptions(TranslationOptions):
 class DescriptionTranslationOptions(TranslationOptions):
     fields = ('description', )
 
+class ComplementTranslationOptions(TranslationOptions):
+    fields = ('complement', 'complement_plural', )
+
 translator.register(Tag, NameDescriptionTranslationOptions)

@@ -1,6 +1,6 @@
 from modeltranslation.translator import translator
-from tooskie.utils.translation import NameTranslationOptions, NamePluralTranslationOptions, NamePluralDescriptionTranslationOptions, NameDescriptionTranslationOptions, DescriptionTranslationOptions
-from .models import Recipe, BudgetLevel, DifficultyLevel, Ingredient, NutritionalProperty, SpecialDiet, Step, Unit, Ustensil
+from tooskie.utils.translation import NameTranslationOptions, NamePluralTranslationOptions, NamePluralDescriptionTranslationOptions, NameDescriptionTranslationOptions, DescriptionTranslationOptions, ComplementTranslationOptions
+from .models import Recipe, BudgetLevel, DifficultyLevel, Ingredient, NutritionalProperty, SpecialDiet, Step, Unit, Ustensil, IngredientInRecipe
 
 translator.register(Recipe, NameTranslationOptions)
 translator.register(BudgetLevel, NameDescriptionTranslationOptions)
@@ -11,3 +11,4 @@ translator.register(SpecialDiet, NameDescriptionTranslationOptions)
 translator.register(Step, DescriptionTranslationOptions)
 translator.register(Unit, NamePluralTranslationOptions)
 translator.register(Ustensil, NamePluralDescriptionTranslationOptions)
+translator.register(IngredientInRecipe, ComplementTranslationOptions)
