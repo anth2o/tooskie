@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .forms import RecipeForm
+from .forms import RecipeForm, StepFormset
 from .models import Ingredient, Recipe
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle

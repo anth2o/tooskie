@@ -1,9 +1,6 @@
 from django import forms
-from .models import Recipe
+from django.forms.models import inlineformset_factory, modelformset_factory
+from .models import Recipe, Step
 
-class RecipeForm(forms.Form):
-    name = forms.CharField(label='Recipe name', max_length=100)
-    
-    class Meta:
-        model = Recipe
-        fields = ('name', 'cooking_time',)
+RecipeForm = modelformset_factory(Recipe, fields=('name', 'cooking_time',))
+StepFormset = inlineformset_factory(Recipe, Step, fields=('name', 'description', ), extra=1)
