@@ -13,7 +13,6 @@
       {% for recipe in recipe_list %}
         <li>
           <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
-          <td><a href="{% url 'recipe:recipe_delete' recipe.id %}">Delete</a></td>
         </li>
       {% endfor %}
     </ul>
