@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.views.generic import (
+    CreateView, DetailView, FormView, ListView, TemplateView
+)
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -74,14 +78,27 @@ def recipe(request, permaname):
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-def get_name(request):
-    logger.debug(request)
-    if request.method == 'POST':
-        form = RecipeForm(request.POST)
-        if form.is_valid():
-            logger.debug('form is valid')
-            return HttpResponseRedirect('/thanks/')
-    else:
-        form = RecipeForm()
-    logger.debug(form)
-    return render(request, 'base.html', {'form': form})
+
+class HomeView(TemplateView):
+    template_name = 'home.html'
+
+class RecipeListView(ListView):
+    model = Recipe
+    template_name = 'recipe_list.html'
+
+class RecipeDetailView(DetailView):
+    model = Recipe
+    template_name = 'recipe_detail.html'
+
+class RecipeCreateView(CreateView):
+    model = Recipe
+    template_name = 'recipe_create.html'
+    fields = ['name',]
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'The recipe was added.'
+        )
+        return super().form_valid(form)

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block page_title %}{{ recipe.name }}{% endblock %}
+
+{% block body_title %}{{ recipe.name }}{% endblock %}
+
+
+{% block content %}
+
+
+  <h2>Steps</h2>
+
+  {% if recipe.steps.all %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Images</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for step in recipe.steps.all %}
+          <tr>
+            <td>{{ step.step_number }}</td>
+            <td>{{ step.description }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+
+    <p>This recipe has no steps.</p>
+
+  {% endif %}
+
+  <p>
+    <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
+  </p>
+
+{% endblock content %}

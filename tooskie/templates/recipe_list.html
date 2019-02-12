@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Recipes{% endblock %}
+
+{% block body_title %}Recipes{% endblock %}
+
+
+{% block content %}
+
+  {% if recipe_list %}
+
+    <ul>
+      {% for recipe in recipe_list %}
+        <li>
+          <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
+          <!-- ({{ publisher.books.count }} book{{ publisher.books.count|pluralize }}) -->
+        </li>
+      {% endfor %}
+    </ul>
+
+  {% else %}
+
+    <p>There are no recipes to display.</p>
+
+  {% endif %}
+
+  <p>
+    <a href="{% url 'recipe:recipe_create' %}">Add a recipe</a>
+  </p>
+
+{% endblock content %}

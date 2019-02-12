@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.urls import reverse
 
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
 from tooskie.helpers import remove_useless_spaces
@@ -25,6 +26,9 @@ class Recipe(NameModel):
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
     tag = models.ManyToManyField('utils.Tag', blank=True, related_name="recipes_not_filtered")
+
+    def get_absolute_url(self):
+        return reverse('recipe:recipe_detail', kwargs={'pk': self.pk})
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
