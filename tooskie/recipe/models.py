@@ -43,6 +43,8 @@ class Tag(NameModel):
         return reverse('recipe:tag_detail', kwargs={'pk': self.pk})
 
 class Step(NameModel):
+    class Meta:
+        ordering = ['recipe', 'step_number']
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()

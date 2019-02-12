@@ -8,12 +8,25 @@
 {% block content %}
 
   {% if recipe_list %}
-
+    <h2> Recipes displaid</h2>
     <ul>
       {% for recipe in recipe_list %}
-        <li>
-          <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
-        </li>
+        {% if recipe.to_display %}
+          <li>
+            <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <h2> Recipes not displaid</h2>
+    <ul>
+      {% for recipe in recipe_list %}
+        {% if not recipe.to_display %}
+          <li>
+            <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
+          </li>
+        {% endif %}
       {% endfor %}
     </ul>
 

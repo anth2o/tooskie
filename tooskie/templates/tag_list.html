@@ -9,11 +9,25 @@
 
   {% if tag_list %}
 
+    <h2> Tags displaid</h2>
     <ul>
       {% for tag in tag_list %}
-        <li>
-          <a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>
-        </li>
+        {% if tag.to_display %}
+          <li>
+            <a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <h2> Tags not displaid</h2>
+    <ul>
+      {% for tag in tag_list %}
+        {% if not tag.to_display %}
+          <li>
+            <a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>
+          </li>
+        {% endif %}
       {% endfor %}
     </ul>
 
