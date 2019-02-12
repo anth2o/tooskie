@@ -9,7 +9,6 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .forms import RecipeForm, StepFormset
 from .models import Ingredient, Recipe
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
@@ -95,7 +94,7 @@ class RecipeDetailView(DetailView):
 class RecipeCreateView(CreateView):
     model = Recipe
     template_name = 'recipe_create.html'
-    fields = ['name',]
+    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'ustensil', 'tag']
 
     def form_valid(self, form):
         messages.add_message(

@@ -7,6 +7,48 @@
 
 {% block content %}
 
+  {% if recipe.to_display %}
+
+    <div>This recipe will be displaid in the playlists</div>
+
+  {% else %}
+
+    <div>This recipe won't be displaid in the playlists</div>
+
+  {% endif %}
+
+  {% if recipe.picture %}
+
+    <img src="{{ recipe.picture }}" style="width:auto;">
+
+  {% endif %}
+
+  <h2>Overview</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Cooking time</th>
+          <th>Preparation time</th>
+          <th>Difficulty level</th>
+          <th>Budget level</th>
+          <th>Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ recipe.cooking_time }} minutes</td>
+          <td>{{ recipe.preparation_time }} minutes</td>
+          <td>{{ recipe.difficulty_level.name }}</td>
+          <td>{{ recipe.budget_level.name }}</td>
+          <td> {% for tag in recipe.tag.all %}
+              {{ tag.name }},
+              {% endfor %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
 
   <h2>Steps</h2>
 
@@ -15,9 +57,9 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Images</th>
+          <th>Step number</th>
+          <th>Description</th>
+          <th>Picture</th>
         </tr>
       </thead>
       <tbody>
@@ -25,6 +67,7 @@
           <tr>
             <td>{{ step.step_number }}</td>
             <td>{{ step.description }}</td>
+            <td> <img src="{{ step.picture }}" style="width:auto;"> </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -63,7 +106,36 @@
 
   {% else %}
 
-    <p>This recipe has no steps.</p>
+    <p>This recipe has no ingredients.</p>
+
+  {% endif %}
+
+  <h2>Ustensils</h2>
+
+  {% if recipe.ustensil_in_recipe.all %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Ustensil</th>
+          <th>Picture</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ustensil in recipe.ustensil_in_recipe.all %}
+          <tr>
+            <td>{{ ustensil.quantity }}</td>
+            <td>{{ ustensil.ustensil.name }}</td>
+            <td> <img src="{{ ustensil.ustensil.picture }}" style="width:auto;"> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+
+    <p>This recipe has no ustensils.</p>
 
   {% endif %}
 

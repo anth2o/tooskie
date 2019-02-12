@@ -67,7 +67,7 @@ class UstensilInRecipe(NameModel):
 
     # Relations
     ustensil = models.ForeignKey('Ustensil', on_delete=models.CASCADE, verbose_name=_('Ustensil'))
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'))
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, verbose_name=_('Recipe'), related_name='ustensil_in_recipe')
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()
