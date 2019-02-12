@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tooskie.recipe.models import Ingredient, Recipe, Step, IngredientInRecipe
+from tooskie.recipe.models import Ingredient, Recipe, Step, IngredientInRecipe, Tag
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -153,3 +153,29 @@ class RecipeSerializer(serializers.ModelSerializer):
             'cooking_time',
             'preparation_time',
         )
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+
+        fields = (
+            'name',
+        )
+
+class TagWithRecipesSerializer(serializers.ModelSerializer):
+    picture = serializers.SerializerMethodField()
+    recipes = RecipeWithoutTagsSerializer(many=True)
+
+    def get_picture(self, tag):
+        request = self.context.get('request')
+        return request.build_absolute_uri(tag.picture.url)
+
+    class Meta:
+        model = Tag
+
+        fields = (
+            'name',
+            'picture',
+            'recipes'
+        )
+

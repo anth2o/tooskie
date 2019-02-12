@@ -1,6 +1,4 @@
 from modeltranslation.translator import TranslationOptions, translator
-from .models import Tag
-
 class NameTranslationOptions(TranslationOptions):
     fields = ('name',)
 
@@ -18,5 +16,3 @@ class DescriptionTranslationOptions(TranslationOptions):
 
 class ComplementTranslationOptions(TranslationOptions):
     fields = ('complement', 'complement_plural', )
-
-translator.register(Tag, NameDescriptionTranslationOptions)

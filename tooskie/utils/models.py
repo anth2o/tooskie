@@ -44,11 +44,3 @@ class LevelModel(NameModel):
     class Meta:
         abstract = True
 
-class Tag(NameModel):
-    picture = models.ImageField(blank=True, null=True)
-    to_display = models.BooleanField(default=False)
-    description = models.TextField(blank=True)
-
-    @property
-    def recipes(self):
-        return self.recipes_not_filtered.filter(to_display=True)

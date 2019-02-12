@@ -25,10 +25,19 @@ class Recipe(NameModel):
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
     unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
-    tag = models.ManyToManyField('utils.Tag', blank=True, related_name="recipes_not_filtered")
+    tag = models.ManyToManyField('Tag', blank=True, related_name="recipes_not_filtered")
 
     def get_absolute_url(self):
         return reverse('recipe:recipe_detail', kwargs={'pk': self.pk})
+
+class Tag(NameModel):
+    picture = models.ImageField(blank=True, null=True)
+    to_display = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
+
+    @property
+    def recipes(self):
+        return self.recipes_not_filtered.filter(to_display=True)
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)

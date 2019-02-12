@@ -4,8 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.utils.text import slugify
 from fractions import Fraction
 
-from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe
-from tooskie.utils.models import Tag
+from tooskie.recipe.models import Recipe, Ingredient, Unit, UnitOfIngredient, DifficultyLevel, BudgetLevel, Step, Ustensil, UstensilInRecipe, IngredientInRecipe, Tag
 from tooskie.helpers import get_sub_dict, loop_to_remove_first_word, get_or_create_from_data, drop_columns, add_suffix
 
 import logging

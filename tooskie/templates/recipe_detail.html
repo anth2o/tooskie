@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+
+
 {% block page_title %}{{ recipe.name }}{% endblock %}
 
 {% block body_title %}{{ recipe.name }}{% endblock %}
@@ -7,13 +9,17 @@
 
 {% block content %}
 
+<p>
+    <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
+</p>
+
   {% if recipe.to_display %}
 
-    <div>This recipe will be displaid in the playlists</div>
+    <div>This recipe <em>will</em> be displaid in the playlists</div>
 
   {% else %}
 
-    <div>This recipe won't be displaid in the playlists</div>
+    <div>This recipe <em>won't</em> be displaid in the playlists</div>
 
   {% endif %}
 
@@ -140,7 +146,6 @@
   {% endif %}
 
   <p>
-    <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
     <a href="{% url 'recipe:recipe_delete' recipe.id %}">Delete recipe</a>
   </p>
 
