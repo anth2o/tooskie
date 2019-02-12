@@ -93,15 +93,15 @@ class HomeView(TemplateView):
 
 class RecipeListView(ListView):
     model = Recipe
-    template_name = 'recipe_list.html'
+    template_name = 'recipe/recipe_list.html'
 
 class RecipeDetailView(DetailView):
     model = Recipe
-    template_name = 'recipe_detail.html'
+    template_name = 'recipe/recipe_detail.html'
 
 class RecipeCreateView(CreateView):
     model = Recipe
-    template_name = 'recipe_create.html'
+    template_name = 'recipe/recipe_create.html'
     fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
 
     def form_valid(self, form):
@@ -126,15 +126,15 @@ class RecipeDeleteView(DeleteView):
 
 class TagListView(ListView):
     model = Tag
-    template_name = 'tag_list.html'
+    template_name = 'tag/tag_list.html'
 
 class TagDetailView(DetailView):
     model = Tag
-    template_name = 'tag_detail.html'
+    template_name = 'tag/tag_detail.html'
 
 class TagCreateView(CreateView):
     model = Tag
-    template_name = 'tag_create.html'
+    template_name = 'tag/tag_create.html'
     fields = ['name', 'name_fr', 'picture', 'to_display', 'description', 'description_fr']
 
     def form_valid(self, form):

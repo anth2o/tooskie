@@ -25,7 +25,7 @@
 
   {% if recipe.picture %}
 
-    <img src="{{ recipe.picture }}" style="width:auto;">
+    <img src="{{ recipe.picture }}" onError="this.src = '{{ recipe.picture.url }}'" style="width:auto;">
 
   {% endif %}
 
