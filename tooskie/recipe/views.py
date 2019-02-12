@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.views.generic import (
-    CreateView, DetailView, FormView, ListView, TemplateView
+    CreateView, DetailView, FormView, ListView, TemplateView, DeleteView
 )
+from django.urls import reverse
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -102,3 +104,15 @@ class RecipeCreateView(CreateView):
             'The recipe was added.'
         )
         return super().form_valid(form)
+
+class RecipeDeleteView(DeleteView):
+    model = Recipe
+    template_name = 'recipe_confirm_delete.html'
+
+    def get_recipe(self, queryset=None):
+        obj = super(RecipeDeleteView, self).get_object()
+        self.recipe = Recipe.objects.get(id=obj.recipe.id)
+        return obj
+
+    def get_success_url(self):
+        return reverse('recipe:recipe_list',)

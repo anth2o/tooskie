@@ -1,0 +1,18 @@
+<form action="" method="post">
+    {% csrf_token %}
+    {% block page_title %}The following objects as well as their related objects will be deleted. Are you sure?{% endblock %}
+
+    {% block body_title %}The following objects as well as their related objects will be deleted. Are you sure?{% endblock %} 
+    <ul>
+        <input type="hidden" value="{{ object.name }}" name="objectToDelete" />
+        <li><a href="{{ object.get_absolute_url }}">{{ object }}</a></li>
+    </ul>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input class="btn btn-link" 
+                type="button" value="Cancel" 
+                onclick="window.history.go(-1);"/>
+        <input class="btn btn-danger" type="submit" value="Confirm"/>
+    </form>
+</form>
+    
