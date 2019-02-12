@@ -36,8 +36,40 @@
 
   {% endif %}
 
+  <h2>Ingredients</h2>
+
+  {% if recipe.ingredients.all %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Picture</th>
+          <th>Quantity for one person</th>
+          <th>Unit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ingredient in recipe.ingredients.all %}
+          <tr>
+            <td>{{ ingredient.unit_of_ingredient.ingredient.name }}</td>
+            <td> <img src="{{ ingredient.unit_of_ingredient.ingredient.picture }}" style="width:auto;"> </td>
+            <td>{{ ingredient.quantity }}</td>
+            <td>{{ ingredient.unit_of_ingredient.unit.name }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+
+    <p>This recipe has no steps.</p>
+
+  {% endif %}
+
   <p>
     <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
+    <a href="{% url 'recipe:recipe_delete' recipe.id %}">Delete recipe</a>
   </p>
 
 {% endblock content %}

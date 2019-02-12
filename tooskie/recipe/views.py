@@ -107,7 +107,7 @@ class RecipeCreateView(CreateView):
 
 class RecipeDeleteView(DeleteView):
     model = Recipe
-    template_name = 'recipe_confirm_delete.html'
+    template_name = 'recipe_delete.html'
 
     def get_recipe(self, queryset=None):
         obj = super(RecipeDeleteView, self).get_object()
