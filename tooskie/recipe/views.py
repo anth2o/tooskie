@@ -114,7 +114,7 @@ class RecipeCreateView(CreateView):
 
 class RecipeDeleteView(DeleteView):
     model = Recipe
-    template_name = 'recipe_delete.html'
+    template_name = 'confirm_delete.html'
 
     def get_recipe(self, queryset=None):
         obj = super(RecipeDeleteView, self).get_object()
@@ -123,3 +123,36 @@ class RecipeDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('recipe:recipe_list',)
+
+class TagListView(ListView):
+    model = Tag
+    template_name = 'tag_list.html'
+
+class TagDetailView(DetailView):
+    model = Tag
+    template_name = 'tag_detail.html'
+
+class TagCreateView(CreateView):
+    model = Tag
+    template_name = 'tag_create.html'
+    fields = ['name', 'name_fr', 'picture', 'to_display', 'description', 'description_fr']
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'The tag was added.'
+        )
+        return super().form_valid(form)
+
+class TagDeleteView(DeleteView):
+    model = Tag
+    template_name = 'confirm_delete.html'
+
+    def get_recipe(self, queryset=None):
+        obj = super(TagDeleteView, self).get_object()
+        self.recipe = Tag.objects.get(id=obj.recipe.id)
+        return obj
+
+    def get_success_url(self):
+        return reverse('recipe:tag_list',)

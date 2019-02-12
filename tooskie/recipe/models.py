@@ -38,6 +38,9 @@ class Tag(NameModel):
     @property
     def recipes(self):
         return self.recipes_not_filtered.filter(to_display=True)
+    
+    def get_absolute_url(self):
+        return reverse('recipe:tag_detail', kwargs={'pk': self.pk})
 
 class Step(NameModel):
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)

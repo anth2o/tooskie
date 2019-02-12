@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+
+
+{% block page_title %}{{ tag.name }}{% endblock %}
+
+{% block body_title %}{{ tag.name }}{% endblock %}
+
+
+{% block content %}
+
+<p>
+    <a href="{% url 'recipe:tag_list' %}">All tags</a>
+</p>
+
+  {% if tag.to_display %}
+
+    <div>This tag <em>will</em> be displaid</div>
+
+  {% else %}
+
+    <div>This tag <em>won't</em> be displaid</div>
+
+  {% endif %}
+
+  {% if tag.picture %}
+
+    <img src="{{ tag.picture }}" style="width:auto;">
+
+  {% endif %}
+
+  {% if tag.description %}
+
+  <div>{{ tag.description }}</div>
+
+  {% endif %}
+
+  <p>
+    <a href="{% url 'recipe:tag_delete' tag.id %}">Delete tag</a>
+  </p>
+
+{% endblock content %}

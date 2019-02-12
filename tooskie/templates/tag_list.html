@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Tags{% endblock %}
+
+{% block body_title %}Tags{% endblock %}
+
+
+{% block content %}
+
+  {% if tag_list %}
+
+    <ul>
+      {% for tag in tag_list %}
+        <li>
+          <a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+  {% else %}
+
+    <p>There are no tags to display.</p>
+
+  {% endif %}
+
+  <p>
+    <a href="{% url 'recipe:tag_create' %}">Add a tag</a>
+  </p>
+
+{% endblock content %}
