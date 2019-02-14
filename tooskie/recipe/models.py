@@ -14,8 +14,8 @@ logger = logging.getLogger("django")
 
 class Recipe(NameModel):
     # time is in minutes
-    cooking_time = models.IntegerField(blank=True, null=True, verbose_name=_('Cooking time (min.)'))
-    preparation_time = models.IntegerField(blank=True, null=True, verbose_name=_('Preparation time (min.)'))
+    cooking_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Cooking time (min.)'))
+    preparation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Preparation time (min.)'))
     url = models.URLField(blank=True)
     picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)

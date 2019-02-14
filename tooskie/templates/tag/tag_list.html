@@ -6,10 +6,13 @@
 
 
 {% block content %}
+  <p>
+    <a href="{% url 'recipe:tag_create' %}">Add a tag</a>
+  </p>
 
   {% if tag_list %}
 
-    <h2> Tags displaid</h2>
+    <h2> Tags displayed</h2>
     <ul>
       {% for tag in tag_list %}
         {% if tag.to_display %}
@@ -20,7 +23,7 @@
       {% endfor %}
     </ul>
 
-    <h2> Tags not displaid</h2>
+    <h2> Tags not displayed</h2>
     <ul>
       {% for tag in tag_list %}
         {% if not tag.to_display %}

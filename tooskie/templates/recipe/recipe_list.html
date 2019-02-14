@@ -6,9 +6,12 @@
 
 
 {% block content %}
+  <p>
+    <a href="{% url 'recipe:recipe_create' %}">Add a recipe</a>
+  </p>
 
   {% if recipe_list %}
-    <h2> Recipes displaid</h2>
+    <h2> Recipes displayed</h2>
     <ul>
       {% for recipe in recipe_list %}
         {% if recipe.to_display %}
@@ -19,7 +22,7 @@
       {% endfor %}
     </ul>
 
-    <h2> Recipes not displaid</h2>
+    <h2> Recipes not displayed</h2>
     <ul>
       {% for recipe in recipe_list %}
         {% if not recipe.to_display %}
