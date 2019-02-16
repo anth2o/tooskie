@@ -119,35 +119,26 @@ class RecipeUpdateView(SingleObjectMixin, FormView):
 
     model = Recipe
     template_name = 'recipe/recipe_update.html'
+    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
 
     def get(self, request, *args, **kwargs):
-        # The Publisher we're editing:
         self.object = self.get_object(queryset=Recipe.objects.all())
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        # The Publisher we're uploading for:
         self.object = self.get_object(queryset=Recipe.objects.all())
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
-        """
-        Use our big formset of formsets, and pass in the Publisher object.
-        """
         return RecipeSteps(**self.get_form_kwargs(), instance=self.object)
 
     def form_valid(self, form):
-        """
-        If the form is valid, redirect to the supplied URL.
-        """
         form.save()
-
         messages.add_message(
             self.request,
             messages.SUCCESS,
             'Changes were saved.'
         )
-
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
