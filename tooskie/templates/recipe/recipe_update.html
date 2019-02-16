@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Editing {{ recipe.name }}{% endblock %}
+
+{% block body_title %}Editing <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>{% endblock %}
+
+
+{% block content %}
+  <form action="" method="post" enctype="multipart/form-data">
+
+    {% for hidden_field in form.hidden_fields %}
+      {{ hidden_field.errors }}
+      {{ hidden_field }}
+    {% endfor %}
+
+    {% csrf_token %}
+
+    {{ form.management_form }}
+    {{ form.non_form_errors }}
+
+    {% for step_form in form.forms %}
+
+      <h2>
+        {% if step_form.instance.step_number %}
+          Step {{ step_form.instance.step_number }}</h2>
+        {% else %}
+          {% if form.forms|length > 1 %}
+            Add another step
+          {% else %}
+            Add a step
+          {% endif %}
+        {% endif %}
+      </h2>
+
+      {% for hidden_field in step_form.hidden_fields %}
+        {{ hidden_field.errors }}
+      {% endfor %}
+
+      <table>
+        {{ step_form.as_table }}
+      </table>
+
+    {% endfor %}
+    <p>
+      <input type="submit" value="Update steps">
+      &nbsp; &nbsp;
+      <a href="{{ recipe.get_absolute_url  }}">Cancel</a>
+    </p>
+  </form>
+
+{% endblock content %}

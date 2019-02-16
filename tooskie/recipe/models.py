@@ -55,6 +55,12 @@ class Step(NameModel):
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', verbose_name=_('Recipe'))
 
     def save(self, *args, **kwargs):
+        if self.step_number is None:
+            steps = Step.objects.filter(recipe=self.recipe).order_by('-step_number')
+            if len(steps) == 0:
+                self.step_number = 1
+            else:
+                self.step_number = steps[0].step_number + 1
         self.name = self.get_name()
         super(Step, self).save(*args, **kwargs)
 

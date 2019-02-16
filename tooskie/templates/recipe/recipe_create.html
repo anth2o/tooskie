@@ -22,81 +22,13 @@
       {{ form.as_table }}
     </table>
 
-    {% for step_form in form.forms %}
-
-    <hr>
-
-    <h2>
-      {% if step_form.instance.id %}
-        Step #{{ step_form.instance.id }}</h2>
-      {% else %}
-        {% if form.forms|length > 1 %}
-          Add another step
-        {% else %}
-          Add a step
-        {% endif %}
-      {% endif %}
-    </h2>
-
-    {% for hidden_field in step_form.hidden_fields %}
-      {{ hidden_field.errors }}
-    {% endfor %}
-
-    <table>
-      {{ step_form.as_table }}
-    </table>
-
-    {% if step_form.nested %}
-      <div class="indent">
-
-        <h3>Image</h3>
-
-        {{ book_form.nested.management_form }}
-        {{ book_form.nested.non_form_errors }}
-
-        <table>
-          {% for stepimage_form in step_form.nested.forms %}
-
-            <tr>
-              <td>
-                <em>
-                  {% if stepimage_form.instance.id %}
-                    StepImage #{{ stepimage_form.instance.id }}
-                  {% else %}
-                    Add an image
-                  {% endif %}
-                </em>
-              </td>
-              <td>
-                {% for hidden_field in stepimage_form.hidden_fields %}
-                  {{ hidden_field.errors }}
-                {% endfor %}
-
-                <table>
-                  {{ stepimage_form.as_table }}
-                </table>
-              </td>
-              <td>
-                {% if stepimage_form.instance.image %}
-                  <img src="{{ stepimage_form.instance.image.url }}" height="100" alt="{{ nested.form.instance.alt_text }}">
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </table>
-      </div>
-    {% endif %}
-
-  {% endfor %}
-
-  <hr>
-
     <p>
       <input type="submit" value="Add recipe">
       &nbsp; &nbsp;
       <input class="btn btn-link" 
       type="button" value="Cancel" 
-      onclick="window.history.go(-1);"/>    </p>
+      onclick="window.history.go(-1);"/>
+    </p>
   </form>
 
 {% endblock content %}
