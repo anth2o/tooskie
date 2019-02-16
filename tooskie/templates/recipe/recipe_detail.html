@@ -74,7 +74,13 @@
           <tr>
             <td>{{ step.step_number }}</td>
             <td>{{ step.description }}</td>
-            <td> <img src="{{ step.picture }}" style="width:auto;"> </td>
+            <td>
+              {% if step.picture %}
+                <img src="{{ step.picture.url }}" onError="this.src = '{{ step.picture }}'" style="width:auto;"></td>
+              {% else %}
+                <img src="{{ step.picture }}" style="width:auto;"></td>
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       </tbody>
