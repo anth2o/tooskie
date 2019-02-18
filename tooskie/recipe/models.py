@@ -191,7 +191,7 @@ class RecipeHasNutritionalProperty(NameModel):
     quantity = models.PositiveIntegerField()
 
     # Relations
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='nutritional_properties')
     nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
     unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE)
 

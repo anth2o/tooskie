@@ -45,7 +45,7 @@ IngredientsFormset = formset_factory(
 
 
 class NutritionalPropertiesForm(forms.Form):
-    quantity = forms.IntegerField(required=True, label=_('Amount'))
+    quantity = forms.IntegerField(required=True, label=_('Amount for one person'))
     unit = forms.ModelChoiceField(required=True, queryset=Unit.objects.filter(
         for_nutritional_properties=True).order_by('name', 'name_fr'))
     nutritional_property = forms.ModelChoiceField(

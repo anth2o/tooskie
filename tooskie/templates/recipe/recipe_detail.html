@@ -155,6 +155,35 @@
 
   {% endif %}
 
+  <h2>Nutritional properties for one person</h2>
+
+  {% if recipe.nutritional_properties.all %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Property</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for nutritional_property in recipe.nutritional_properties.all %}
+          <tr>
+            <td>{{ nutritional_property.quantity }}</td>
+            <td>{{ nutritional_property.unit_of_nutritional_property.name }}</td>
+            <td>{{ nutritional_property.nutritional_property.name }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+
+    <p>This recipe has no nutritional properties.</p>
+
+  {% endif %}
+
   <p>
     <a href="{% url 'recipe:recipe_delete' recipe.id %}">Delete recipe</a>
   </p>
