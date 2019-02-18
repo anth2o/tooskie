@@ -14,6 +14,7 @@
     <a href="{% url 'recipe:recipe_update' recipe.id %}">Update recipe</a>
     <a href="{% url 'recipe:recipe_update_steps' recipe.id %}">Update steps</a>
     <a href="{% url 'recipe:recipe_update_ingredients' recipe.id %}">Update ingredients</a>
+    <a href="{% url 'recipe:recipe_update_nutri' recipe.id %}">Update nutritional properties</a>
 </p>
 
   {% if recipe.to_display %}

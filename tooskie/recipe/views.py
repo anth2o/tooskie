@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Ingredient, Recipe, Tag
-from .forms import RecipeStepsFormset, IngredientsFormset
+from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
 from .serializers import IngredientSerializerWithPicture, RecipeSerializer, TagWithRecipesSerializer
@@ -179,6 +179,40 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
 
     def get_form(self, form_class=None):
         return IngredientsFormset(**self.get_form_kwargs())
+
+    def form_valid(self, formset):
+        logger.debug(self.object)
+        if formset.is_valid():
+            for form in formset:
+                form.save(recipe=self.object)
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                'Changes were saved.'
+            )
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('recipe:recipe_detail', kwargs={'pk': self.object.pk})
+
+class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
+    """
+    For adding steps to a Recipe, or editing them.
+    """
+
+    model = Recipe
+    template_name = 'recipe/recipe_update_nutri.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        return NutritionalPropertiesFormset(**self.get_form_kwargs())
 
     def form_valid(self, formset):
         logger.debug(self.object)

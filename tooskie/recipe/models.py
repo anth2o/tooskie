@@ -196,6 +196,7 @@ class RecipeHasNutritionalProperty(NameModel):
 
 class Unit(NameModel):
     name_plural = models.CharField(max_length=1000, blank=True)
+    for_nutritional_properties = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if (not self.name or self.name == ''):
@@ -203,8 +204,6 @@ class Unit(NameModel):
                 self.name = NONE_UNIT
             else:
                 self.name = self.permaname.capitalize()
-        if self.name_plural:
-            self.name_plural = self.name_plural.capitalize()
         super(Unit, self).save(*args, **kwargs)
 
 class NutritionalProperty(NameModel):
