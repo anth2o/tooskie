@@ -188,6 +188,7 @@ class RecipeHasNutritionalProperty(NameModel):
         verbose_name_plural = 'Recipes has nutritional properties'
 
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
+    quantity = models.PositiveIntegerField()
 
     # Relations
     recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)

@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty
 from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
@@ -171,7 +171,12 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
-        return super().get(request, *args, **kwargs)
+        instance_list = IngredientInRecipe.objects.filter(recipe=self.object)
+        initial_data = []
+        for instance in instance_list:
+            initial_data.append({'quantity': instance.quantity, 'unit': instance.unit_of_ingredient.unit, 'ingredient': instance.unit_of_ingredient.ingredient})
+        formset = IngredientsFormset(initial=initial_data)
+        return self.render_to_response({'form': formset})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -205,7 +210,12 @@ class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
-        return super().get(request, *args, **kwargs)
+        instance_list = RecipeHasNutritionalProperty.objects.filter(recipe=self.object)
+        initial_data = []
+        for instance in instance_list:
+            initial_data.append({'quantity': instance.quantity, 'unit': instance.unit_of_nutritional_property, 'nutritional_property': instance.nutritional_property})
+        formset = NutritionalPropertiesFormset(initial=initial_data)
+        return self.render_to_response({'form': formset})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())

@@ -53,7 +53,7 @@ class NutritionalPropertiesForm(forms.Form):
 
     def save(self, recipe, *args, **kwargs):
         recipe_has_nutritional_properties, created = RecipeHasNutritionalProperty.objects.get_or_create(
-            recipe=recipe, nutritional_property=self.cleaned_data['nutritional_property'], unit_of_nutritional_property=self.cleaned_data['unit'])
+            recipe=recipe, nutritional_property=self.cleaned_data['nutritional_property'], unit_of_nutritional_property=self.cleaned_data['unit'], quantity=self.cleaned_data['quantity'])
         if created:
             recipe_has_nutritional_properties.save()
 
