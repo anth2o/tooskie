@@ -18,6 +18,10 @@ class BaseModel(models.Model):
         abstract = True
 
 class NameModel(models.Model):
+    class Meta:
+        ordering = ['name']
+        abstract = True
+
     name = models.CharField(max_length=1000, verbose_name=_('Name'), unique=True)
     permaname = AutoSlugField(always_update=True, populate_from='name', unique=True, max_length=256)
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('Created at'))
@@ -34,8 +38,6 @@ class NameModel(models.Model):
         except Exception as e:
             raise e
 
-    class Meta:
-        abstract = True
 
 class LevelModel(NameModel):
     class Meta:

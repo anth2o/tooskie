@@ -31,6 +31,9 @@ class Recipe(NameModel):
         return reverse('recipe:recipe_detail', kwargs={'pk': self.pk})
 
 class Tag(NameModel):
+    class Meta:
+        ordering = ['name', 'name_fr']
+        
     picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
     description = models.TextField(blank=True)
