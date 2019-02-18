@@ -19,8 +19,8 @@ RecipeStepsFormset = inlineformset_factory(
 
 class IngredientsForm(forms.Form):
     quantity = forms.IntegerField(required=False, label=_('Quantity for one person'))
-    unit = forms.ModelChoiceField(required=True, queryset=Unit.objects.all())
-    ingredient = forms.ModelChoiceField(required=True, label=_('Ingredient'), queryset=Ingredient.objects.all())
+    unit = forms.ModelChoiceField(required=True, queryset=Unit.objects.all().order_by('name'))
+    ingredient = forms.ModelChoiceField(required=True, label=_('Ingredient'), queryset=Ingredient.objects.all().order_by('name'))
 
     def save(self, recipe, *args, **kwargs):
         unit_of_ingredient, created = UnitOfIngredient.objects.get_or_create(unit=self.cleaned_data['unit'], ingredient=self.cleaned_data['ingredient'])

@@ -39,9 +39,8 @@ class NameModel(models.Model):
 
 class LevelModel(NameModel):
     class Meta:
-        ordering = ['level',]
         abstract = True
-        
+
     level = models.PositiveIntegerField(blank=True, null=True)
     description = models.TextField(blank=True)
 

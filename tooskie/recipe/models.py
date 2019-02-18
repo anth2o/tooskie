@@ -68,9 +68,13 @@ class Step(NameModel):
         return self.recipe.name + ' step ' + str(self.step_number)
 
 class DifficultyLevel(LevelModel):
+    class Meta:
+        ordering = ['level',]
     pass
 
 class BudgetLevel(LevelModel):
+    class Meta:
+        ordering = ['level',]
     pass
 
 class Ustensil(NameModel):
