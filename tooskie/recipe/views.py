@@ -9,13 +9,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Ingredient, Recipe, Tag
-from .forms import RecipeStepsFormset
+from .forms import RecipeStepsFormset, IngredientsFormset
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
 from .serializers import IngredientSerializerWithPicture, RecipeSerializer, TagWithRecipesSerializer
 
 import logging
-from tooskie.constants import LOGGING_CONFIG
 
 logger = logging.getLogger("django")
 
@@ -119,7 +118,41 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
 
     model = Recipe
     template_name = 'recipe/recipe_update_steps.html'
-    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        logger.debug('GET')
+        logger.debug(self.object)
+        logger.debug(request)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        logger.debug('getform')
+        return RecipeStepsFormset(**self.get_form_kwargs(), instance=self.object)
+
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'Changes were saved.'
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('recipe:recipe_detail', kwargs={'pk': self.object.pk})
+
+class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
+    """
+    For adding steps to a Recipe, or editing them.
+    """
+
+    model = Recipe
+    template_name = 'recipe/recipe_update_ingredients.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -130,15 +163,18 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
-        return RecipeStepsFormset(**self.get_form_kwargs(), instance=self.object)
+        return IngredientsFormset(**self.get_form_kwargs())
 
-    def form_valid(self, form):
-        form.save()
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            'Changes were saved.'
-        )
+    def form_valid(self, formset):
+        logger.debug(self.object)
+        if formset.is_valid():
+            for form in formset:
+                form.save(recipe=self.object)
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                'Changes were saved.'
+            )
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):

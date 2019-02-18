@@ -69,7 +69,7 @@
     }
     // Register the click event handlers
     $("#add").click(function() {
-      return addForm(this, 'steps');
+      return addForm(this, 'ingredients');
     });
     
     $(".delete").click(function() {
@@ -98,17 +98,17 @@
     {{ form.management_form }}
     {{ form.non_form_errors }}
 
-    {% for step_form in form.forms %}
+    {% for ingredient_form in form.forms %}
       <div class="item">
 
       <h2>
-        {% if step_form.instance.step_number %}
-          Step {{ step_form.instance.step_number }}</h2>
+        {% if ingredient_form.instance.name %}
+          {{ ingredient_form.instance.name }}</h2>
         {% else %}
           {% if form.forms|length > 1 %}
-            Add another step
+            Add another ingredient
           {% else %}
-            Add a step
+            Add an ingredient
           {% endif %}
         {% endif %}
       </h2>
@@ -117,7 +117,7 @@
         {{ hidden_field.errors }}
       {% endfor %}
 
-    {{ step_form.as_p }}
+    {{ ingredient_form.as_p }}
     
     </div>
 
@@ -127,7 +127,7 @@
     <p><a id="add" href="#">Add another item</a></p>
 
     <p>
-      <input type="submit" value="Update steps">
+      <input type="submit" value="Update ingredients">
       &nbsp; &nbsp;
       <a href="{{ recipe.get_absolute_url  }}">Cancel</a>
     </p>

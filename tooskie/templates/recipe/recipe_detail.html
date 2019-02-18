@@ -11,7 +11,8 @@
 
 <p>
     <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
-    <a href="{% url 'recipe:recipe_update_steps' recipe.id %}">Update recipe steps</a>
+    <a href="{% url 'recipe:recipe_update_steps' recipe.id %}">Update steps</a>
+    <a href="{% url 'recipe:recipe_update_ingredients' recipe.id %}">Update ingredients</a>
 </p>
 
   {% if recipe.to_display %}
