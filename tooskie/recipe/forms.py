@@ -14,7 +14,7 @@ RecipeStepsFormset = inlineformset_factory(
     Step,
     fields=('description', 'time_start', 'picture'),
     extra=1,
-    can_delete=False
+    can_delete=True
 )
 
 
@@ -40,7 +40,7 @@ class IngredientsForm(forms.Form):
 IngredientsFormset = formset_factory(
     IngredientsForm,
     extra=1,
-    can_delete=False
+    can_delete=True
 )
 
 
@@ -60,5 +60,5 @@ class NutritionalPropertiesForm(forms.Form):
 NutritionalPropertiesFormset = formset_factory(
     NutritionalPropertiesForm,
     extra=1,
-    can_delete=False
+    can_delete=True
 )
