@@ -5,53 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block page_title %}{% endblock %}</title>
-
-    <style type="text/css">
-      body {
-        background: #fff;
-        color: #000;
-        font-family: Helvetica, Arial, sans-serif;
-        line-height: 1.4em;
-        margin: 2em 30px 3em 30px;
-      }
-      table {
-        border-collapse: collapse;
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 1em;
-      }
-      th, td {
-        text-align: left;
-        vertical-align: top;
-        padding: 0.5em 5px;
-        border-top: 1px solid #ccc;
-      }
-      table table tr:first-child th,
-      table table tr:first-child td {
-        border-top: none;
-      }
-      img {
-        padding: 3px;
-        border: 1px solid #ccc;
-        width: auto;
-      }
-      td img {
-        vertical-align: top;
-      }
-      hr {
-        border: 0;
-        border-top: 1px solid #999;
-        margin: 1em 0;
-      }
-      .indent {
-          margin-left: 40px;
-      }
-      a:visited {
-        color: blue;
-      }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   </head>
   <body>
-
+    <div class="container">
     <h1>{% block body_title %}{% endblock %}</h1>
 
     {% if messages %}
@@ -68,6 +25,8 @@
       {% endblock content %}
       <a href="{% url 'recipe:home' %}">Home</a>
     </main>
+  
+  </div>
 
   </body>
 </html>

@@ -4,6 +4,7 @@ django-rest-framework
 djangorestframework-camel-case
 django-autoslug-iplweb
 django-modeltranslation==0.13b1
+django-crispy-forms
 Pillow
 psycopg2-binary
 six

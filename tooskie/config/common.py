@@ -18,7 +18,19 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+
+        'rest_framework',
+        'autoslug',
+        'crispy_forms',
+        
+        'tooskie.recipe',
+        'tooskie.user',
+        'tooskie.utils',
+        'tooskie.pantry',
+        'tooskie.shop'
     ]
+    
+    CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
     MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',

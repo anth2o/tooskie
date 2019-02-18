@@ -80,6 +80,9 @@
 
 {% extends 'base.html' %}
 
+{% load crispy_forms_tags %}
+
+
 {% block page_title %}Editing {{ recipe.name }}{% endblock %}
 
 {% block body_title %}Editing <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>{% endblock %}
@@ -117,7 +120,7 @@
         {{ hidden_field.errors }}
       {% endfor %}
 
-    {{ ingredient_form.as_p }}
+      {{ ingredient_form|crispy }}
     
     </div>
 
