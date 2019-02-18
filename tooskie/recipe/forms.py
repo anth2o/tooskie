@@ -19,7 +19,7 @@ RecipeStepsFormset = inlineformset_factory(
 
 
 class IngredientsForm(forms.Form):
-    quantity = forms.IntegerField(
+    quantity = forms.FloatField(
         required=False, label=_('Quantity for one person'))
     unit = forms.ModelChoiceField(
         required=True, queryset=Unit.objects.order_by('name', 'name_fr'))

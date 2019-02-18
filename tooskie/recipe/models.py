@@ -108,7 +108,6 @@ class Ingredient(NameModel):
     conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
     picture = models.ImageField(blank=True, null=True)
     name_plural = models.CharField(max_length=1000, blank=True)
-    is_indivisible = models.BooleanField(default=False)
 
     # Relations
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
@@ -156,6 +155,7 @@ class UnitOfIngredient(NameModel):
     average_price = models.FloatField(blank=True, null=True, verbose_name=_('Average price for one unit'))
     linking_word = models.CharField(max_length=1000, blank=True)
     linking_word_plural = models.CharField(max_length=1000, blank=True)
+    is_indivisible = models.BooleanField(default=False)
 
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
