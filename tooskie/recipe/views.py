@@ -228,7 +228,10 @@ class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
         logger.debug(self.object)
         if formset.is_valid():
             for form in formset:
-                form.save(recipe=self.object)
+                try:
+                    form.save(recipe=self.object)
+                except Exception as e:
+                    logger.error(e)
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
