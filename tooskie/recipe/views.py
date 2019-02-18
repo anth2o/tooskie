@@ -176,7 +176,7 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
         for instance in instance_list:
             initial_data.append({'quantity': instance.quantity, 'unit': instance.unit_of_ingredient.unit, 'ingredient': instance.unit_of_ingredient.ingredient})
         formset = IngredientsFormset(initial=initial_data)
-        return self.render_to_response({'form': formset})
+        return self.render_to_response({'form': formset, 'recipe': self.object})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -215,7 +215,7 @@ class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
         for instance in instance_list:
             initial_data.append({'quantity': instance.quantity, 'unit': instance.unit_of_nutritional_property, 'nutritional_property': instance.nutritional_property})
         formset = NutritionalPropertiesFormset(initial=initial_data)
-        return self.render_to_response({'form': formset})
+        return self.render_to_response({'form': formset, 'recipe': self.object})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
