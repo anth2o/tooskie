@@ -195,6 +195,13 @@ class RecipeHasNutritionalProperty(NameModel):
     nutritional_property = models.ForeignKey('NutritionalProperty', on_delete=models.CASCADE)
     unit_of_nutritional_property = models.ForeignKey('Unit', on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        self.name = self.get_name()
+        super(RecipeHasNutritionalProperty, self).save(*args, **kwargs)
+
+    def get_name(self):
+        return str(self.quantity) + ' ' + str(self.unit_of_nutritional_property) + ' of ' + str(self.nutritional_property) + LINK_WORD + str(self.recipe)
+
 class Unit(NameModel):
     name_plural = models.CharField(max_length=1000, blank=True)
     for_nutritional_properties = models.BooleanField(default=False)
