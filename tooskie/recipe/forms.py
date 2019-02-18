@@ -35,8 +35,3 @@ IngredientsFormset = formset_factory(
                                 extra=1,
                                 can_delete=False
                             )
-
-class RecipeForm(ModelForm):
-    class Meta:
-        model = Recipe
-        fields = ('name', 'cooking_time')

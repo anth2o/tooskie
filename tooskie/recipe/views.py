@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, DeleteView
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, DeleteView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse
 
@@ -111,6 +111,25 @@ class RecipeCreateView(CreateView):
         )
         return super().form_valid(form)
 
+class RecipeUpdateView(UpdateView):
+    """
+    For adding steps to a Recipe, or editing them.
+    """
+
+    model = Recipe
+    template_name = 'recipe/recipe_update.html'
+    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
+
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'Changes were saved.'
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
+
 class RecipeUpdateStepsView(SingleObjectMixin, FormView):
     """
     For adding steps to a Recipe, or editing them.
@@ -121,9 +140,6 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
-        logger.debug('GET')
-        logger.debug(self.object)
-        logger.debug(request)
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -131,7 +147,6 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
-        logger.debug('getform')
         return RecipeStepsFormset(**self.get_form_kwargs(), instance=self.object)
 
     def form_valid(self, form):
