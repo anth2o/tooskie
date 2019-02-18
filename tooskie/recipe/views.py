@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Ingredient, Recipe, Tag
-from .forms import RecipeSteps
+from .forms import RecipeStepsFormset
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
 from .serializers import IngredientSerializerWithPicture, RecipeSerializer, TagWithRecipesSerializer
@@ -112,13 +112,13 @@ class RecipeCreateView(CreateView):
         )
         return super().form_valid(form)
 
-class RecipeUpdateView(SingleObjectMixin, FormView):
+class RecipeUpdateStepsView(SingleObjectMixin, FormView):
     """
     For adding steps to a Recipe, or editing them.
     """
 
     model = Recipe
-    template_name = 'recipe/recipe_update.html'
+    template_name = 'recipe/recipe_update_steps.html'
     fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
 
     def get(self, request, *args, **kwargs):
@@ -130,7 +130,7 @@ class RecipeUpdateView(SingleObjectMixin, FormView):
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
-        return RecipeSteps(**self.get_form_kwargs(), instance=self.object)
+        return RecipeStepsFormset(**self.get_form_kwargs(), instance=self.object)
 
     def form_valid(self, form):
         form.save()
