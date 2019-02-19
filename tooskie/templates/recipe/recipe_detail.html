@@ -95,19 +95,19 @@
     <table>
       <thead>
         <tr>
-          <th>Ingredient</th>
-          <th>Picture</th>
           <th>Quantity for one person</th>
           <th>Unit</th>
+          <th>Ingredient</th>
+          <th>Picture</th>
         </tr>
       </thead>
       <tbody>
         {% for ingredient in recipe.ingredients.all %}
           <tr>
-            <td>{{ ingredient.unit_of_ingredient.ingredient.name }}</td>
-            <td> <img src="{{ ingredient.unit_of_ingredient.ingredient.absolute_picture }}" > </td>
             <td>{{ ingredient.quantity }}</td>
             <td>{{ ingredient.unit_of_ingredient.unit.name }}</td>
+            <td>{{ ingredient.unit_of_ingredient.ingredient.name }}</td>
+            <td> <img src="{{ ingredient.unit_of_ingredient.ingredient.absolute_picture }}" > </td>
           </tr>
         {% endfor %}
       </tbody>
