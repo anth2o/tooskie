@@ -34,10 +34,6 @@ class Dev(Common):
         ),
     }
 
-    MEDIA_ROOT = join(os.path.dirname(Common.BASE_DIR), 'media')
-    MEDIA_URL = '/media/'
-
-
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,

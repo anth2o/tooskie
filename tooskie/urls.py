@@ -38,6 +38,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/', include(api_urls)),
     path('', include('tooskie.recipe.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)

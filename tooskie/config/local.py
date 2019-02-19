@@ -77,6 +77,3 @@ class Local(Common):
             'djangorestframework_camel_case.parser.CamelCaseJSONParser',
         ),
     }
-
-    MEDIA_ROOT = join(os.path.dirname(Common.BASE_DIR), 'media')
-    MEDIA_URL = '/media/'

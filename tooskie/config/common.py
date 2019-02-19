@@ -107,4 +107,12 @@ class Common(Configuration):
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+    STATICFILES_DIRS = (
+        os.path.join(os.path.dirname(BASE_DIR), "static"),
+    )
+
     STATIC_URL = '/static/'
+
+
+    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
+    MEDIA_URL = '/media/'
