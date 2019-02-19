@@ -38,11 +38,29 @@ class NameModel(models.Model):
         except Exception as e:
             raise e
 
-
 class LevelModel(NameModel):
     class Meta:
         abstract = True
 
     level = models.PositiveIntegerField(blank=True, null=True)
     description = models.TextField(blank=True)
+
+class PictureModel(models.Model):
+    class Meta:
+        abstract = True
+    
+    picture = models.ImageField(blank=True, null=True)
+
+    @property
+    def absolute_picture(self):
+        """
+        Return the url of the picture (on media or an external website)
+        """
+        try:
+            self.picture.file
+            logger.debug(self.picture.url)
+            return self.picture.url
+        except Exception:
+            return self.picture
+
 

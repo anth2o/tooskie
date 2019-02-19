@@ -8,16 +8,15 @@ from django.urls import reverse
 
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG, NONE_UNIT
 from tooskie.helpers import remove_useless_spaces
-from tooskie.utils.models import LevelModel, NameModel
+from tooskie.utils.models import LevelModel, NameModel, PictureModel
 
 logger = logging.getLogger("django")
 
-class Recipe(NameModel):
+class Recipe(NameModel, PictureModel):
     # time is in minutes
     cooking_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Cooking time (min.)'))
     preparation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Preparation time (min.)'))
     url = models.URLField(blank=True)
-    picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
 
     # Relations
@@ -30,11 +29,10 @@ class Recipe(NameModel):
     def get_absolute_url(self):
         return reverse('recipe:recipe_detail', kwargs={'pk': self.pk})
 
-class Tag(NameModel):
+class Tag(NameModel, PictureModel):
     class Meta:
         ordering = ['name', 'name_fr']
         
-    picture = models.ImageField(blank=True, null=True)
     to_display = models.BooleanField(default=False)
     description = models.TextField(blank=True)
 
@@ -45,13 +43,12 @@ class Tag(NameModel):
     def get_absolute_url(self):
         return reverse('recipe:tag_detail', kwargs={'pk': self.pk})
 
-class Step(NameModel):
+class Step(NameModel, PictureModel):
     class Meta:
         ordering = ['recipe', 'step_number']
     name = models.CharField(max_length=1000, unique=True, verbose_name=_('Name'), blank=True)
     step_number = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     description = models.TextField()
-    picture = models.ImageField(blank=True, null=True)
     time_start = models.IntegerField(blank=True, null=True, verbose_name=_('Time start of the step (min.)'))
 
     # Relations
@@ -80,10 +77,9 @@ class BudgetLevel(LevelModel):
         ordering = ['level',]
     pass
 
-class Ustensil(NameModel):
+class Ustensil(NameModel, PictureModel):
     name_plural = models.CharField(max_length=1000, blank=True)
     description = models.TextField(blank=True)
-    picture = models.ImageField(blank=True)
 
 class UstensilInRecipe(NameModel):
     class Meta:
@@ -103,10 +99,9 @@ class UstensilInRecipe(NameModel):
     def get_name(self):
         return self.ustensil.name + LINK_WORD + self.recipe.name.lower()
 
-class Ingredient(NameModel):
+class Ingredient(NameModel, PictureModel):
     # average conservation time in hours
     conservation_time = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('Conservation time in hours'))
-    picture = models.ImageField(blank=True, null=True)
     name_plural = models.CharField(max_length=1000, blank=True)
 
     # Relations
@@ -133,7 +128,7 @@ class IngredientInRecipe(NameModel):
 
     @property
     def picture(self):
-        return self.unit_of_ingredient.ingredient.picture
+        return self.unit_of_ingredient.ingredient.absolute_picture
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()

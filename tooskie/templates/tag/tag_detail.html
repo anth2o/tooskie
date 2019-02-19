@@ -23,9 +23,9 @@
 
   {% endif %}
 
-  {% if tag.picture %}
+  {% if tag.absolute_picture %}
 
-  <img src="{{ tag.picture }}" onError="this.src = '{{ tag.picture.url }}'" style="width:auto;">
+  <img src="{{ tag.absolute_picture }}" >
 
   {% endif %}
 

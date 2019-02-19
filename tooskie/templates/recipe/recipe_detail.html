@@ -8,14 +8,7 @@
 
 
 {% block content %}
-
-<p>
-    <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
-    <a href="{% url 'recipe:recipe_update' recipe.id %}">Update recipe</a>
-    <a href="{% url 'recipe:recipe_update_steps' recipe.id %}">Update steps</a>
-    <a href="{% url 'recipe:recipe_update_ingredients' recipe.id %}">Update ingredients</a>
-    <a href="{% url 'recipe:recipe_update_nutri' recipe.id %}">Update nutritional properties</a>
-</p>
+  <a href="{% url 'recipe:recipe_list' %}">All recipes</a>
 
   {% if recipe.to_display %}
 
@@ -27,13 +20,15 @@
 
   {% endif %}
 
-  {% if recipe.picture %}
+  {% if recipe.absolute_picture %}
 
-    <img src="{{ recipe.picture }}" onError="this.src = '{{ recipe.picture.url }}'" style="width:auto;">
+    <img src="{{ recipe.absolute_picture }}" >
 
   {% endif %}
 
   <h2>Overview</h2>
+
+  <a href="{% url 'recipe:recipe_update' recipe.id %}">Update recipe</a>
 
     <table>
       <thead>
@@ -62,6 +57,8 @@
 
   <h2>Steps</h2>
 
+  <a href="{% url 'recipe:recipe_update_steps' recipe.id %}">Update steps</a>
+
   {% if recipe.steps.all %}
 
     <table>
@@ -77,13 +74,7 @@
           <tr>
             <td>{{ step.step_number }}</td>
             <td>{{ step.description }}</td>
-            <td>
-              {% if step.picture %}
-                <img src="{{ step.picture.url }}" onError="this.src = '{{ step.picture }}'" style="width:auto;"></td>
-              {% else %}
-                <img src="{{ step.picture }}" style="width:auto;"></td>
-              {% endif %}
-            </td>
+            <td> <img src="{{ step.absolute_picture }}""> </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -96,6 +87,8 @@
   {% endif %}
 
   <h2>Ingredients</h2>
+
+  <a href="{% url 'recipe:recipe_update_ingredients' recipe.id %}">Update ingredients</a>
 
   {% if recipe.ingredients.all %}
 
@@ -112,7 +105,7 @@
         {% for ingredient in recipe.ingredients.all %}
           <tr>
             <td>{{ ingredient.unit_of_ingredient.ingredient.name }}</td>
-            <td> <img src="{{ ingredient.unit_of_ingredient.ingredient.picture }}" style="width:auto;"> </td>
+            <td> <img src="{{ ingredient.unit_of_ingredient.ingredient.absolute_picture }}" > </td>
             <td>{{ ingredient.quantity }}</td>
             <td>{{ ingredient.unit_of_ingredient.unit.name }}</td>
           </tr>
@@ -143,7 +136,8 @@
           <tr>
             <td>{{ ustensil.quantity }}</td>
             <td>{{ ustensil.ustensil.name }}</td>
-            <td> <img src="{{ ustensil.ustensil.picture }}" style="width:auto;"> </td>
+            
+            <td> <img src="{{ ustensil.ustensil.absolute_picture }}" > </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -156,6 +150,8 @@
   {% endif %}
 
   <h2>Nutritional properties for one person</h2>
+
+  <a href="{% url 'recipe:recipe_update_nutri' recipe.id %}">Update nutritional properties</a>
 
   {% if recipe.nutritional_properties.all %}
 

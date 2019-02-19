@@ -180,6 +180,8 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
+        logger.debug('REQUEST')
+        logger.debug(request.POST)
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
