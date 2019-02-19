@@ -94,10 +94,11 @@ class RecipeForm(forms.Form):
         if self.cleaned_data['DELETE']:
             self.delete(tag, *args, **kwargs)
             return
-        self.cleaned_data['recipe'].save()
+        logger.debug(self.cleaned_data)
+        self.cleaned_data['recipe'].tag.add(tag)
     
-    def delete(self, recipe, *args, **kwargs):
-        self.cleaned_data['recipe'].delete()
+    def delete(self, tag, *args, **kwargs):
+        self.cleaned_data['recipe'].tag.remove(tag)
 
 TagRecipesFormset = formset_factory(
     RecipeForm,

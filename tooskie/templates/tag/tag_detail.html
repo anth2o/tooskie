@@ -44,8 +44,8 @@
     {% for recipe in tag.recipes %}
     
       <div>
-        <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
         <img src="{{ recipe.absolute_picture }}" >
+        <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
       </div>
 
     {% endfor %}

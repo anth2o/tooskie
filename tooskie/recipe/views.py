@@ -304,7 +304,7 @@ class TagUpdateRecipesView(SingleObjectMixin, FormView):
     def form_valid(self, formset):
         if formset.is_valid():
             for form in formset:
-                form.save(recipe=self.object)
+                form.save(tag=self.object)
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
