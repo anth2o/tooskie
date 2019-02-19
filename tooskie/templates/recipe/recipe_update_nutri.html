@@ -36,8 +36,8 @@
       <div class="item">
 
       <h2>
-        {% if nutri_form.instance.name %}
-          {{ nutri_form.instance.name }}</h2>
+        {% if nutri_form.nutritional_property.value %}
+          Nutritional property</h2>
         {% else %}
           {% if form.forms|length > 1 %}
             Add an other nutritional property
@@ -51,8 +51,17 @@
         {{ hidden_field.errors }}
       {% endfor %}
 
-      {{ nutri_form|crispy }}
-    
+      <div class="form-row">
+        <div class="form-group col-md-2 mb-0">
+          {{ nutri_form.quantity|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-4 mb-0">
+          {{ nutri_form.unit|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+          {{ nutri_form.nutritional_property|as_crispy_field }}
+        </div>
+      </div>       
     </div>
 
 

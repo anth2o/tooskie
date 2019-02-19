@@ -7,6 +7,10 @@
       $("#add").click(function() {
         return addForm(this, 'form');
       });
+
+      // $("#delete").click(function() {
+      //   return deleteForm(this, 'form');
+      // });
     });
   </script>
 {% endblock %}
@@ -35,8 +39,8 @@
       <div class="item">
 
       <h2>
-        {% if ingredient_form.instance.name %}
-          {{ ingredient_form.instance.name }}</h2>
+        {% if ingredient_form.ingredient.value %}
+          Ingredient</h2>
         {% else %}
           {% if form.forms|length > 1 %}
             Add another ingredient
@@ -50,8 +54,17 @@
         {{ hidden_field.errors }}
       {% endfor %}
 
-      {{ ingredient_form|crispy }}
-    
+      <div class="form-row">
+        <div class="form-group col-md-2 mb-0">
+          {{ ingredient_form.quantity|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-4 mb-0">
+          {{ ingredient_form.unit|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+          {{ ingredient_form.ingredient|as_crispy_field }}
+        </div>
+      </div>    
     </div>
 
 
