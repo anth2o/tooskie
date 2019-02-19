@@ -129,7 +129,6 @@ class RecipeUpdateView(UpdateView):
         )
         return HttpResponseRedirect(self.get_success_url())
 
-
 class RecipeUpdateStepsView(SingleObjectMixin, FormView):
     """
     For adding steps to a Recipe, or editing them.
@@ -144,6 +143,7 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
+        logger.debug(request.POST)
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
@@ -180,15 +180,12 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
-        logger.debug('REQUEST')
-        logger.debug(request.POST)
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
         return IngredientsFormset(**self.get_form_kwargs())
 
     def form_valid(self, formset):
-        logger.debug(self.object)
         if formset.is_valid():
             for form in formset:
                 form.save(recipe=self.object)

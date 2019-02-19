@@ -50,16 +50,8 @@
         {{ hidden_field.errors }}
       {% endfor %}
 
-    {{ step_form.description|as_crispy_field }}
-    <div class="form-row">
-      <div class="form-group col-md-6 mb-0">
-        {{ step_form.time_start|as_crispy_field }}
-      </div>
-      <div class="form-group col-md-6 mb-0">
-        {{ step_form.picture|as_crispy_field }}
-      </div>
-    </div> 
-    {{ step_form.DELETE|as_crispy_field }}
+      {{ step_form|crispy }}
+
     </div>
 
 
