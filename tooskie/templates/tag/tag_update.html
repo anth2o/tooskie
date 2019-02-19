@@ -2,9 +2,9 @@
 
 {% load crispy_forms_tags %}
 
-{% block page_title %}Adding a tag{% endblock %}
+{% block page_title %}Updating {{ tag.name }} {% endblock %}
 
-{% block body_title %}Adding a tag{% endblock %}
+{% block body_title %}Updating <a href="{{ tag.get_absolute_url }}">{{ tag.name }}{% endblock %}
 
 
 {% block content %}
@@ -17,12 +17,13 @@
 
     {% csrf_token %}
 
+    {{ form.management_form }}
     {{ form.non_form_errors }}
 
     {{ form|crispy }}
 
     <p>
-      <input type="submit" value="Add tag">
+      <input type="submit" value="Update tag">
       &nbsp; &nbsp;
       <input class="btn btn-link" 
       type="button" value="Cancel" 

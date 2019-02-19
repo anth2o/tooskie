@@ -23,6 +23,8 @@
 
   {% endif %}
 
+  <div><a href="{% url 'recipe:tag_update' tag.id %}">Update tag</a></div>
+
   {% if tag.absolute_picture %}
 
   <img src="{{ tag.absolute_picture }}" >
@@ -34,6 +36,22 @@
   <div>{{ tag.description }}</div>
 
   {% endif %}
+
+  <a href="{% url 'recipe:tag_update_recipes' tag.id %}">Update recipes</a>
+
+  {% if tag.recipes %}
+
+    {% for recipe in tag.recipes %}
+    
+      <div>
+        <a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a>
+        <img src="{{ recipe.absolute_picture }}" >
+      </div>
+
+    {% endfor %}
+
+  {% endif %}
+
 
   <p>
     <a href="{% url 'recipe:tag_delete' tag.id %}">Delete tag</a>

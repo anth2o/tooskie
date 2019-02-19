@@ -2,7 +2,7 @@ from django.forms.models import BaseInlineFormSet, inlineformset_factory, ModelF
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Recipe, Step, UnitOfIngredient, IngredientInRecipe, Unit, Ingredient, NutritionalProperty, RecipeHasNutritionalProperty
+from .models import Recipe, Step, UnitOfIngredient, IngredientInRecipe, Unit, Ingredient, NutritionalProperty, RecipeHasNutritionalProperty, Tag
 
 import logging
 
@@ -57,7 +57,7 @@ IngredientsFormset = formset_factory(
 
 
 class NutritionalPropertiesForm(forms.Form):
-    quantity = forms.IntegerField(required=True, label=_('Amount for one person'))
+    quantity = forms.FloatField(required=True, label=_('Amount for one person'))
     unit = forms.ModelChoiceField(required=True, queryset=Unit.objects.filter(
         for_nutritional_properties=True).order_by('name', 'name_fr'))
     nutritional_property = forms.ModelChoiceField(
@@ -81,6 +81,26 @@ class NutritionalPropertiesForm(forms.Form):
 
 NutritionalPropertiesFormset = formset_factory(
     NutritionalPropertiesForm,
+    extra=1,
+    can_delete=True
+)
+
+class RecipeForm(forms.Form):
+    recipe = forms.ModelChoiceField(required=True, queryset=Recipe.objects.order_by('name', 'name_fr'))
+
+    def save(self, tag, *args, **kwargs):
+        if not self.cleaned_data:
+            return
+        if self.cleaned_data['DELETE']:
+            self.delete(tag, *args, **kwargs)
+            return
+        self.cleaned_data['recipe'].save()
+    
+    def delete(self, recipe, *args, **kwargs):
+        self.cleaned_data['recipe'].delete()
+
+TagRecipesFormset = formset_factory(
+    RecipeForm,
     extra=1,
     can_delete=True
 )

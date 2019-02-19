@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty
-from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset
+from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset, TagRecipesFormset
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
 from .serializers import IngredientSerializerWithPicture, RecipeSerializer, TagWithRecipesSerializer
@@ -112,10 +112,6 @@ class RecipeCreateView(CreateView):
         return super().form_valid(form)
 
 class RecipeUpdateView(UpdateView):
-    """
-    For adding steps to a Recipe, or editing them.
-    """
-
     model = Recipe
     template_name = 'recipe/recipe_update.html'
     fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
@@ -133,7 +129,6 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
     """
     For adding steps to a Recipe, or editing them.
     """
-
     model = Recipe
     template_name = 'recipe/recipe_update_steps.html'
 
@@ -143,7 +138,6 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
-        logger.debug(request.POST)
         return super().post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
@@ -163,9 +157,8 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
 
 class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
     """
-    For adding steps to a Recipe, or editing them.
+    For adding ingredients to a Recipe, or editing them.
     """
-
     model = Recipe
     template_name = 'recipe/recipe_update_ingredients.html'
 
@@ -201,9 +194,8 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
 
 class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
     """
-    For adding steps to a Recipe, or editing them.
+    For adding nutritional properties to a Recipe, or editing them.
     """
-
     model = Recipe
     template_name = 'recipe/recipe_update_nutri.html'
 
@@ -227,10 +219,7 @@ class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
         logger.debug(self.object)
         if formset.is_valid():
             for form in formset:
-                try:
-                    form.save(recipe=self.object)
-                except Exception as e:
-                    logger.error(e)
+                form.save(recipe=self.object)
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
@@ -273,6 +262,58 @@ class TagCreateView(CreateView):
             'The tag was added.'
         )
         return super().form_valid(form)
+
+class TagUpdateView(UpdateView):
+    model = Tag
+    template_name = 'tag/tag_update.html'
+    fields = ['name', 'name_fr', 'picture', 'description', 'description_fr']
+
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'Changes were saved.'
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
+class TagUpdateRecipesView(SingleObjectMixin, FormView):
+    """
+    For adding recipes to a Tag, or editing them.
+    """
+    model = Tag
+    template_name = 'tag/tag_update_recipes.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Tag.objects.all())
+        instance_list = Recipe.objects.filter(tag=self.object)
+        initial_data = []
+        for instance in instance_list:
+            initial_data.append({'recipe': instance})
+        formset = TagRecipesFormset(initial=initial_data)
+        logger.debug(initial_data)
+        return self.render_to_response({'form': formset, 'tag': self.object})
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Tag.objects.all())
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        return TagRecipesFormset(**self.get_form_kwargs())
+
+    def form_valid(self, formset):
+        if formset.is_valid():
+            for form in formset:
+                form.save(recipe=self.object)
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                'Changes were saved.'
+            )
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('recipe:tag_detail', kwargs={'pk': self.object.pk})
 
 class TagDeleteView(DeleteView):
     model = Tag
