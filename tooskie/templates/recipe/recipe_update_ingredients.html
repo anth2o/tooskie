@@ -8,9 +8,9 @@
         return addForm(this, 'form');
       });
 
-      // $("#delete").click(function() {
-      //   return deleteForm(this, 'form');
-      // });
+      $("#delete").click(function() {
+        return deleteForm(this, 'form');
+      });
     });
   </script>
 {% endblock %}
@@ -65,6 +65,7 @@
           {{ ingredient_form.ingredient|as_crispy_field }}
         </div>
       </div>    
+      <!-- <p><a id="delete" href="#">Delete</a></p> -->
       {{ ingredient_form.DELETE|as_crispy_field }}
     </div>
 
