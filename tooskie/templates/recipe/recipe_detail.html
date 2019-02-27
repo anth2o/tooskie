@@ -33,8 +33,8 @@
     <table>
       <thead>
         <tr>
-          <th>Cooking time</th>
           <th>Preparation time</th>
+          <th>Cooking time</th>
           <th>Difficulty level</th>
           <th>Budget level</th>
           <th>Tags</th>
@@ -42,8 +42,8 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ recipe.cooking_time }} minutes</td>
           <td>{{ recipe.preparation_time }} minutes</td>
+          <td>{{ recipe.cooking_time }} minutes</td>
           <td>{{ recipe.difficulty_level.name }}</td>
           <td>{{ recipe.budget_level.name }}</td>
           <td> {% for tag in recipe.tag_displayed.all %}

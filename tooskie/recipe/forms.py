@@ -109,7 +109,7 @@ TagRecipesFormset = formset_factory(
 class RecipeModelForm(ModelForm):
     class Meta:
         model = Recipe
-        fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level']
+        fields = ['name', 'name_fr', 'preparation_time', 'cooking_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level']
 
     tags = forms.ModelMultipleChoiceField(required=False, queryset=Tag.objects.filter(to_display=True))
 

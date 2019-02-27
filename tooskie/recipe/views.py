@@ -101,7 +101,7 @@ class RecipeDetailView(DetailView):
 class RecipeCreateView(CreateView):
     model = Recipe
     template_name = 'recipe/recipe_create.html'
-    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag_displayed']
+    fields = ['name', 'name_fr', 'preparation_time', 'cooking_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag_displayed']
 
     def form_valid(self, form):
         messages.add_message(
