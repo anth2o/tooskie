@@ -27,9 +27,9 @@ class IngredientsForm(forms.Form):
         'Ingredient'), queryset=Ingredient.objects.order_by('name', 'name_fr'))
 
     def save(self, recipe, *args, **kwargs):
+        logger.debug(self.cleaned_data)
         if not self.cleaned_data:
             return
-        logger.debug(self.cleaned_data)
         if self.cleaned_data['DELETE']:
             self.delete(recipe, *args, **kwargs)
             return
