@@ -120,8 +120,11 @@ class RecipeUpdateView(UpdateView):
         self.object = self.get_object(queryset=Recipe.objects.all())
         initial_data = self.object.__dict__                
         initial_data['tags'] = Tag.objects.filter(recipes_not_filtered=self.object, to_display=True)
-        initial_data['difficulty_level'] = DifficultyLevel.objects.get(pk=initial_data['difficulty_level_id'])
-        initial_data['budget_level'] = BudgetLevel.objects.get(pk=initial_data['budget_level_id'])
+        logger.debug(initial_data)
+        if initial_data['difficulty_level_id'] is not None:
+            initial_data['difficulty_level'] = DifficultyLevel.objects.get(pk=initial_data['difficulty_level_id'])
+        if initial_data['budget_level_id'] is not None:
+            initial_data['budget_level'] = BudgetLevel.objects.get(pk=initial_data['budget_level_id'])
         logger.debug(initial_data)
         form = RecipeModelForm(initial=initial_data)
         return self.render_to_response({'form': form})
