@@ -8,8 +8,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty
-from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset, TagRecipesFormset
+from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty, DifficultyLevel, BudgetLevel
+from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset, TagRecipesFormset, RecipeModelForm
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
 from .serializers import IngredientSerializerWithPicture, RecipeSerializer, TagWithRecipesSerializer
@@ -101,7 +101,7 @@ class RecipeDetailView(DetailView):
 class RecipeCreateView(CreateView):
     model = Recipe
     template_name = 'recipe/recipe_create.html'
-    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
+    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag_displayed']
 
     def form_valid(self, form):
         messages.add_message(
@@ -112,11 +112,22 @@ class RecipeCreateView(CreateView):
         return super().form_valid(form)
 
 class RecipeUpdateView(UpdateView):
-    model = Recipe
     template_name = 'recipe/recipe_update.html'
-    fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag']
+    model = Recipe
+    form_class = RecipeModelForm
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        initial_data = self.object.__dict__                
+        initial_data['tags'] = Tag.objects.filter(recipes_not_filtered=self.object, to_display=True)
+        initial_data['difficulty_level'] = DifficultyLevel.objects.get(pk=initial_data['difficulty_level_id'])
+        initial_data['budget_level'] = BudgetLevel.objects.get(pk=initial_data['budget_level_id'])
+        logger.debug(initial_data)
+        form = RecipeModelForm(initial=initial_data)
+        return self.render_to_response({'form': form})
 
     def form_valid(self, form):
+        logger.debug(form.cleaned_data)
         form.save()
         messages.add_message(
             self.request,

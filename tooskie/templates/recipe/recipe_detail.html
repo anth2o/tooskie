@@ -46,7 +46,7 @@
           <td>{{ recipe.preparation_time }} minutes</td>
           <td>{{ recipe.difficulty_level.name }}</td>
           <td>{{ recipe.budget_level.name }}</td>
-          <td> {% for tag in recipe.tag.all %}
+          <td> {% for tag in recipe.tag_displayed.all %}
               {{ tag.name }},
               {% endfor %}
           </td>

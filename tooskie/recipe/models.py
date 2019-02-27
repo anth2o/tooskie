@@ -29,6 +29,10 @@ class Recipe(NameModel, PictureModel):
     def get_absolute_url(self):
         return reverse('recipe:recipe_detail', kwargs={'pk': self.pk})
 
+    @property
+    def tag_displayed(self):
+        return self.tag.filter(to_display=True)
+        
 class Tag(NameModel, PictureModel):
     class Meta:
         ordering = ['name', 'name_fr']

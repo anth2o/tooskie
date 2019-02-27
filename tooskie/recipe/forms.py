@@ -105,3 +105,22 @@ TagRecipesFormset = formset_factory(
     extra=1,
     can_delete=True
 )
+
+class RecipeModelForm(ModelForm):
+    class Meta:
+        model = Recipe
+        fields = ['name', 'name_fr', 'cooking_time', 'preparation_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level']
+
+    tags = forms.ModelMultipleChoiceField(required=False, queryset=Tag.objects.filter(to_display=True))
+
+    def save(self, *args, **kwargs):
+        if not self.cleaned_data:
+            return
+        logger.debug(self.cleaned_data)
+        for tag in self.cleaned_data['tags']:
+            logger.debug(tag)
+            self.instance.tag.add(tag)
+        self.instance.difficulty_level = self.cleaned_data['difficulty_level']
+        self.instance.budget_level = self.cleaned_data['budget_level']
+        self.instance.save()
+        logger.debug(self.instance)
