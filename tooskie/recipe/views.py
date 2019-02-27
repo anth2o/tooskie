@@ -101,15 +101,20 @@ class RecipeDetailView(DetailView):
 class RecipeCreateView(CreateView):
     model = Recipe
     template_name = 'recipe/recipe_create.html'
-    fields = ['name', 'name_fr', 'preparation_time', 'cooking_time', 'url', 'picture', 'to_display', 'difficulty_level', 'budget_level', 'tag_displayed']
+    form_class = RecipeModelForm
 
     def form_valid(self, form):
+        form.save()
+        self.object = form.instance
         messages.add_message(
             self.request,
             messages.SUCCESS,
             'The recipe was added.'
         )
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 class RecipeUpdateView(UpdateView):
     template_name = 'recipe/recipe_update.html'

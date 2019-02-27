@@ -117,10 +117,10 @@ class RecipeModelForm(ModelForm):
         if not self.cleaned_data:
             return
         logger.debug(self.cleaned_data)
-        for tag in self.cleaned_data['tags']:
-            logger.debug(tag)
-            self.instance.tag.add(tag)
         self.instance.difficulty_level = self.cleaned_data['difficulty_level']
         self.instance.budget_level = self.cleaned_data['budget_level']
         self.instance.save()
+        for tag in self.cleaned_data['tags']:
+            logger.debug(tag)
+            self.instance.tag.add(tag)
         logger.debug(self.instance)
