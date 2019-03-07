@@ -92,15 +92,15 @@ class HomeView(TemplateView):
 
 class RecipeListView(ListView):
     model = Recipe
-    template_name = 'recipe/recipe_list.html'
+    template_name = 'recipe/list.html'
 
 class RecipeDetailView(DetailView):
     model = Recipe
-    template_name = 'recipe/recipe_detail.html'
+    template_name = 'recipe/detail.html'
 
 class RecipeCreateView(CreateView):
     model = Recipe
-    template_name = 'recipe/recipe_create.html'
+    template_name = 'recipe/create.html'
     form_class = RecipeModelForm
 
     def form_valid(self, form):
@@ -117,7 +117,7 @@ class RecipeCreateView(CreateView):
         return self.object.get_absolute_url()
 
 class RecipeUpdateView(UpdateView):
-    template_name = 'recipe/recipe_update.html'
+    template_name = 'recipe/update.html'
     model = Recipe
     form_class = RecipeModelForm
 
@@ -149,7 +149,7 @@ class RecipeUpdateStepsView(SingleObjectMixin, FormView):
     For adding steps to a Recipe, or editing them.
     """
     model = Recipe
-    template_name = 'recipe/recipe_update_steps.html'
+    template_name = 'recipe/update_steps.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -179,7 +179,7 @@ class RecipeUpdateIngredientsView(SingleObjectMixin, FormView):
     For adding ingredients to a Recipe, or editing them.
     """
     model = Recipe
-    template_name = 'recipe/recipe_update_ingredients.html'
+    template_name = 'recipe/update_ingredients.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -216,7 +216,7 @@ class RecipeUpdateNutritionalPropertiesView(SingleObjectMixin, FormView):
     For adding nutritional properties to a Recipe, or editing them.
     """
     model = Recipe
-    template_name = 'recipe/recipe_update_nutri.html'
+    template_name = 'recipe/update_nutri.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Recipe.objects.all())
@@ -263,15 +263,15 @@ class RecipeDeleteView(DeleteView):
 
 class TagListView(ListView):
     model = Tag
-    template_name = 'tag/tag_list.html'
+    template_name = 'tag/list.html'
 
 class TagDetailView(DetailView):
     model = Tag
-    template_name = 'tag/tag_detail.html'
+    template_name = 'tag/detail.html'
 
 class TagCreateView(CreateView):
     model = Tag
-    template_name = 'tag/tag_create.html'
+    template_name = 'tag/create.html'
     fields = ['name', 'name_fr', 'picture', 'to_display', 'description', 'description_fr']
 
     def form_valid(self, form):
@@ -284,7 +284,7 @@ class TagCreateView(CreateView):
 
 class TagUpdateView(UpdateView):
     model = Tag
-    template_name = 'tag/tag_update.html'
+    template_name = 'tag/update.html'
     fields = ['name', 'name_fr', 'picture', 'description', 'description_fr']
 
     def form_valid(self, form):
@@ -301,7 +301,7 @@ class TagUpdateRecipesView(SingleObjectMixin, FormView):
     For adding recipes to a Tag, or editing them.
     """
     model = Tag
-    template_name = 'tag/tag_update_recipes.html'
+    template_name = 'tag/update_recipes.html'
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Tag.objects.all())
