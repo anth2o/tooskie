@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 
-from tooskie.utils.models import BaseModel, NameModel
+from tooskie.utils.models import BaseModel, NameModel, PictureModel
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG
 
 import logging
@@ -52,21 +52,36 @@ class Brand(NameModel):
 class Shop(NameModel):
     description = models.TextField(blank=True)
     is_partner = models.NullBooleanField()
+    is_online_shop = models.BooleanField(default=False)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
     # Relations
     brand = models.ForeignKey('Brand', on_delete=models.DO_NOTHING, blank=True, null=True)
 
-class IsInShop(BaseModel):
+class ProductPrice(BaseModel):
     class Meta:
-        verbose_name_plural = 'Are in shop'
+        verbose_name_plural = 'Products prices'
         
     price = models.FloatField(blank=True, null=True)
 
     # Relations
-    shop = models.ForeignKey('Shop', on_delete=models.CASCADE)
+    shop = models.ForeignKey('Shop', on_delete=models.CASCADE, blank=True, null=True)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.shop) + LINK_WORD + str(self.product)
+
+class Product(NameModel, PictureModel):
+    pass
+
+class QuantityInProduct(BaseModel):
+    quantity = models.FloatField()
+
+    # Relations
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
     unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.unit_of_ingredient) + LINK_WORD + str(self.shop)
+        return str(self.product) + LINK_WORD + str(self.unit_of_ingredient)
+    

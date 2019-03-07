@@ -159,6 +159,7 @@ class UnitOfIngredient(NameModel):
     # Relations
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
     unit = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name="unit_of_ingredient")
+    product = models.ManyToManyField('shop.Product', through='shop.QuantityInProduct')
 
     def save(self, *args, **kwargs):
         self.name = self.get_name()
