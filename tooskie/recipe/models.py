@@ -124,7 +124,6 @@ class Ingredient(NameModel, PictureModel):
         products = Product.objects.none()
         for unit_of_ingredient in self.unit_of_ingredient.all():
             products = products | unit_of_ingredient.product.all()
-        print(products)
         return products
 
     def get_absolute_url(self):

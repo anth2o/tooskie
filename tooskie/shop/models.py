@@ -3,6 +3,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
+from django.urls import reverse
 
 from tooskie.utils.models import BaseModel, NameModel, PictureModel
 from tooskie.constants import LINK_WORD, LOGGING_CONFIG
@@ -73,8 +74,8 @@ class ProductPrice(BaseModel):
         return str(self.product) + LINK_WORD + str(self.shop)
 
 class Product(NameModel, PictureModel):
-    pass
-
+    def get_absolute_url(self):
+        return reverse('shop:product_detail', kwargs={'pk': self.pk})
 class QuantityInProduct(BaseModel):
     quantity = models.FloatField()
 
