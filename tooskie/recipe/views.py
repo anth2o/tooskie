@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty, DifficultyLevel, BudgetLevel
+from .models import Ingredient, Recipe, Tag, IngredientInRecipe, RecipeHasNutritionalProperty, DifficultyLevel, BudgetLevel, Ingredient
 from .forms import RecipeStepsFormset, IngredientsFormset, NutritionalPropertiesFormset, TagRecipesFormset, RecipeModelForm
 from tooskie.pantry.models import Pantry
 from tooskie.pantry.generate_recipes import filter_recipes, get_ingredients, get_recipes_pickle,save_recipes_pickle
@@ -345,3 +345,8 @@ class TagDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('recipe:tag_list',)
+
+
+class IngredientListView(ListView):
+    model = Ingredient
+    template_name = 'ingredient/list.html'

@@ -111,6 +111,17 @@ class Ingredient(NameModel, PictureModel):
     # Relations
     special_diet = models.ManyToManyField('SpecialDiet', through='IngredientCompatbibleWithDiet')
 
+    @property
+    def has_products(self):
+        print('has products')
+        for unit_of_ingredient in self.unit_of_ingredient.all():
+            if len(unit_of_ingredient.product.all()) > 0:
+                return True
+        return False
+
+    def get_absolute_url(self):
+        return reverse('recipe:tag_detail', kwargs={'pk': self.pk})
+
     def save(self, *args, **kwargs):
         self.name_plural = remove_useless_spaces(self.name_plural)
         super(Ingredient, self).save(*args, **kwargs)
@@ -157,7 +168,7 @@ class UnitOfIngredient(NameModel):
     is_indivisible = models.BooleanField(default=False)
 
     # Relations
-    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
+    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE, related_name="unit_of_ingredient")
     unit = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name="unit_of_ingredient")
     product = models.ManyToManyField('shop.Product', through='shop.QuantityInProduct')
 

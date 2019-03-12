@@ -19,4 +19,5 @@ urlpatterns = [
     path('tag/update/<int:pk>/', views.TagUpdateView.as_view(), name='tag_update'),
     path('tag/update_recipes/<int:pk>/', views.TagUpdateRecipesView.as_view(), name='tag_update_recipes'),
     path('tag/delete/<int:pk>/', views.TagDeleteView.as_view(), name='tag_delete'),
+    path('ingredient/', views.IngredientListView.as_view(), name='ingredient_list'),
 ]
