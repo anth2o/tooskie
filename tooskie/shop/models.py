@@ -67,10 +67,10 @@ class ProductPrice(BaseModel):
 
     # Relations
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE, blank=True, null=True)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='prices')
 
     def __str__(self):
-        return str(self.shop) + LINK_WORD + str(self.product)
+        return str(self.product) + LINK_WORD + str(self.shop)
 
 class Product(NameModel, PictureModel):
     pass

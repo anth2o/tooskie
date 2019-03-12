@@ -113,11 +113,19 @@ class Ingredient(NameModel, PictureModel):
 
     @property
     def has_products(self):
-        print('has products')
         for unit_of_ingredient in self.unit_of_ingredient.all():
             if len(unit_of_ingredient.product.all()) > 0:
                 return True
         return False
+
+    @property
+    def products(self):
+        from tooskie.shop.models import Product
+        products = Product.objects.none()
+        for unit_of_ingredient in self.unit_of_ingredient.all():
+            products = products | unit_of_ingredient.product.all()
+        print(products)
+        return products
 
     def get_absolute_url(self):
         return reverse('recipe:ingredient_detail', kwargs={'pk': self.pk})
