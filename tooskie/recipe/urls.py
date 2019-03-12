@@ -5,6 +5,7 @@ app_name = 'recipe'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
+
     path('recipe/', views.RecipeListView.as_view(), name='recipe_list'),
     path('recipe/<int:pk>/', views.RecipeDetailView.as_view(), name='recipe_detail'),
     path('recipe/add/', views.RecipeCreateView.as_view(), name='recipe_create'),
@@ -13,11 +14,17 @@ urlpatterns = [
     path('recipe/update_ingredients/<int:pk>/', views.RecipeUpdateIngredientsView.as_view(), name='recipe_update_ingredients'),
     path('recipe/update_nutri/<int:pk>/', views.RecipeUpdateNutritionalPropertiesView.as_view(), name='recipe_update_nutri'),
     path('recipe/delete/<int:pk>/', views.RecipeDeleteView.as_view(), name='recipe_delete'),
+
     path('tag/', views.TagListView.as_view(), name='tag_list'),
     path('tag/<int:pk>/', views.TagDetailView.as_view(), name='tag_detail'),
     path('tag/add/', views.TagCreateView.as_view(), name='tag_create'),
     path('tag/update/<int:pk>/', views.TagUpdateView.as_view(), name='tag_update'),
     path('tag/update_recipes/<int:pk>/', views.TagUpdateRecipesView.as_view(), name='tag_update_recipes'),
     path('tag/delete/<int:pk>/', views.TagDeleteView.as_view(), name='tag_delete'),
+
     path('ingredient/', views.IngredientListView.as_view(), name='ingredient_list'),
+    path('ingredient/<int:pk>/', views.IngredientDetailView.as_view(), name='ingredient_detail'),
+    path('ingredient/add/', views.IngredientCreateView.as_view(), name='ingredient_create'),
+    path('ingredient/update/<int:pk>/', views.IngredientUpdateView.as_view(), name='ingredient_update'),
+    path('ingredient/delete/<int:pk>/', views.IngredientDeleteView.as_view(), name='ingredient_delete'),
 ]

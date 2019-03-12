@@ -350,3 +350,46 @@ class TagDeleteView(DeleteView):
 class IngredientListView(ListView):
     model = Ingredient
     template_name = 'ingredient/list.html'
+
+class IngredientDetailView(DetailView):
+    model = Ingredient
+    template_name = 'ingredient/detail.html'
+
+class IngredientCreateView(CreateView):
+    model = Ingredient
+    template_name = 'ingredient/create.html'
+    fields = ['name', 'name_fr', 'picture',]
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'The ingredient was added.'
+        )
+        return super().form_valid(form)
+
+class IngredientUpdateView(UpdateView):
+    model = Ingredient
+    template_name = 'ingredient/update.html'
+    fields = ['name', 'name_fr', 'picture',]
+
+    def form_valid(self, form):
+        form.save()
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'Changes were saved.'
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
+class IngredientDeleteView(DeleteView):
+    model = Ingredient
+    template_name = 'confirm_delete.html'
+
+    def get_recipe(self, queryset=None):
+        obj = super(TagDeleteView, self).get_object()
+        self.recipe = Tag.objects.get(id=obj.recipe.id)
+        return obj
+
+    def get_success_url(self):
+        return reverse('recipe:ingredient_list',)

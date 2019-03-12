@@ -120,7 +120,7 @@ class Ingredient(NameModel, PictureModel):
         return False
 
     def get_absolute_url(self):
-        return reverse('recipe:tag_detail', kwargs={'pk': self.pk})
+        return reverse('recipe:ingredient_detail', kwargs={'pk': self.pk})
 
     def save(self, *args, **kwargs):
         self.name_plural = remove_useless_spaces(self.name_plural)

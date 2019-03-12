@@ -7,6 +7,10 @@
 
 {% block content %}
 
+<p>
+  <a href="{% url 'recipe:ingredient_create' %}">Add an ingredient</a>
+</p>
+
 {% if ingredient_list %}
     <h2> Ingredients without products </h2>
     <ul>
@@ -32,7 +36,7 @@
 
   {% else %}
 
-    <p>There are no recipes to display.</p>
+    <p>There are no ingredients to display.</p>
 
   {% endif %}
 
