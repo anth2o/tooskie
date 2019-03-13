@@ -64,11 +64,13 @@ class ProductPrice(BaseModel):
     class Meta:
         verbose_name_plural = 'Products prices'
         
-    price = models.FloatField(blank=True, null=True)
+    price = models.FloatField()
+    quantity = models.FloatField()
 
     # Relations
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE, blank=True, null=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='prices')
+    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.product) + LINK_WORD + str(self.shop)
@@ -76,14 +78,4 @@ class ProductPrice(BaseModel):
 class Product(NameModel, PictureModel):
     def get_absolute_url(self):
         return reverse('shop:product_update', kwargs={'pk': self.pk})
-
-class QuantityInProduct(BaseModel):
-    quantity = models.FloatField()
-
-    # Relations
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    unit_of_ingredient = models.ForeignKey('recipe.UnitOfIngredient', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.product) + LINK_WORD + str(self.unit_of_ingredient)
     
