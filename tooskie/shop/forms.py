@@ -15,7 +15,7 @@ class ProductModelForm(ModelForm):
         model = Product
         fields = ['name', 'name_fr', 'picture']
 
-    ingredient = forms.ModelChoiceField(required=True, queryset=Ingredient.objects.order_by('name', 'name_fr'))
+    ingredient = forms.ModelChoiceField(required=True, queryset=Ingredient.objects.order_by('name', 'name_fr'), widget=forms.HiddenInput())
     price = forms.FloatField(required=True)
     quantity = forms.FloatField(required=True)
     unit = forms.ModelChoiceField(required=True, queryset=Unit.objects.order_by('name', 'name_fr'))

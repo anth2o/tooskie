@@ -14,6 +14,13 @@ class ProductCreateView(CreateView):
     template_name = 'product/create.html'
     form_class = ProductModelForm
 
+    def get(self, request, pk, *args, **kwargs):
+        ingredient = Ingredient.objects.get(id=pk)
+        initial_data = {}   
+        initial_data['ingredient'] = ingredient
+        form = ProductModelForm(initial=initial_data)
+        return self.render_to_response({'form': form, 'ingredient': ingredient})
+
     def form_valid(self, form):
         form.save()
         self.object = form.instance
@@ -44,7 +51,7 @@ class ProductUpdateView(UpdateView):
         initial_data['shop'] = self.object.prices.all()[0].shop
         initial_data['picture'] = self.object.picture
         form = ProductModelForm(initial=initial_data)
-        return self.render_to_response({'form': form})
+        return self.render_to_response({'form': form, 'ingredient': unit_of_ingredient.ingredient})
 
     def form_valid(self, form):
         form.save()

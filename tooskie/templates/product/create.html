@@ -2,9 +2,9 @@
 
 {% load crispy_forms_tags %}
 
-{% block page_title %}Adding a product{% endblock %}
+{% block page_title %}Adding a product for {{ ingredient.name }} {% endblock %}
 
-{% block body_title %}Adding a product{% endblock %}
+{% block body_title %}Adding a product for <a href="{{ ingredient.get_absolute_url }}">{{ ingredient.name }}</a> {% endblock %}
 
 
 {% block content %}

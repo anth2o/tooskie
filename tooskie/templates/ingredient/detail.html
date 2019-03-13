@@ -25,42 +25,50 @@
 
   <h2> Products </h2>
 
-  <ul>
-    {% for product in ingredient.products %}
-      <li>
-        <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Picture</th>
-                <th>Price</th>
-                <th>Shop</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-                <tr>
-                  <td>  
-                    <a href="{{ product.get_absolute_url }}"> {{ product.name }}
-                  </td> 
-                  <td> <img src="{{ product.absolute_picture }}"> </td>
-                  <td>
-                      {% for price in product.prices.all %}
-                      {{ price.price }} <br>
-                      {% endfor %}
-                  </td>
-                  <td>                       
-                    {% for price in product.prices.all %}
-                      {{ price.shop }} <br>
-                    {% endfor %}
-                  </td>
-                  <td><a href="{% url 'shop:product_delete' product.id %}">Delete product</a> </td>
-                </tr>
-            </tbody>
-          </table>
-      </li>
-    {% endfor %}
-  </ul>
+  <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Picture</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Price</th>
+          <th>Shop</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr>
+            {% for product in ingredient.products %}  
+              <td>  
+                <a href="{{ product.get_absolute_url }}"> {{ product.name }}
+              </td> 
+              <td> <img src="{{ product.absolute_picture }}"> </td>
+              <td>
+                  {% for price in product.prices.all %}
+                  {{ price.quantity }} <br>
+                  {% endfor %}
+              </td>
+              <td>                       
+                {% for price in product.prices.all %}
+                  {{ price.unit_of_ingredient.unit }} <br>
+                {% endfor %}
+              </td>
+              <td>
+                  {% for price in product.prices.all %}
+                  {{ price.price }} <br>
+                  {% endfor %}
+              </td>
+              <td>                       
+                {% for price in product.prices.all %}
+                  {{ price.shop }} <br>
+                {% endfor %}
+              </td>
+              <td><a href="{% url 'shop:product_delete' product.id %}">Delete product</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
 
   {% else %}
@@ -70,7 +78,7 @@
   {% endif %}
 
   <p>
-      <a href="{% url 'shop:product_create' %}">Add a product</a>
+      <a href="{% url 'shop:product_create' ingredient.id %}">Add a product</a>
   </p>
 
   <p>

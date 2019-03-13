@@ -2,9 +2,9 @@
 
 {% load crispy_forms_tags %}
 
-{% block page_title %}Updating {{ product.name }} {% endblock %}
+{% block page_title %}Updating {{ form.name.value }} for {{ ingredient.name }}{% endblock %}
 
-{% block body_title %}Updating {{ product.name }}{% endblock %}
+{% block body_title %}Updating {{ form.name.value }} for <a href="{{ ingredient.get_absolute_url }}">{{ ingredient.name }}</a>{% endblock %}
 
 
 {% block content %}
