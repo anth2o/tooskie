@@ -351,6 +351,14 @@ class IngredientListView(ListView):
     model = Ingredient
     template_name = 'ingredient/list.html'
 
+    def get_queryset(self):
+        recipes = Recipe.objects.filter(to_display=True)
+        ingredients_id = set([])
+        for recipe in recipes:
+            for unit_of_ingredient in recipe.unit_of_ingredient.all().select_related('ingredient'):
+                ingredients_id = set(ingredients_id) | set([unit_of_ingredient.ingredient.id])
+        return Ingredient.objects.filter(id__in=list(ingredients_id))
+
 class IngredientDetailView(DetailView):
     model = Ingredient
     template_name = 'ingredient/detail.html'

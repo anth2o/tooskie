@@ -23,7 +23,7 @@ class Recipe(NameModel, PictureModel):
     difficulty_level = models.ForeignKey('DifficultyLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Difficulty level'))
     budget_level = models.ForeignKey('BudgetLevel', blank=True, null=True, on_delete=models.CASCADE, verbose_name=_('Budget level'))
     ustensil = models.ManyToManyField('Ustensil', through='UstensilInRecipe', verbose_name=_('Ustensil(s) used'))
-    unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'))
+    unit_of_ingredient = models.ManyToManyField('UnitOfIngredient', through='IngredientInRecipe', verbose_name=_('Ingredient(s) in recipe'), related_name='recipes')
     tag = models.ManyToManyField('Tag', blank=True, related_name="recipes_not_filtered")
 
     def get_absolute_url(self):
@@ -125,6 +125,16 @@ class Ingredient(NameModel, PictureModel):
         for unit_of_ingredient in self.unit_of_ingredient.all():
             products = products | unit_of_ingredient.product.all()
         return products
+
+    @property
+    def to_display(self):
+        logger.debug(self.name)
+        for unit_of_ingredient in self.unit_of_ingredient.all():
+            for recipe in unit_of_ingredient.recipes.all():
+                logger.debug(recipe)
+                if recipe.to_display:
+                    return True
+        return False
 
     def get_absolute_url(self):
         return reverse('recipe:ingredient_detail', kwargs={'pk': self.pk})
