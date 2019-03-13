@@ -75,7 +75,8 @@ class ProductPrice(BaseModel):
 
 class Product(NameModel, PictureModel):
     def get_absolute_url(self):
-        return reverse('shop:product_detail', kwargs={'pk': self.pk})
+        return reverse('shop:product_update', kwargs={'pk': self.pk})
+
 class QuantityInProduct(BaseModel):
     quantity = models.FloatField()
 

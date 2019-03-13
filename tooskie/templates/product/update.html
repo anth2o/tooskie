@@ -2,9 +2,9 @@
 
 {% load crispy_forms_tags %}
 
-{% block page_title %}Updating {{ ingredient.name }} {% endblock %}
+{% block page_title %}Updating {{ product.name }} {% endblock %}
 
-{% block body_title %}Updating <a href="{{ ingredient.get_absolute_url }}">{{ ingredient.name }}{% endblock %}
+{% block body_title %}Updating {{ product.name }}{% endblock %}
 
 
 {% block content %}
@@ -23,7 +23,7 @@
     {{ form|crispy }}
 
     <p>
-      <input type="submit" value="Update ingredient">
+      <input type="submit" value="Update product">
       &nbsp; &nbsp;
       <input class="btn btn-link" 
       type="button" value="Cancel" 

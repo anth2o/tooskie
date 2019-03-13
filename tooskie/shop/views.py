@@ -7,14 +7,6 @@ from django.urls import reverse
 
 from .models import Product
 
-class ProductListView(ListView):
-    model = Product
-    template_name = 'product/list.html'
-
-class ProductDetailView(DetailView):
-    model = Product
-    template_name = 'product/detail.html'
-
 class ProductCreateView(CreateView):
     model = Product
     template_name = 'product/create.html'
@@ -25,8 +17,11 @@ class ProductCreateView(CreateView):
             self.request,
             messages.SUCCESS,
             'The product was added.'
-        )
-        return super().form_valid(form)
+        )    
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_success_url(self):
+        return reverse('recipe:ingredient_list',)
 
 class ProductUpdateView(UpdateView):
     model = Product
@@ -42,14 +37,17 @@ class ProductUpdateView(UpdateView):
         )
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_success_url(self):
+        return reverse('recipe:ingredient_list',)
+
 class ProductDeleteView(DeleteView):
     model = Product
     template_name = 'confirm_delete.html'
 
     def get_recipe(self, queryset=None):
-        obj = super(TagDeleteView, self).get_object()
-        self.recipe = Tag.objects.get(id=obj.recipe.id)
+        obj = super(ProductDeleteView, self).get_object()
+        self.product = Product.objects.get(id=obj.product.id)
         return obj
 
     def get_success_url(self):
-        return reverse('shop:product_list',)
+        return reverse('recipe:ingredient_list',)
