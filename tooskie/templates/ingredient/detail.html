@@ -44,11 +44,7 @@
                 <a href="{{ product.get_absolute_url }}"> {{ product.name }}
               </td> 
               <td> <img src="{{ product.absolute_picture }}"> </td>
-              <td>
-                  {% for price in product.prices.all %}
-                  {{ price.quantity }} <br>
-                  {% endfor %}
-              </td>
+              <td> {{ product.quantity }} </td>
               <td>                       
                 {% for price in product.prices.all %}
                   {{ price.unit_of_ingredient.unit }} <br>

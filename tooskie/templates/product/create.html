@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+  {{ block.super }}
+  <script>
+    $(document).ready(function() {
+      $("#add").click(function() {
+        return addForm(this, 'form');
+      });
+
+      $("#delete").click(function() {
+        return deleteForm(this, 'form');
+      });
+    });
+  </script>
+{% endblock %}
+
 {% load crispy_forms_tags %}
 
 {% block page_title %}Adding a product for {{ ingredient.name }} {% endblock %}
@@ -10,16 +25,42 @@
 {% block content %}
   <form action="" method="post" enctype="multipart/form-data">
 
-    {% for hidden_field in form.hidden_fields %}
+    {% for hidden_field in forms.0.hidden_fields %}
       {{ hidden_field.errors }}
       {{ hidden_field }}
     {% endfor %}
 
     {% csrf_token %}
 
-    {{ form.non_form_errors }}
+    {{ forms.0.non_form_errors }}
 
-    {{ form|crispy }}
+    {{ forms.0|crispy }}
+
+    {% for hidden_field in forms.1.hidden_fields %}
+      {{ hidden_field.errors }}
+      {{ hidden_field }}
+    {% endfor %}
+
+    {% csrf_token %}
+
+    {{ forms.1.management_form }}
+    {{ forms.1.non_form_errors }}
+
+    {% for product_price_form in forms.1.forms %}
+      <div class="item">
+
+      {% for hidden_field in product_price_form.hidden_fields %}
+        {{ hidden_field.errors }}
+      {% endfor %}
+
+      {{ product_price_form|crispy }}
+
+    </div>
+
+
+    {% endfor %}
+
+    <p><a id="add" href="#">Add another item</a></p>
 
     <p>
       <input type="submit" value="Add product">

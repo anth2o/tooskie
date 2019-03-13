@@ -6,7 +6,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse
 
 from .models import Product
-from .forms import ProductModelForm
+from .forms import ProductModelForm, ProductPriceFormset
 from tooskie.recipe.models import Unit, Ingredient
 
 class ProductCreateView(CreateView):
@@ -32,7 +32,7 @@ class ProductCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
     
     def get_success_url(self):
-        unit_of_ingredient = self.object.unit_of_ingredient.all()[0]
+        unit_of_ingredient = self.object.unit_of_ingredient
         return reverse('recipe:ingredient_detail', kwargs={'pk': unit_of_ingredient.ingredient.id})
 
 class ProductUpdateView(UpdateView):
@@ -43,13 +43,16 @@ class ProductUpdateView(UpdateView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Product.objects.all())
         initial_data = self.object.__dict__
-        unit_of_ingredient = self.object.unit_of_ingredient.all()[0]       
+        unit_of_ingredient = self.object.unit_of_ingredient   
         initial_data['ingredient'] = unit_of_ingredient.ingredient
         initial_data['unit'] = unit_of_ingredient.unit
-        initial_data['price'] = self.object.prices.all()[0].price
-        initial_data['quantity'] = self.object.prices.all()[0].quantity
-        initial_data['shop'] = self.object.prices.all()[0].shop
         initial_data['picture'] = self.object.picture
+        try:
+            initial_data['price'] = self.object.prices.all()[0].price
+            initial_data['quantity'] = self.object.prices.all()[0].quantity
+            initial_data['shop'] = self.object.prices.all()[0].shop
+        except:
+            pass
         form = ProductModelForm(initial=initial_data)
         return self.render_to_response({'form': form, 'ingredient': unit_of_ingredient.ingredient})
 
@@ -64,7 +67,7 @@ class ProductUpdateView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        unit_of_ingredient = self.object.unit_of_ingredient.all()[0]
+        unit_of_ingredient = self.object.unit_of_ingredient
         return reverse('recipe:ingredient_detail', kwargs={'pk': unit_of_ingredient.ingredient.id})
 
 class ProductDeleteView(DeleteView):
@@ -77,5 +80,5 @@ class ProductDeleteView(DeleteView):
         return obj
 
     def get_success_url(self):
-        unit_of_ingredient = self.object.unit_of_ingredient.all()[0]
+        unit_of_ingredient = self.object.unit_of_ingredient
         return reverse('recipe:ingredient_detail', kwargs={'pk': unit_of_ingredient.ingredient.id})

@@ -272,7 +272,7 @@ class TagDetailView(DetailView):
 class TagCreateView(CreateView):
     model = Tag
     template_name = 'tag/create.html'
-    fields = ['name', 'name_fr', 'picture', 'to_display', 'description', 'description_fr']
+    fields = ['name', 'picture', 'to_display', 'description', 'description_fr']
 
     def form_valid(self, form):
         messages.add_message(
@@ -285,7 +285,7 @@ class TagCreateView(CreateView):
 class TagUpdateView(UpdateView):
     model = Tag
     template_name = 'tag/update.html'
-    fields = ['name', 'name_fr', 'picture', 'description', 'description_fr']
+    fields = ['name', 'picture', 'description', 'description_fr']
 
     def form_valid(self, form):
         form.save()
@@ -366,7 +366,7 @@ class IngredientDetailView(DetailView):
 class IngredientCreateView(CreateView):
     model = Ingredient
     template_name = 'ingredient/create.html'
-    fields = ['name', 'name_fr', 'picture',]
+    fields = ['name', 'picture',]
 
     def form_valid(self, form):
         messages.add_message(
@@ -379,7 +379,7 @@ class IngredientCreateView(CreateView):
 class IngredientUpdateView(UpdateView):
     model = Ingredient
     template_name = 'ingredient/update.html'
-    fields = ['name', 'name_fr', 'picture',]
+    fields = ['name', 'picture',]
 
     def form_valid(self, form):
         form.save()
