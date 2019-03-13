@@ -9,17 +9,18 @@ from .models import Product
 from .forms import ProductModelForm, ProductPriceFormset
 from tooskie.recipe.models import Unit, Ingredient
 
-class ProductCreateView(CreateView):
-    model = Product
+class ProductCreateView(FormView):
+    # model = Product
     template_name = 'product/create.html'
-    form_class = ProductModelForm
+    # form_class = ProductModelForm
 
     def get(self, request, pk, *args, **kwargs):
         ingredient = Ingredient.objects.get(id=pk)
         initial_data = {}   
         initial_data['ingredient'] = ingredient
         form = ProductModelForm(initial=initial_data)
-        return self.render_to_response({'form': form, 'ingredient': ingredient})
+        formset = ProductPriceFormset()
+        return self.render_to_response({'forms': [form, formset], 'ingredient': ingredient})
 
     def form_valid(self, form):
         form.save()
