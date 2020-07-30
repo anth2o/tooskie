@@ -8,7 +8,8 @@ ADD requirements.txt /app/requirements.txt
 # set working directory to /app/
 WORKDIR /app/
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# install python dependencies
-RUN pip install -r requirements.txt
+ADD . /app
+
+RUN mkdir /app/logs || true
